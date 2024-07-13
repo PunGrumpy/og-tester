@@ -45,7 +45,7 @@ export function MetadataForm({
       <form onSubmit={handleSubmit} className="mb-4 flex space-x-2">
         <Input
           type="text"
-          placeholder="Enter a URL (e.g., vercel.com)"
+          placeholder="Enter a URL (e.g. pungrumpy.com)"
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
           required
