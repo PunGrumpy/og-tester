@@ -1,13 +1,14 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Copy, Share2, Trash } from 'lucide-react'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { Share2Icon } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import { MetadataForm } from '@/components/MetadataForm'
+import { MetadataResults } from '@/components/MetadataResults'
+import { RecentTests } from '@/components/RecentTests'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -16,11 +17,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MetadataAttributes } from '@/types/metadata'
 import { HistoryItem } from '@/types/storage'
+import { deleteHistoryItem, updateHistory } from '@/utils/historyUtils'
+import { fetchMetadata, validateMetadata } from '@/utils/metadataUtils'
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -36,150 +36,41 @@ export default function Home() {
     }
   }, [])
 
-  const fetchMetadata = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    try {
-      const response = await fetch(
-        `/api/fetchMetadata?url=${encodeURIComponent(url)}`
-      )
-      const data = await response.json()
-      if (response.ok) {
+  const handleFetchMetadata = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await fetchMetadata(url)
         setMetadata(data)
-        updateHistory(url, data)
+        setHistory(updateHistory(history, url, data))
         toast.success('Metadata fetched successfully')
-      } else {
-        setError(data.error || 'An error occurred while fetching metadata')
+      } catch (error) {
+        console.error('Failed to fetch metadata:', error)
+        setError('An unexpected error occurred')
         toast.error('Failed to fetch metadata')
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Failed to fetch metadata:', error)
-      setError('An unexpected error occurred')
-      toast.error('An unexpected error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const updateHistory = (url: string, metadata: MetadataAttributes) => {
-    const now = Date.now()
-    const existingIndex = history.findIndex(item => item.url === url)
-    let newHistory
-
-    if (existingIndex !== -1) {
-      newHistory = [
-        { url, timestamp: now, metadata },
-        ...history.slice(0, existingIndex),
-        ...history.slice(existingIndex + 1)
-      ]
-    } else {
-      newHistory = [{ url, timestamp: now, metadata }, ...history]
-    }
-
-    newHistory = newHistory.slice(0, 10)
-
-    setHistory(newHistory)
-    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
-  }
-
-  const deleteHistoryItem = (urlToDelete: string) => {
-    const newHistory = history.filter(item => item.url !== urlToDelete)
-    setHistory(newHistory)
-    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
-  }
-
-  const validateMetadata = (metadata: MetadataAttributes) => {
-    const issues = []
-    if (!metadata.ogTitle) issues.push('Missing og:title')
-    if (!metadata.ogDescription) issues.push('Missing og:description')
-    if (!metadata.ogImage) issues.push('Missing og:image')
-    if (!metadata.twitterCard) issues.push('Missing twitter:card')
-    return issues
-  }
-
-  const isHttps = (url: string) => url.startsWith('https://')
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success('Copied to clipboard!')
-  }
+    },
+    [url, history]
+  )
 
   const generateShareableLink = () => {
     const baseUrl = window.location.origin
     const shareUrl = `${baseUrl}/share?url=${encodeURIComponent(url)}`
-    copyToClipboard(shareUrl)
+    navigator.clipboard.writeText(shareUrl)
     toast.success('Shareable link copied to clipboard!')
   }
 
-  const MetadataItem = ({
-    term,
-    description
-  }: {
-    term: string
-    description: string | undefined
-  }) => (
-    <div className="mb-2 flex items-center justify-between">
-      <div>
-        <dt className="text-sm font-semibold text-muted-foreground">{term}</dt>
-        <dd className="mt-1 text-sm">{description || 'Not specified'}</dd>
-      </div>
-      {description && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => copyToClipboard(description)}
-        >
-          <Copy className="size-4" />
-          <span className="sr-only">Copy</span>
-        </Button>
-      )}
-    </div>
+  const handleDeleteHistoryItem = useCallback(
+    (urlToDelete: string) => {
+      setHistory(deleteHistoryItem(history, urlToDelete))
+      toast.success('History item deleted')
+    },
+    [history]
   )
-
-  const ImagePreview = ({
-    src,
-    alt
-  }: {
-    src: string | undefined
-    alt: string
-  }) => {
-    const [error, setError] = useState(false)
-
-    if (!src) return <p>No {alt} found</p>
-
-    if (!isHttps(src)) {
-      return (
-        <Alert variant="destructive">
-          <AlertTitle>Insecure Image Source</AlertTitle>
-          <AlertDescription>
-            The image is served over HTTP, which is not secure. URL: {src}
-          </AlertDescription>
-        </Alert>
-      )
-    }
-
-    if (error) {
-      return (
-        <div className="bg-gray-200 p-4 text-center dark:bg-gray-700">
-          <p>Error loading image. URL: {src}</p>
-        </div>
-      )
-    }
-
-    return (
-      <div className="relative h-[300px] w-full">
-        <Image
-          src={src}
-          alt={alt}
-          layout="fill"
-          objectFit="contain"
-          onError={() => setError(true)}
-          unoptimized={src.endsWith('.svg')}
-        />
-      </div>
-    )
-  }
 
   return (
     <motion.div
@@ -194,7 +85,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               OG & Twitter Card Tester
               <Button onClick={generateShareableLink} variant="ghost">
-                <Share2 className="mr-2 size-4" />
+                <Share2Icon className="mr-2 size-4" />
                 Share Results
               </Button>
             </div>
@@ -204,18 +95,12 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={fetchMetadata} className="mb-4 flex space-x-2">
-            <Input
-              type="url"
-              placeholder="https://example.com"
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              required
-            />
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Loading...' : 'Test'}
-            </Button>
-          </form>
+          <MetadataForm
+            url={url}
+            setUrl={setUrl}
+            onSubmit={handleFetchMetadata}
+            loading={loading}
+          />
 
           {error && (
             <Alert variant="destructive" className="mb-4">
@@ -225,215 +110,20 @@ export default function Home() {
           )}
 
           {metadata && (
-            <div className="mt-6">
-              <h2 className="mb-4 text-xl font-bold">Metadata Results</h2>
-              <Tabs defaultValue="all">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="og">Open Graph</TabsTrigger>
-                  <TabsTrigger value="twitter">Twitter</TabsTrigger>
-                </TabsList>
-                <TabsContent value="all">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Open Graph</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <dl className="space-y-2">
-                          <MetadataItem
-                            term="Title"
-                            description={metadata.ogTitle}
-                          />
-                          <MetadataItem
-                            term="Description"
-                            description={metadata.ogDescription}
-                          />
-                          <MetadataItem
-                            term="URL"
-                            description={metadata.ogUrl}
-                          />
-                          <MetadataItem
-                            term="Site Name"
-                            description={metadata.ogSiteName}
-                          />
-                          <MetadataItem
-                            term="Type"
-                            description={metadata.ogType}
-                          />
-                        </dl>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Twitter Card</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <dl className="space-y-2">
-                          <MetadataItem
-                            term="Card"
-                            description={metadata.twitterCard}
-                          />
-                          <MetadataItem
-                            term="Site"
-                            description={metadata.twitterSite}
-                          />
-                          <MetadataItem
-                            term="Title"
-                            description={metadata.twitterTitle}
-                          />
-                          <MetadataItem
-                            term="Description"
-                            description={metadata.twitterDescription}
-                          />
-                        </dl>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-                <TabsContent value="og">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Open Graph</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <dl className="space-y-2">
-                        <MetadataItem
-                          term="Title"
-                          description={metadata.ogTitle}
-                        />
-                        <MetadataItem
-                          term="Description"
-                          description={metadata.ogDescription}
-                        />
-                        <MetadataItem term="URL" description={metadata.ogUrl} />
-                        <MetadataItem
-                          term="Site Name"
-                          description={metadata.ogSiteName}
-                        />
-                        <MetadataItem
-                          term="Type"
-                          description={metadata.ogType}
-                        />
-                      </dl>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                <TabsContent value="twitter">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Twitter Card</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <dl className="space-y-2">
-                        <MetadataItem
-                          term="Card"
-                          description={metadata.twitterCard}
-                        />
-                        <MetadataItem
-                          term="Site"
-                          description={metadata.twitterSite}
-                        />
-                        <MetadataItem
-                          term="Title"
-                          description={metadata.twitterTitle}
-                        />
-                        <MetadataItem
-                          term="Description"
-                          description={metadata.twitterDescription}
-                        />
-                      </dl>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-
-              <Card className="mt-4">
-                <CardHeader>
-                  <CardTitle>Image Preview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="og">
-                    <TabsList>
-                      <TabsTrigger value="og">Open Graph</TabsTrigger>
-                      <TabsTrigger value="twitter">Twitter Card</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="og">
-                      <ImagePreview src={metadata.ogImage} alt="OG Image" />
-                    </TabsContent>
-                    <TabsContent value="twitter">
-                      <ImagePreview
-                        src={metadata.twitterImage}
-                        alt="Twitter Card Image"
-                      />
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-
-              <Card className="mt-4">
-                <CardHeader>
-                  <CardTitle>Validation</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {validateMetadata(metadata).map((issue, index) => (
-                    <Badge
-                      key={index}
-                      variant="destructive"
-                      className="mb-2 mr-2"
-                    >
-                      {issue}
-                    </Badge>
-                  ))}
-                  {validateMetadata(metadata).length === 0 && (
-                    <Badge variant="default">
-                      All required metadata present
-                    </Badge>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            <MetadataResults
+              metadata={metadata}
+              validateMetadata={validateMetadata}
+            />
           )}
 
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Recent Tests</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[200px]">
-                {history.map((item, index) => (
-                  <div
-                    key={index}
-                    className="group mb-2 flex items-center justify-between"
-                  >
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        setUrl(item.url)
-                        setMetadata(item.metadata)
-                      }}
-                    >
-                      {item.url}
-                    </Button>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(item.timestamp).toLocaleString()}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteHistoryItem(item.url)}
-                        className="opacity-0 transition-opacity group-hover:opacity-100"
-                      >
-                        <Trash className="size-4 text-red-500" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <RecentTests
+            history={history}
+            onSelectHistoryItem={item => {
+              setUrl(item.url)
+              setMetadata(item.metadata)
+            }}
+            onDeleteHistoryItem={handleDeleteHistoryItem}
+          />
         </CardContent>
       </Card>
     </motion.div>
