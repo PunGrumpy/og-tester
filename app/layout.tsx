@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-import { Provider } from '@/components/provider'
+import { Provider } from '@/components/Provider'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
