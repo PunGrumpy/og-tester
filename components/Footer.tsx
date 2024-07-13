@@ -8,7 +8,7 @@ export function Footer() {
           © {new Date().getFullYear()}{' '}
           <Link
             href="https://pungrumpy.com"
-            className="hover:text-primary-foreground hover:underline"
+            className="hover:text-primary hover:underline"
           >
             PunGrumpy
           </Link>
