@@ -9,23 +9,25 @@ type MetadataItemProps = {
 }
 
 export function MetadataItem({ term, value }: MetadataItemProps) {
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success('Copied to clipboard')
+  const copyToClipboard = () => {
+    if (value) {
+      navigator.clipboard.writeText(value)
+      toast.success('Copied to clipboard')
+    }
   }
 
   return (
-    <div className="mb-2 flex items-start justify-between">
-      <div className="grow">
+    <div className="flex items-start justify-between">
+      <div>
         <dt className="text-sm font-semibold text-muted-foreground">{term}</dt>
-        <dd className="mt-1 break-all text-sm">{value || 'Not specified'}</dd>
+        <dd className="mt-1 text-sm">{value || 'Not specified'}</dd>
       </div>
       {value && (
         <Button
           variant="ghost"
-          size="icon"
-          onClick={() => copyToClipboard(value)}
-          className="ml-2 shrink-0"
+          size="sm"
+          onClick={copyToClipboard}
+          className="text-muted-foreground hover:text-primary"
         >
           <Copy className="size-4" />
           <span className="sr-only">Copy</span>

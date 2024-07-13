@@ -15,6 +15,14 @@ export function MetadataResults({
   metadata,
   validateMetadata
 }: MetadataResultsProps) {
+  const renderMetadataItems = (items: [string, string | undefined][]) => (
+    <dl className="space-y-2">
+      {items.map(([key, value]) => (
+        <MetadataItem key={key} term={key} value={value} />
+      ))}
+    </dl>
+  )
+
   return (
     <div className="mt-6">
       <h2 className="mb-4 text-xl font-bold">Metadata Results</h2>
@@ -31,20 +39,11 @@ export function MetadataResults({
                 <CardTitle>Open Graph</CardTitle>
               </CardHeader>
               <CardContent>
-                <dl className="space-y-2">
-                  <MetadataItem term="og:title" value={metadata.ogTitle} />
-                  <MetadataItem
-                    term="og:description"
-                    value={metadata.ogDescription}
-                  />
-                  <MetadataItem term="og:url" value={metadata.ogUrl} />
-                  <MetadataItem
-                    term="og:site_name"
-                    value={metadata.ogSiteName}
-                  />
-                  <MetadataItem term="og:type" value={metadata.ogType} />
-                  <MetadataItem term="og:image" value={metadata.ogImage} />
-                </dl>
+                {renderMetadataItems(
+                  Object.entries(metadata).filter(([key]) =>
+                    key.startsWith('og')
+                  )
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -52,28 +51,11 @@ export function MetadataResults({
                 <CardTitle>Twitter Card</CardTitle>
               </CardHeader>
               <CardContent>
-                <dl className="space-y-2">
-                  <MetadataItem
-                    term="twitter:card"
-                    value={metadata.twitterCard}
-                  />
-                  <MetadataItem
-                    term="twitter:site"
-                    value={metadata.twitterSite}
-                  />
-                  <MetadataItem
-                    term="twitter:title"
-                    value={metadata.twitterTitle}
-                  />
-                  <MetadataItem
-                    term="twitter:description"
-                    value={metadata.twitterDescription}
-                  />
-                  <MetadataItem
-                    term="twitter:image"
-                    value={metadata.twitterImage}
-                  />
-                </dl>
+                {renderMetadataItems(
+                  Object.entries(metadata).filter(([key]) =>
+                    key.startsWith('twitter')
+                  )
+                )}
               </CardContent>
             </Card>
           </div>
@@ -84,17 +66,9 @@ export function MetadataResults({
               <CardTitle>Open Graph</CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="space-y-2">
-                <MetadataItem term="og:title" value={metadata.ogTitle} />
-                <MetadataItem
-                  term="og:description"
-                  value={metadata.ogDescription}
-                />
-                <MetadataItem term="og:url" value={metadata.ogUrl} />
-                <MetadataItem term="og:site_name" value={metadata.ogSiteName} />
-                <MetadataItem term="og:type" value={metadata.ogType} />
-                <MetadataItem term="og:image" value={metadata.ogImage} />
-              </dl>
+              {renderMetadataItems(
+                Object.entries(metadata).filter(([key]) => key.startsWith('og'))
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -104,28 +78,11 @@ export function MetadataResults({
               <CardTitle>Twitter Card</CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="space-y-2">
-                <MetadataItem
-                  term="twitter:card"
-                  value={metadata.twitterCard}
-                />
-                <MetadataItem
-                  term="twitter:site"
-                  value={metadata.twitterSite}
-                />
-                <MetadataItem
-                  term="twitter:title"
-                  value={metadata.twitterTitle}
-                />
-                <MetadataItem
-                  term="twitter:description"
-                  value={metadata.twitterDescription}
-                />
-                <MetadataItem
-                  term="twitter:image"
-                  value={metadata.twitterImage}
-                />
-              </dl>
+              {renderMetadataItems(
+                Object.entries(metadata).filter(([key]) =>
+                  key.startsWith('twitter')
+                )
+              )}
             </CardContent>
           </Card>
         </TabsContent>
