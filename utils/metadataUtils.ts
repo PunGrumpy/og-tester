@@ -1,9 +1,7 @@
 import { MetadataAttributes } from '@/types/metadata'
 
 export async function fetchMetadata(url: string): Promise<MetadataAttributes> {
-  const response = await fetch(
-    `/api/fetchMetadata?url=${encodeURIComponent(url)}`
-  )
+  const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`)
   if (!response.ok) {
     throw new Error('Failed to fetch metadata')
   }
