@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import { MetadataAttributes } from '@/types/metadata'
 import { HistoryItem } from '@/types/storage'
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
 }
 
@@ -15,7 +15,7 @@ export function updateHistory(
 ): HistoryItem[] {
   const now = Date.now()
   const existingIndex = history.findIndex(item => item.url === url)
-  let newHistory
+  let newHistory: HistoryItem[]
 
   if (existingIndex !== -1) {
     newHistory = [
@@ -28,7 +28,9 @@ export function updateHistory(
   }
 
   newHistory = newHistory.slice(0, 10)
-  localStorage.setItem('urlHistory', JSON.stringify(newHistory))
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
+  }
   return newHistory
 }
 
@@ -37,20 +39,22 @@ export function deleteHistoryItem(
   urlToDelete: string
 ): HistoryItem[] {
   const newHistory = history.filter(item => item.url !== urlToDelete)
-  localStorage.setItem('urlHistory', JSON.stringify(newHistory))
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
+  }
   return newHistory
 }
 
 export async function fetchMetadata(url: string): Promise<MetadataAttributes> {
   const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`)
   if (!response.ok) {
-    throw new Error('Failed to fetch metadata')
+    throw new Error(`HTTP error! status: ${response.status}`)
   }
   return response.json()
 }
 
 export function validateMetadata(metadata: MetadataAttributes): string[] {
-  const issues = []
+  const issues: string[] = []
   if (!metadata.ogTitle) issues.push('Missing og:title')
   if (!metadata.ogDescription) issues.push('Missing og:description')
   if (!metadata.ogImage) issues.push('Missing og:image')
