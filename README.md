@@ -1,7 +1,7 @@
 <div align="center">
-    <img src="/public/preview.png" alt="Preview" />
     <h1>🧪 OG Tester</h1>
     <p>A tool to help you debug and preview your meta, Twitter, and Open Graph tags.</p>
+    <img src="/public/preview.png" alt="Preview" />
 </div>
 
 ## ✨ Features
