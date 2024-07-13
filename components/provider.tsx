@@ -14,16 +14,18 @@ import {
 export function Provider({ children, ...props }: ThemeProviderProps) {
   return (
     <>
-      <Toaster
-        position="top-center"
-        icons={{
-          success: <CircleCheckIcon size={18} />,
-          error: <CircleXIcon size={18} />,
-          warning: <CircleAlertIcon size={18} />,
-          info: <InfoIcon size={18} />
-        }}
-      />
-      <NextThemesProvider {...props}>{children}</NextThemesProvider>
+      <NextThemesProvider {...props}>
+        {children}
+        <Toaster
+          position="top-center"
+          icons={{
+            success: <CircleCheckIcon size={18} />,
+            error: <CircleXIcon size={18} />,
+            warning: <CircleAlertIcon size={18} />,
+            info: <InfoIcon size={18} />
+          }}
+        />
+      </NextThemesProvider>
     </>
   )
 }

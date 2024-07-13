@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MetadataAttributes } from '@/types/metadata'
 import Image from 'next/image'
+import { toast } from 'sonner'
 
 export default function SharePage() {
   const searchParams = useSearchParams()
@@ -22,6 +23,7 @@ export default function SharePage() {
     } else {
       setError('No URL provided')
       setLoading(false)
+      toast.error('No URL provided')
     }
   }, [searchParams])
 
@@ -33,12 +35,15 @@ export default function SharePage() {
       const data = await response.json()
       if (response.ok) {
         setMetadata(data)
+        toast.success('Metadata fetched successfully')
       } else {
         setError(data.error || 'An error occurred while fetching metadata')
+        toast.error('Failed to fetch metadata')
       }
     } catch (error) {
       console.error('Failed to fetch metadata:', error)
       setError('An unexpected error occurred')
+      toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)
     }
