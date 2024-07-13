@@ -32,17 +32,18 @@ export function MetadataResults({
               </CardHeader>
               <CardContent>
                 <dl className="space-y-2">
-                  <MetadataItem term="Title" description={metadata.ogTitle} />
+                  <MetadataItem term="og:title" value={metadata.ogTitle} />
                   <MetadataItem
-                    term="Description"
-                    description={metadata.ogDescription}
+                    term="og:description"
+                    value={metadata.ogDescription}
                   />
-                  <MetadataItem term="URL" description={metadata.ogUrl} />
+                  <MetadataItem term="og:url" value={metadata.ogUrl} />
                   <MetadataItem
-                    term="Site Name"
-                    description={metadata.ogSiteName}
+                    term="og:site_name"
+                    value={metadata.ogSiteName}
                   />
-                  <MetadataItem term="Type" description={metadata.ogType} />
+                  <MetadataItem term="og:type" value={metadata.ogType} />
+                  <MetadataItem term="og:image" value={metadata.ogImage} />
                 </dl>
               </CardContent>
             </Card>
@@ -53,20 +54,24 @@ export function MetadataResults({
               <CardContent>
                 <dl className="space-y-2">
                   <MetadataItem
-                    term="Card"
-                    description={metadata.twitterCard}
+                    term="twitter:card"
+                    value={metadata.twitterCard}
                   />
                   <MetadataItem
-                    term="Site"
-                    description={metadata.twitterSite}
+                    term="twitter:site"
+                    value={metadata.twitterSite}
                   />
                   <MetadataItem
-                    term="Title"
-                    description={metadata.twitterTitle}
+                    term="twitter:title"
+                    value={metadata.twitterTitle}
                   />
                   <MetadataItem
-                    term="Description"
-                    description={metadata.twitterDescription}
+                    term="twitter:description"
+                    value={metadata.twitterDescription}
+                  />
+                  <MetadataItem
+                    term="twitter:image"
+                    value={metadata.twitterImage}
                   />
                 </dl>
               </CardContent>
@@ -80,17 +85,15 @@ export function MetadataResults({
             </CardHeader>
             <CardContent>
               <dl className="space-y-2">
-                <MetadataItem term="Title" description={metadata.ogTitle} />
+                <MetadataItem term="og:title" value={metadata.ogTitle} />
                 <MetadataItem
-                  term="Description"
-                  description={metadata.ogDescription}
+                  term="og:description"
+                  value={metadata.ogDescription}
                 />
-                <MetadataItem term="URL" description={metadata.ogUrl} />
-                <MetadataItem
-                  term="Site Name"
-                  description={metadata.ogSiteName}
-                />
-                <MetadataItem term="Type" description={metadata.ogType} />
+                <MetadataItem term="og:url" value={metadata.ogUrl} />
+                <MetadataItem term="og:site_name" value={metadata.ogSiteName} />
+                <MetadataItem term="og:type" value={metadata.ogType} />
+                <MetadataItem term="og:image" value={metadata.ogImage} />
               </dl>
             </CardContent>
           </Card>
@@ -102,15 +105,25 @@ export function MetadataResults({
             </CardHeader>
             <CardContent>
               <dl className="space-y-2">
-                <MetadataItem term="Card" description={metadata.twitterCard} />
-                <MetadataItem term="Site" description={metadata.twitterSite} />
                 <MetadataItem
-                  term="Title"
-                  description={metadata.twitterTitle}
+                  term="twitter:card"
+                  value={metadata.twitterCard}
                 />
                 <MetadataItem
-                  term="Description"
-                  description={metadata.twitterDescription}
+                  term="twitter:site"
+                  value={metadata.twitterSite}
+                />
+                <MetadataItem
+                  term="twitter:title"
+                  value={metadata.twitterTitle}
+                />
+                <MetadataItem
+                  term="twitter:description"
+                  value={metadata.twitterDescription}
+                />
+                <MetadataItem
+                  term="twitter:image"
+                  value={metadata.twitterImage}
                 />
               </dl>
             </CardContent>
