@@ -14,8 +14,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { fetchMetadata, validateMetadata } from '@/lib/utils'
 import { MetadataAttributes } from '@/types/metadata'
-import { fetchMetadata, validateMetadata } from '@/utils/metadataUtils'
 
 import Loading from '../loading'
 

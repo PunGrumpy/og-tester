@@ -17,10 +17,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import {
+  deleteHistoryItem,
+  fetchMetadata,
+  updateHistory,
+  validateMetadata
+} from '@/lib/utils'
 import { MetadataAttributes } from '@/types/metadata'
 import { HistoryItem } from '@/types/storage'
-import { deleteHistoryItem, updateHistory } from '@/utils/historyUtils'
-import { fetchMetadata, validateMetadata } from '@/utils/metadataUtils'
 
 export default function Home() {
   const [url, setUrl] = useState('')
