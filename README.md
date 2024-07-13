@@ -1,6 +1,6 @@
 <div align="center">
-    <h1>🧪 OG Tester</h1>
     <img src="/public/preview.png" alt="Preview" />
+    <h1>🧪 OG Tester</h1>
     <p>A tool to help you debug and preview your meta, Twitter, and Open Graph tags.</p>
 </div>
 
