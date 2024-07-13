@@ -37,14 +37,14 @@ export default function Home() {
   }, [])
 
   const handleFetchMetadata = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent, processedUrl: string) => {
       e.preventDefault()
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchMetadata(url)
+        const data = await fetchMetadata(processedUrl)
         setMetadata(data)
-        setHistory(updateHistory(history, url, data))
+        setHistory(updateHistory(history, processedUrl, data))
         toast.success('Metadata fetched successfully')
       } catch (error) {
         console.error('Failed to fetch metadata:', error)
@@ -54,7 +54,7 @@ export default function Home() {
         setLoading(false)
       }
     },
-    [url, history]
+    [history]
   )
 
   const generateShareableLink = () => {
