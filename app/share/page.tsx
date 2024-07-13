@@ -1,43 +1,31 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { useSearchParams } from 'next/navigation'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Trash, Copy, Share2 } from 'lucide-react'
-import { HistoryItem } from '@/types/storage'
 import { MetadataAttributes } from '@/types/metadata'
+import Image from 'next/image'
 
-export default function Home() {
-  const [url, setUrl] = useState('')
+export default function SharePage() {
+  const searchParams = useSearchParams()
   const [metadata, setMetadata] = useState<MetadataAttributes | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [history, setHistory] = useState<HistoryItem[]>([])
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem('urlHistory')
-    if (savedHistory) {
-      setHistory(JSON.parse(savedHistory))
+    const url = searchParams.get('url')
+    if (url) {
+      fetchMetadata(url)
+    } else {
+      setError('No URL provided')
+      setLoading(false)
     }
-  }, [])
+  }, [searchParams])
 
-  const fetchMetadata = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  const fetchMetadata = async (url: string) => {
     try {
       const response = await fetch(
         `/api/fetchMetadata?url=${encodeURIComponent(url)}`
@@ -45,7 +33,6 @@ export default function Home() {
       const data = await response.json()
       if (response.ok) {
         setMetadata(data)
-        updateHistory(url, data)
       } else {
         setError(data.error || 'An error occurred while fetching metadata')
       }
@@ -57,33 +44,6 @@ export default function Home() {
     }
   }
 
-  const updateHistory = (url: string, metadata: MetadataAttributes) => {
-    const now = Date.now()
-    const existingIndex = history.findIndex(item => item.url === url)
-    let newHistory
-
-    if (existingIndex !== -1) {
-      newHistory = [
-        { url, timestamp: now, metadata },
-        ...history.slice(0, existingIndex),
-        ...history.slice(existingIndex + 1)
-      ]
-    } else {
-      newHistory = [{ url, timestamp: now, metadata }, ...history]
-    }
-
-    newHistory = newHistory.slice(0, 10)
-
-    setHistory(newHistory)
-    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
-  }
-
-  const deleteHistoryItem = (urlToDelete: string) => {
-    const newHistory = history.filter(item => item.url !== urlToDelete)
-    setHistory(newHistory)
-    localStorage.setItem('urlHistory', JSON.stringify(newHistory))
-  }
-
   const validateMetadata = (metadata: MetadataAttributes) => {
     const issues = []
     if (!metadata.ogTitle) issues.push('Missing og:title')
@@ -93,19 +53,6 @@ export default function Home() {
     return issues
   }
 
-  const isHttps = (url: string) => url.startsWith('https://')
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-  }
-
-  const generateShareableLink = () => {
-    const baseUrl = window.location.origin
-    const shareUrl = `${baseUrl}/share?url=${encodeURIComponent(url)}`
-    copyToClipboard(shareUrl)
-    alert('Shareable link copied to clipboard!')
-  }
-
   const MetadataItem = ({
     term,
     description
@@ -113,21 +60,9 @@ export default function Home() {
     term: string
     description: string | undefined
   }) => (
-    <div className="mb-2 flex justify-between items-center">
-      <div>
-        <dt className="font-semibold text-sm text-muted-foreground">{term}</dt>
-        <dd className="mt-1 text-sm">{description || 'Not specified'}</dd>
-      </div>
-      {description && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => copyToClipboard(description)}
-        >
-          <Copy className="h-4 w-4" />
-          <span className="sr-only">Copy</span>
-        </Button>
-      )}
+    <div className="mb-2">
+      <dt className="font-semibold text-sm text-muted-foreground">{term}</dt>
+      <dd className="mt-1 text-sm">{description || 'Not specified'}</dd>
     </div>
   )
 
@@ -138,29 +73,7 @@ export default function Home() {
     src: string | undefined
     alt: string
   }) => {
-    const [error, setError] = useState(false)
-
     if (!src) return <p>No {alt} found</p>
-
-    if (!isHttps(src)) {
-      return (
-        <Alert variant="destructive">
-          <AlertTitle>Insecure Image Source</AlertTitle>
-          <AlertDescription>
-            The image is served over HTTP, which is not secure. URL: {src}
-          </AlertDescription>
-        </Alert>
-      )
-    }
-
-    if (error) {
-      return (
-        <div className="bg-gray-200 dark:bg-gray-700 p-4 text-center">
-          <p>Error loading image. URL: {src}</p>
-        </div>
-      )
-    }
-
     return (
       <div className="relative w-full h-[300px]">
         <Image
@@ -168,59 +81,30 @@ export default function Home() {
           alt={alt}
           layout="fill"
           objectFit="contain"
-          onError={() => setError(true)}
           unoptimized={src.endsWith('.svg')}
         />
       </div>
     )
   }
 
+  if (loading) return <div>Loading...</div>
+  if (error)
+    return (
+      <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="container mx-auto py-8 px-4"
-    >
+    <div className="container mx-auto py-8 px-4">
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle>
-            <div className="flex items-center justify-between">
-              OG & Twitter Card Tester
-              <Button onClick={generateShareableLink} variant="ghost">
-                <Share2 className="mr-2 h-4 w-4" />
-                Share Results
-              </Button>
-            </div>
-          </CardTitle>
-          <CardDescription>
-            Enter a URL to test its Open Graph and Twitter Card metadata
-          </CardDescription>
+          <CardTitle>Shared Metadata Results</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={fetchMetadata} className="flex space-x-2 mb-4">
-            <Input
-              type="url"
-              placeholder="https://example.com"
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              required
-            />
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Loading...' : 'Test'}
-            </Button>
-          </form>
-
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           {metadata && (
-            <div className="mt-6">
-              <h2 className="text-xl font-bold mb-4">Metadata Results</h2>
+            <>
               <Tabs defaultValue="all">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="all">All</TabsTrigger>
@@ -386,50 +270,10 @@ export default function Home() {
                   )}
                 </CardContent>
               </Card>
-            </div>
+            </>
           )}
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Recent Tests</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[200px]">
-                {history.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center mb-2 group"
-                  >
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        setUrl(item.url)
-                        setMetadata(item.metadata)
-                      }}
-                    >
-                      {item.url}
-                    </Button>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(item.timestamp).toLocaleString()}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteHistoryItem(item.url)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash className="h-4 w-4 text-red-500" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </ScrollArea>
-            </CardContent>
-          </Card>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   )
 }
