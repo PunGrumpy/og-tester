@@ -6,6 +6,8 @@ import { useTheme } from 'next-themes'
 
 import { Button } from '@/components/ui/button'
 
+import { Icons } from './Icons'
+
 export function Header() {
   const { theme, setTheme } = useTheme()
 
@@ -13,7 +15,7 @@ export function Header() {
     <header className="w-full border-b">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold">OG Tester</span>
+          <Icons.logo />
         </Link>
         <nav>
           <Button
