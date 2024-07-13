@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { notFound, useSearchParams } from 'next/navigation'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MetadataAttributes } from '@/types/metadata'
 import Image from 'next/image'
 import { toast } from 'sonner'
+import Loading from '../loading'
 
 export default function SharePage() {
   const searchParams = useSearchParams()
@@ -21,9 +21,7 @@ export default function SharePage() {
     if (url) {
       fetchMetadata(url)
     } else {
-      setError('No URL provided')
-      setLoading(false)
-      toast.error('No URL provided')
+      notFound()
     }
   }, [searchParams])
 
@@ -92,14 +90,8 @@ export default function SharePage() {
     )
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error)
-    return (
-      <Alert variant="destructive">
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    )
+  if (loading) return <Loading />
+  if (error) throw new Error(error)
 
   return (
     <div className="container mx-auto py-8 px-4">
