@@ -1,16 +1,17 @@
 import Link from 'next/link'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
-  CardFooter
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card'
 
 export default function NotFound() {
   return (
-    <div className="container mx-auto py-8 px-4 flex items-center justify-center min-h-screen">
+    <div className="container mx-auto flex min-h-screen items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>404 - Page Not Found</CardTitle>

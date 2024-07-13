@@ -1,34 +1,42 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
-import { Provider } from '@/components/provider'
-import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
+
+import { Footer } from '@/components/Footer'
+import { Header } from '@/components/Header'
+import { Provider } from '@/components/provider'
+import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'OG Tester',
   description: 'Test Open Graph and Twitter Card metadata'
 }
 
-export default function RootLayout({
-  children
-}: {
+interface RootLayoutProps {
   children: React.ReactNode
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body
+        className={cn(
+          'font-sans antialiased',
+          GeistSans.variable,
+          GeistMono.variable
+        )}
+      >
         <Provider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen">
+          <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="flex-grow">{children}</main>
+            <main className="grow">{children}</main>
             <Footer />
           </div>
         </Provider>

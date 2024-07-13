@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { notFound, useSearchParams } from 'next/navigation'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MetadataAttributes } from '@/types/metadata'
-import Image from 'next/image'
-import { toast } from 'sonner'
+
 import Loading from '../loading'
 
 export default function SharePage() {
@@ -64,7 +66,7 @@ export default function SharePage() {
     description: string | undefined
   }) => (
     <div className="mb-2">
-      <dt className="font-semibold text-sm text-muted-foreground">{term}</dt>
+      <dt className="text-sm font-semibold text-muted-foreground">{term}</dt>
       <dd className="mt-1 text-sm">{description || 'Not specified'}</dd>
     </div>
   )
@@ -78,7 +80,7 @@ export default function SharePage() {
   }) => {
     if (!src) return <p>No {alt} found</p>
     return (
-      <div className="relative w-full h-[300px]">
+      <div className="relative h-[300px] w-full">
         <Image
           src={src}
           alt={alt}
@@ -94,8 +96,8 @@ export default function SharePage() {
   if (error) throw new Error(error)
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="container mx-auto px-4 py-8">
+      <Card className="mx-auto w-full max-w-4xl">
         <CardHeader>
           <CardTitle>Shared Metadata Results</CardTitle>
         </CardHeader>
@@ -109,7 +111,7 @@ export default function SharePage() {
                   <TabsTrigger value="twitter">Twitter</TabsTrigger>
                 </TabsList>
                 <TabsContent value="all">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <Card>
                       <CardHeader>
                         <CardTitle>Open Graph</CardTitle>
@@ -255,7 +257,7 @@ export default function SharePage() {
                     <Badge
                       key={index}
                       variant="destructive"
-                      className="mr-2 mb-2"
+                      className="mb-2 mr-2"
                     >
                       {issue}
                     </Badge>

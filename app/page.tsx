@@ -1,25 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { Copy, Share2, Trash } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
-  CardHeader,
-  CardTitle,
+  CardContent,
   CardDescription,
-  CardContent
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Trash, Copy, Share2 } from 'lucide-react'
-import { HistoryItem } from '@/types/storage'
 import { MetadataAttributes } from '@/types/metadata'
-import { toast } from 'sonner'
+import { HistoryItem } from '@/types/storage'
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -118,9 +119,9 @@ export default function Home() {
     term: string
     description: string | undefined
   }) => (
-    <div className="mb-2 flex justify-between items-center">
+    <div className="mb-2 flex items-center justify-between">
       <div>
-        <dt className="font-semibold text-sm text-muted-foreground">{term}</dt>
+        <dt className="text-sm font-semibold text-muted-foreground">{term}</dt>
         <dd className="mt-1 text-sm">{description || 'Not specified'}</dd>
       </div>
       {description && (
@@ -129,7 +130,7 @@ export default function Home() {
           size="icon"
           onClick={() => copyToClipboard(description)}
         >
-          <Copy className="h-4 w-4" />
+          <Copy className="size-4" />
           <span className="sr-only">Copy</span>
         </Button>
       )}
@@ -160,14 +161,14 @@ export default function Home() {
 
     if (error) {
       return (
-        <div className="bg-gray-200 dark:bg-gray-700 p-4 text-center">
+        <div className="bg-gray-200 p-4 text-center dark:bg-gray-700">
           <p>Error loading image. URL: {src}</p>
         </div>
       )
     }
 
     return (
-      <div className="relative w-full h-[300px]">
+      <div className="relative h-[300px] w-full">
         <Image
           src={src}
           alt={alt}
@@ -185,15 +186,15 @@ export default function Home() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto py-8 px-4"
+      className="container mx-auto px-4 py-8"
     >
-      <Card className="w-full max-w-4xl mx-auto">
+      <Card className="mx-auto w-full max-w-4xl">
         <CardHeader>
           <CardTitle>
             <div className="flex items-center justify-between">
               OG & Twitter Card Tester
               <Button onClick={generateShareableLink} variant="ghost">
-                <Share2 className="mr-2 h-4 w-4" />
+                <Share2 className="mr-2 size-4" />
                 Share Results
               </Button>
             </div>
@@ -203,7 +204,7 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={fetchMetadata} className="flex space-x-2 mb-4">
+          <form onSubmit={fetchMetadata} className="mb-4 flex space-x-2">
             <Input
               type="url"
               placeholder="https://example.com"
@@ -225,7 +226,7 @@ export default function Home() {
 
           {metadata && (
             <div className="mt-6">
-              <h2 className="text-xl font-bold mb-4">Metadata Results</h2>
+              <h2 className="mb-4 text-xl font-bold">Metadata Results</h2>
               <Tabs defaultValue="all">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="all">All</TabsTrigger>
@@ -233,7 +234,7 @@ export default function Home() {
                   <TabsTrigger value="twitter">Twitter</TabsTrigger>
                 </TabsList>
                 <TabsContent value="all">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <Card>
                       <CardHeader>
                         <CardTitle>Open Graph</CardTitle>
@@ -379,7 +380,7 @@ export default function Home() {
                     <Badge
                       key={index}
                       variant="destructive"
-                      className="mr-2 mb-2"
+                      className="mb-2 mr-2"
                     >
                       {issue}
                     </Badge>
@@ -403,7 +404,7 @@ export default function Home() {
                 {history.map((item, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-center mb-2 group"
+                    className="group mb-2 flex items-center justify-between"
                   >
                     <Button
                       variant="link"
@@ -422,9 +423,9 @@ export default function Home() {
                         variant="ghost"
                         size="icon"
                         onClick={() => deleteHistoryItem(item.url)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="opacity-0 transition-opacity group-hover:opacity-100"
                       >
-                        <Trash className="h-4 w-4 text-red-500" />
+                        <Trash className="size-4 text-red-500" />
                         <span className="sr-only">Delete</span>
                       </Button>
                     </div>

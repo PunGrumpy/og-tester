@@ -1,15 +1,16 @@
 'use client'
 
-import * as React from 'react'
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
-import { type ThemeProviderProps } from 'next-themes/dist/types'
-import { Toaster } from './ui/sonner'
 import {
   CircleAlertIcon,
   CircleCheckIcon,
   CircleXIcon,
   InfoIcon
 } from 'lucide-react'
+import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import { type ThemeProviderProps } from 'next-themes/dist/types'
+import * as React from 'react'
+
+import { Toaster } from './ui/sonner'
 
 export function Provider({ children, ...props }: ThemeProviderProps) {
   return (
