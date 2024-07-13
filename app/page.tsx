@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Trash, Copy, Share2 } from 'lucide-react'
 import { HistoryItem } from '@/types/storage'
 import { MetadataAttributes } from '@/types/metadata'
+import { toast } from 'sonner'
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -46,12 +47,15 @@ export default function Home() {
       if (response.ok) {
         setMetadata(data)
         updateHistory(url, data)
+        toast.success('Metadata fetched successfully')
       } else {
         setError(data.error || 'An error occurred while fetching metadata')
+        toast.error('Failed to fetch metadata')
       }
     } catch (error) {
       console.error('Failed to fetch metadata:', error)
       setError('An unexpected error occurred')
+      toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)
     }
@@ -103,7 +107,7 @@ export default function Home() {
     const baseUrl = window.location.origin
     const shareUrl = `${baseUrl}/share?url=${encodeURIComponent(url)}`
     copyToClipboard(shareUrl)
-    alert('Shareable link copied to clipboard!')
+    toast.success('Shareable link copied to clipboard!')
   }
 
   const MetadataItem = ({
