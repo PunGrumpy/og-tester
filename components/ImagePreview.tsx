@@ -35,7 +35,8 @@ export function ImagePreview({ src, alt }: ImagePreviewProps) {
         <AlertCircle className="size-4" />
         <AlertTitle>Insecure Image Source</AlertTitle>
         <AlertDescription>
-          The image is served over HTTP, which is not secure. URL: {src}
+          The image is served over HTTP, which is not secure and may not load in
+          some browsers.
         </AlertDescription>
       </Alert>
     )
