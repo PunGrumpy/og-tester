@@ -11,6 +11,12 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(url)
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: `HTTP error! status: ${response.status}` },
+        { status: response.status }
+      )
+    }
     const html = await response.text()
     const $ = cheerio.load(html)
 
@@ -31,7 +37,10 @@ export async function GET(request: Request) {
     return NextResponse.json(metadata)
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch metadata' },
+      {
+        error:
+          error instanceof Error ? error.message : 'Failed to fetch metadata'
+      },
       { status: 500 }
     )
   }
