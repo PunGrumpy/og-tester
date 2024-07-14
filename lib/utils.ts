@@ -46,10 +46,20 @@ export function deleteHistoryItem(
 }
 
 export async function fetchMetadata(url: string): Promise<MetadataAttributes> {
-  const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`)
+  const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`, {
+    headers: {
+      'x-api-key': process.env.NEXT_PUBLIC_API_KEY || ''
+    }
+  })
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
+    const errorData = await response.json()
+    console.error('API Error:', errorData)
+    throw new Error(
+      `Failed to fetch metadata: ${errorData.error || response.statusText}`
+    )
   }
+
   return response.json()
 }
 
