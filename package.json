@@ -5,6 +5,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "dev:infisical": "infisical run --env dev -- next dev",
+    "dev:turbo": "next dev --turbo",
     "format": "prettier --write .",
     "lint": "next lint && eslint .",
     "lint:fix": "next lint --fix && eslint . --fix",
