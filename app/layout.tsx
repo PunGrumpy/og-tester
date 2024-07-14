@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/twitter-card.png',
-        width: 1500,
+        width: 1920,
         height: 500,
         alt: 'Twitter Card Image'
       }
@@ -65,8 +65,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        width: 1920
+        height: 1080,
         alt: 'Open Graph Image',
         type: 'image/png'
       }
