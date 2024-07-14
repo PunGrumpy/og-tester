@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Share2Icon } from 'lucide-react'
+import { Share2Icon, ShieldAlertIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -9,6 +9,7 @@ import { MetadataForm } from '@/components/MetadataForm'
 import { MetadataResults } from '@/components/MetadataResults'
 import { RecentTests } from '@/components/RecentTests'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -87,7 +88,13 @@ export default function Home() {
         <CardHeader>
           <CardTitle>
             <div className="flex items-center justify-between">
-              OG & Twitter Card Tester
+              <div>
+                OG & Twitter Card Tester
+                <Badge variant="destructive" className="ml-2">
+                  <ShieldAlertIcon className="mr-1 size-3" />
+                  API Restricted
+                </Badge>
+              </div>
               <Button onClick={generateShareableLink} variant="ghost">
                 <Share2Icon className="mr-2 size-4" />
                 Share Results
