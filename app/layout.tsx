@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/og-image.png',
-        width: 1920
+        width: 1920,
         height: 1080,
         alt: 'Open Graph Image',
         type: 'image/png'
