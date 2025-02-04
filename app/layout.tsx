@@ -3,9 +3,9 @@ import '@/app/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
-import { Provider } from '@/components/Provider'
+import { Footer } from '@/components/footer/Footer'
+import { Header } from '@/components/header/Header'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -117,23 +117,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'overscroll-contain font-sans antialiased',
+          'overflow-x-hidden overscroll-contain font-sans antialiased',
           geistSans.variable,
           geistMono.variable
         )}
       >
-        <Provider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="grow">{children}</main>
-            <Footer />
-          </div>
-        </Provider>
+          <Header />
+          <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
+          <main className="divide-y sm:border-b">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   )
