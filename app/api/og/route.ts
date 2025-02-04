@@ -1,29 +1,7 @@
 import * as cheerio from 'cheerio'
 import { NextResponse } from 'next/server'
 
-import { cors } from '@/lib/cors'
-
-const API_KEY = process.env.API_KEY
-
 export async function GET(request: Request) {
-  const apiKey = request.headers.get('x-api-key')
-
-  if (apiKey !== API_KEY) {
-    return NextResponse.json(
-      { error: 'Unauthorized: Invalid API Key' },
-      { status: 401 }
-    )
-  }
-
-  const corsResponse = await cors(
-    request,
-    new NextResponse(JSON.stringify({ message: 'CORS check passed' }))
-  )
-
-  if (corsResponse.status !== 200) {
-    return corsResponse
-  }
-
   const { searchParams } = new URL(request.url)
   const url = searchParams.get('url')
 

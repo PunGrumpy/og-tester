@@ -1,4 +1,4 @@
-import { MetadataAttributes } from './metadata'
+import { MetadataAttributes } from '@/types/metadata'
 
 type HistoryItem = {
   url: string

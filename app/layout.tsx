@@ -3,15 +3,20 @@ import '@/app/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
-import { Provider } from '@/components/Provider'
+import { Footer } from '@/components/footer/Footer'
+import { Header } from '@/components/header/Header'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { Toaster } from '@/components/ui/sonner'
+import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
+const protocol = env.VERCEL_PROJECT_PRODUCTION_URL.includes('localhost')
+  ? 'http'
+  : 'https'
+const siteUrl = new URL(`${protocol}://${env.VERCEL_PROJECT_PRODUCTION_URL}`)
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_METADATA_BASE || 'http://localhost:3000'
-  ),
+  metadataBase: siteUrl,
   title: {
     default: 'OG Tester',
     template: `%s | OG Tester`
@@ -117,23 +122,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'overscroll-contain font-sans antialiased',
+          'bg-backdrop overflow-x-hidden overscroll-contain font-sans antialiased',
           geistSans.variable,
           geistMono.variable
         )}
       >
-        <Provider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="grow">{children}</main>
-            <Footer />
-          </div>
-        </Provider>
+          <Header />
+          <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
+          <main className="divide-y sm:border-b">{children}</main>
+          <Footer />
+        </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )
