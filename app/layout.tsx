@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Footer } from '@/components/footer/Footer'
 import { Header } from '@/components/header/Header'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -133,6 +134,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <main className="divide-y sm:border-b">{children}</main>
           <Footer />
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )
