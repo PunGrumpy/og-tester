@@ -1,8 +1,7 @@
-import './globals.css'
+import '@/app/globals.css'
 
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
 import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
@@ -92,6 +91,23 @@ export const viewport: Viewport = {
   ]
 }
 
+const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  fallback: ['ui-sans-serif', 'system-ui'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true
+})
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  fallback: ['ui-monospace', 'monospace'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true
+})
+
 interface RootLayoutProps {
   children: React.ReactNode
 }
@@ -101,9 +117,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'font-sans antialiased',
-          GeistSans.variable,
-          GeistMono.variable
+          'overscroll-contain font-sans antialiased',
+          geistSans.variable,
+          geistMono.variable
         )}
       >
         <Provider
