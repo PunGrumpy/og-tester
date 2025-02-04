@@ -1,26 +1,29 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
 import { Section } from '@/components/sections/Section'
+import { fetchMetadata } from '@/lib/utils'
 import { MetadataAttributes } from '@/types/metadata'
+import { HistoryItem } from '@/types/storage'
 
 import { ContactForm } from './components/ContactForm'
+import { HistorySearch } from './components/HistorySearch'
 import { MetadataResults } from './components/MetadataResult'
 
 export default function HomePage() {
-  const metadata: MetadataAttributes = {
-    ogTitle: 'PunGrumpy - Digital Developer & DevOps Engineer',
-    ogImage:
-      'https://www.pungrumpy.com/api/og?title=Home&subtitle=Website&texture=1',
-    ogDescription:
-      'Personal portfolio and blog showcasing my work in digital development and DevOps engineering',
-    ogUrl: 'https://example.com',
-    ogType: 'website',
-    ogSiteName: 'Example',
-    twitterCard: 'summary',
-    twitterTitle: 'Test',
-    twitterDescription:
-      'Personal portfolio and blog showcasing my work in digital development and DevOps engineering',
-    twitterImage:
-      'https://www.pungrumpy.com/api/og?title=Home&subtitle=Website&texture=1',
-    twitterSite: '@example'
+  const [metadata, setMetadata] = useState<MetadataAttributes>({})
+  const [history, setHistory] = useState<HistoryItem[]>([])
+
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('urlHistory')
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory))
+    }
+  }, [])
+
+  const handleMetadataUpdate = (newMetadata: MetadataAttributes) => {
+    setMetadata(newMetadata)
   }
 
   return (
@@ -36,12 +39,46 @@ export default function HomePage() {
             </p>
           </div>
 
-          <ContactForm />
+          <ContactForm
+            onMetadataUpdate={handleMetadataUpdate}
+            history={history}
+            setHistory={setHistory}
+          />
         </div>
       </Section>
 
-      <Section>
+      <Section className="min-h-[500px]">
         <MetadataResults metadata={metadata} validateMetadata={() => []} />
+      </Section>
+
+      <Section>
+        <div className="p-8">
+          <h2 className="text-xl leading-tight font-bold tracking-tight sm:text-2xl md:text-3xl">
+            Search History
+          </h2>
+          <HistorySearch
+            history={history}
+            onSelectHistoryItem={item => {
+              fetchMetadata(item.url)
+                .then(response => {
+                  handleMetadataUpdate(response)
+                })
+                .catch(error => {
+                  toast.error(
+                    error instanceof Error ? error.message : 'An error occurred'
+                  )
+                })
+            }}
+            onDeleteHistoryItem={url => {
+              setHistory(history.filter(item => item.url !== url))
+              localStorage.setItem(
+                'urlHistory',
+                JSON.stringify(history.filter(item => item.url !== url))
+              )
+              toast.success('History item deleted')
+            }}
+          />
+        </div>
       </Section>
     </>
   )
