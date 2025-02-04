@@ -118,7 +118,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'overflow-x-hidden overscroll-contain font-sans antialiased',
+          'bg-backdrop overflow-x-hidden overscroll-contain font-sans antialiased',
           geistSans.variable,
           geistMono.variable
         )}
