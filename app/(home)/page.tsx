@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import { ViewAnimation } from '@/components/providers/ViewAnimation'
 import { Section } from '@/components/sections/Section'
 import { cn, fetchMetadata } from '@/lib/utils'
 import { MetadataAttributes } from '@/types/metadata'
@@ -31,12 +32,24 @@ export default function HomePage() {
       <Section className="border-t">
         <div className="space-y-8 p-8">
           <div className="text-center">
-            <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl">
-              Open Graph Tester
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Enter a URL to fetch its Open Graph metadata
-            </p>
+            <ViewAnimation
+              initial={{ opacity: 0, translateY: -8 }}
+              whileInView={{ opacity: 1, translateY: 0 }}
+              delay={0.2}
+            >
+              <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl">
+                Open Graph Tester
+              </h1>
+            </ViewAnimation>
+            <ViewAnimation
+              initial={{ opacity: 0, translateY: -8 }}
+              whileInView={{ opacity: 1, translateY: 0 }}
+              delay={0.4}
+            >
+              <p className="text-muted-foreground mt-2">
+                Enter a URL to fetch its Open Graph metadata
+              </p>
+            </ViewAnimation>
           </div>
 
           <ContactForm
