@@ -6,7 +6,7 @@
 
 ## ✨ Features
 
-- `⚡️` Next.js 14 with App Router
+- `⚡️` Next.js 15 with App Router
 - `🎨` Tailwind CSS for styling
 - `🎉` shadcn/ui for UI components
 - `🎬` Framer Motion for animations

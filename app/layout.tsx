@@ -7,12 +7,16 @@ import { Footer } from '@/components/footer/Footer'
 import { Header } from '@/components/header/Header'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { Toaster } from '@/components/ui/sonner'
+import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
+const protocol = env.VERCEL_PROJECT_PRODUCTION_URL.includes('localhost')
+  ? 'http'
+  : 'https'
+const siteUrl = new URL(`${protocol}://${env.VERCEL_PROJECT_PRODUCTION_URL}`)
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_METADATA_BASE || 'http://localhost:3000'
-  ),
+  metadataBase: siteUrl,
   title: {
     default: 'OG Tester',
     template: `%s | OG Tester`

@@ -1,5 +1,7 @@
 import 'server-only'
 
+import { env } from '@/lib/env'
+
 type BetterStackResponse = {
   data: {
     id: string
@@ -72,7 +74,7 @@ export const Status = async () => {
       'https://uptime.betterstack.com/api/v2/monitors',
       {
         headers: {
-          Authorization: `Bearer ${process.env.BETTERSTACK_API_KEY}`
+          Authorization: `Bearer ${env.BETTERSTACK_API_KEY}`
         }
       }
     )
@@ -107,7 +109,7 @@ export const Status = async () => {
       className="flex items-center gap-3 text-sm"
       target="_blank"
       rel="noreferrer"
-      href={process.env.BETTERSTACK_URL}
+      href={env.BETTERSTACK_URL}
     >
       <span className="relative flex h-2 w-2">
         <span
