@@ -92,7 +92,7 @@ export default function HomePage() {
             toast.success('History item deleted')
           }}
         />
-        <div className="to-backdrop absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent" />
+        <div className="to-backdrop pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent" />
       </Section>
     </>
   )
