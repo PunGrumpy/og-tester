@@ -32,7 +32,7 @@ export function RecentTests({
                 {item.url}
               </Button>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   {new Date(item.timestamp).toLocaleString()}
                 </span>
                 <Button

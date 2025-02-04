@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="w-full border-t">
       <div className="container mx-auto flex h-16 items-center justify-center px-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           © {new Date().getFullYear()}{' '}
           <Link
             href="https://pungrumpy.com"

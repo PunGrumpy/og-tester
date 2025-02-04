@@ -117,7 +117,7 @@ export function MetadataResults({
         </CardHeader>
         <CardContent>
           {validateMetadata(metadata).map((issue, index) => (
-            <Badge key={index} variant="destructive" className="mb-2 mr-2">
+            <Badge key={index} variant="destructive" className="mr-2 mb-2">
               {issue}
             </Badge>
           ))}

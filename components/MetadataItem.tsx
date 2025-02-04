@@ -19,7 +19,7 @@ export function MetadataItem({ term, value }: MetadataItemProps) {
   return (
     <div className="flex items-start justify-between">
       <div>
-        <dt className="text-sm font-semibold text-muted-foreground">{term}</dt>
+        <dt className="text-muted-foreground text-sm font-semibold">{term}</dt>
         <dd className="mt-1 text-sm">{value || 'Not specified'}</dd>
       </div>
       {value && (
