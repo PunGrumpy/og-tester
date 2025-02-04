@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Section } from '@/components/sections/Section'
-import { fetchMetadata } from '@/lib/utils'
+import { cn, fetchMetadata } from '@/lib/utils'
 import { MetadataAttributes } from '@/types/metadata'
 import { HistoryItem } from '@/types/storage'
 
@@ -51,34 +51,35 @@ export default function HomePage() {
         <MetadataResults metadata={metadata} validateMetadata={() => []} />
       </Section>
 
-      <Section>
-        <div className="p-8">
-          <h2 className="text-xl leading-tight font-bold tracking-tight sm:text-2xl md:text-3xl">
-            Search History
-          </h2>
-          <HistorySearch
-            history={history}
-            onSelectHistoryItem={item => {
-              fetchMetadata(item.url)
-                .then(response => {
-                  handleMetadataUpdate(response)
-                })
-                .catch(error => {
-                  toast.error(
-                    error instanceof Error ? error.message : 'An error occurred'
-                  )
-                })
-            }}
-            onDeleteHistoryItem={url => {
-              setHistory(history.filter(item => item.url !== url))
-              localStorage.setItem(
-                'urlHistory',
-                JSON.stringify(history.filter(item => item.url !== url))
-              )
-              toast.success('History item deleted')
-            }}
-          />
-        </div>
+      <Section
+        className={cn(
+          'relative flex min-h-[336px] flex-col gap-2 px-4 py-8 font-mono text-xs',
+          'space-y-4 sm:px-8 sm:text-sm'
+        )}
+      >
+        <HistorySearch
+          history={history}
+          onSelectHistoryItem={item => {
+            fetchMetadata(item.url)
+              .then(response => {
+                handleMetadataUpdate(response)
+              })
+              .catch(error => {
+                toast.error(
+                  error instanceof Error ? error.message : 'An error occurred'
+                )
+              })
+          }}
+          onDeleteHistoryItem={url => {
+            setHistory(history.filter(item => item.url !== url))
+            localStorage.setItem(
+              'urlHistory',
+              JSON.stringify(history.filter(item => item.url !== url))
+            )
+            toast.success('History item deleted')
+          }}
+        />
+        <div className="to-backdrop absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent" />
       </Section>
     </>
   )

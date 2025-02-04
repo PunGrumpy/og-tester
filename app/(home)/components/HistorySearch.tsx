@@ -1,5 +1,6 @@
 import { Trash } from 'lucide-react'
 
+import { ViewAnimation } from '@/components/providers/ViewAnimation'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { HistoryItem } from '@/types/storage'
@@ -16,9 +17,14 @@ export const HistorySearch = ({
   onDeleteHistoryItem
 }: HistorySearchProps) => {
   return (
-    <div className="mt-6 w-full">
-      <ScrollArea className="">
-        {history.map((item, index) => (
+    <ScrollArea>
+      {history.map((item, index) => (
+        <ViewAnimation
+          key={index}
+          initial={{ opacity: 0, translateY: -8 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          delay={index * 0.1}
+        >
           <div
             key={index}
             className="group mb-2 flex items-center justify-between"
@@ -44,8 +50,8 @@ export const HistorySearch = ({
               </Button>
             </div>
           </div>
-        ))}
-      </ScrollArea>
-    </div>
+        </ViewAnimation>
+      ))}
+    </ScrollArea>
   )
 }
