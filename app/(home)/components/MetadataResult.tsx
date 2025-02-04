@@ -13,6 +13,10 @@ interface MetadataResultProps {
 }
 
 export const MetadataResults = ({ metadata }: MetadataResultProps) => {
+  const hasOgMetadata = metadata.ogTitle || metadata.ogDescription
+  const hasTwitterMetadata =
+    metadata.twitterTitle || metadata.twitterDescription
+
   return (
     <section className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       <div>
@@ -24,22 +28,40 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
           <div className="flex flex-col gap-6">
             <Prose>
               <small className="text-muted-foreground">Open Graph</small>
-              {metadata.ogTitle && (
-                <h2 className="my-2 text-3xl">{metadata.ogTitle}</h2>
-              )}
-              {metadata.ogDescription && (
-                <p className="text-foreground/80">{metadata.ogDescription}</p>
+              {hasOgMetadata ? (
+                <>
+                  {metadata.ogTitle && (
+                    <h2 className="my-2 text-3xl">{metadata.ogTitle}</h2>
+                  )}
+                  {metadata.ogDescription && (
+                    <p className="text-foreground/80">
+                      {metadata.ogDescription}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-sm italic">
+                  No Open Graph metadata available
+                </p>
               )}
             </Prose>
 
             <Prose>
               <small className="text-muted-foreground">Twitter Card</small>
-              {metadata.twitterTitle && (
-                <h2 className="my-2 text-3xl">{metadata.twitterTitle}</h2>
-              )}
-              {metadata.twitterDescription && (
-                <p className="text-foreground/80">
-                  {metadata.twitterDescription}
+              {hasTwitterMetadata ? (
+                <>
+                  {metadata.twitterTitle && (
+                    <h2 className="my-2 text-3xl">{metadata.twitterTitle}</h2>
+                  )}
+                  {metadata.twitterDescription && (
+                    <p className="text-foreground/80">
+                      {metadata.twitterDescription}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-sm italic">
+                  No Twitter Card metadata available
                 </p>
               )}
             </Prose>
@@ -74,7 +96,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
         </ViewAnimation>
       </div>
 
-      {metadata.ogImage && (
+      {metadata.ogImage ? (
         <div className="bg-dashed sm:col-span-2">
           <ViewAnimation
             initial={{ opacity: 0 }}
@@ -92,6 +114,21 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                 height={500}
                 className="w-full rounded-tl-lg border-t border-l sm:rounded-tl-2xl"
               />
+            </div>
+          </ViewAnimation>
+        </div>
+      ) : (
+        <div className="bg-dashed sm:col-span-2">
+          <ViewAnimation
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            delay={0.4}
+            className="relative"
+          >
+            <div className="flex h-full min-h-[500px] items-center justify-center">
+              <p className="text-muted-foreground text-sm italic">
+                No image available
+              </p>
             </div>
           </ViewAnimation>
         </div>
