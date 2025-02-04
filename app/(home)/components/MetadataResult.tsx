@@ -67,9 +67,9 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             </Prose>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex flex-col items-start gap-1 md:flex-row">
             {metadata.ogUrl && (
-              <Button asChild variant="outline" className="gap-2" key="website">
+              <Button asChild variant="outline" key="website">
                 <Link
                   href={metadata.ogUrl}
                   target="_blank"
@@ -82,7 +82,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             )}
 
             {metadata.ogImage && (
-              <Button asChild variant="link" className="gap-2" key="image">
+              <Button asChild variant="link" key="image">
                 <Link
                   href={metadata.ogImage}
                   target="_blank"
