@@ -102,9 +102,9 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             delay={0.4}
-            className="relative"
+            className="relative h-full"
           >
-            <div className="pt-4 pl-4 sm:pt-8 sm:pl-8">
+            <div className="h-full pt-4 pl-4 sm:pt-8 sm:pl-8">
               <div className="dashed-line-top" />
               <div className="dashed-line-left" />
               <Image
@@ -112,7 +112,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                 alt={metadata.ogTitle || 'No title found'}
                 width={820}
                 height={500}
-                className="w-full rounded-tl-lg border-t border-l sm:rounded-tl-2xl"
+                className="h-full w-full rounded-tl-lg border-t border-l sm:rounded-tl-2xl"
               />
             </div>
           </ViewAnimation>
