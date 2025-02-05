@@ -96,7 +96,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
         </ViewAnimation>
       </div>
 
-      {metadata.ogImage ? (
+      {metadata.ogImage && metadata.ogImage.startsWith('https') ? (
         <div className="bg-dashed sm:col-span-2">
           <ViewAnimation
             initial={{ opacity: 0 }}
