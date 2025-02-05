@@ -66,7 +66,7 @@ export default function HomePage() {
 
       <Section
         className={cn(
-          'relative flex min-h-[336px] flex-col gap-2 px-4 py-8 font-mono text-xs',
+          'relative flex flex-col gap-2 px-4 py-8 font-mono text-xs',
           'space-y-4 sm:px-8 sm:text-sm'
         )}
       >

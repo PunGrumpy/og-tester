@@ -17,7 +17,7 @@ export const HistorySearch = ({
   onDeleteHistoryItem
 }: HistorySearchProps) => {
   return (
-    <ScrollArea>
+    <ScrollArea className="mt-4 h-[336px]">
       {history.map((item, index) => (
         <ViewAnimation
           key={index}
