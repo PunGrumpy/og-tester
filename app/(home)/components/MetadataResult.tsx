@@ -9,7 +9,6 @@ import { MetadataAttributes } from '@/types/metadata'
 
 interface MetadataResultProps {
   metadata: MetadataAttributes
-  validateMetadata: (metadata: MetadataAttributes) => string[]
 }
 
 export const MetadataResults = ({ metadata }: MetadataResultProps) => {

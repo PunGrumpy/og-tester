@@ -11,6 +11,7 @@ import { HistoryItem } from '@/types/storage'
 import { ContactForm } from './components/ContactForm'
 import { HistorySearch } from './components/HistorySearch'
 import { MetadataResults } from './components/MetadataResult'
+import { ValidateResult } from './components/ValidateResult'
 
 export default function HomePage() {
   const [metadata, setMetadata] = useState<MetadataAttributes>({})
@@ -61,7 +62,11 @@ export default function HomePage() {
       </Section>
 
       <Section className="min-h-[500px]">
-        <MetadataResults metadata={metadata} validateMetadata={() => []} />
+        <MetadataResults metadata={metadata} />
+      </Section>
+
+      <Section>
+        <ValidateResult metadata={metadata} />
       </Section>
 
       <Section
