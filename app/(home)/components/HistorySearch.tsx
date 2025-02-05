@@ -30,7 +30,7 @@ export const HistorySearch = ({
             className="group mb-2 flex items-center justify-between"
           >
             <h3
-              className="cursor-pointer"
+              className="cursor-pointer hover:underline hover:underline-offset-4"
               onClick={() => onSelectHistoryItem(item)}
             >
               {item.url}
