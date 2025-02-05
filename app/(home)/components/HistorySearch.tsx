@@ -36,8 +36,8 @@ export const HistorySearch = ({
               {item.url}
             </h3>
             <div className="flex items-center space-x-2">
-              <span className="text-muted-foreground text-sm">
-                {new Date(item.timestamp).toLocaleString()}
+              <span className="text-muted-foreground">
+                {new Date(item.timestamp).toLocaleString().split(',')[0]}
               </span>
               <Button
                 variant="ghost"
