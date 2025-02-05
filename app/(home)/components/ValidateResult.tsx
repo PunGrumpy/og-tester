@@ -5,12 +5,16 @@ import { MetadataAttributes } from '@/types/metadata'
 
 interface ValidateResultProps {
   metadata: MetadataAttributes
+  hasSearched: boolean
 }
 
-export const ValidateResult = ({ metadata }: ValidateResultProps) => {
+export const ValidateResult = ({
+  metadata,
+  hasSearched
+}: ValidateResultProps) => {
   const errors = validateMetadata(metadata)
 
-  if (errors.length === 0) return null
+  if (!hasSearched || errors.length === 0) return null
 
   return (
     <section className="flex flex-wrap gap-2 p-4">

@@ -16,6 +16,7 @@ import { ValidateResult } from './components/ValidateResult'
 export default function HomePage() {
   const [metadata, setMetadata] = useState<MetadataAttributes>({})
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('urlHistory')
@@ -26,6 +27,7 @@ export default function HomePage() {
 
   const handleMetadataUpdate = (newMetadata: MetadataAttributes) => {
     setMetadata(newMetadata)
+    setHasSearched(true)
   }
 
   return (
@@ -66,7 +68,7 @@ export default function HomePage() {
       </Section>
 
       <Section>
-        <ValidateResult metadata={metadata} />
+        <ValidateResult metadata={metadata} hasSearched={hasSearched} />
       </Section>
 
       <Section
