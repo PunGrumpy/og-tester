@@ -80,15 +80,6 @@ export default function HomePage() {
     return response.json()
   }
 
-  const validateMetadata = (metadata: Metadata): string[] => {
-    const issues: string[] = []
-    if (!metadata.ogTitle) issues.push('Missing og:title')
-    if (!metadata.ogDescription) issues.push('Missing og:description')
-    if (!metadata.ogImage) issues.push('Missing og:image')
-    if (!metadata.twitterCard) issues.push('Missing twitter:card')
-    return issues
-  }
-
   return (
     <>
       <Section className="border-t">
@@ -127,11 +118,7 @@ export default function HomePage() {
       </Section>
 
       <Section>
-        <ValidateResult
-          metadata={metadata}
-          hasSearched={hasSearched}
-          validateMetadata={validateMetadata}
-        />
+        <ValidateResult metadata={metadata} hasSearched={hasSearched} />
       </Section>
 
       <Section
