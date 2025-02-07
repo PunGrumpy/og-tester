@@ -1,16 +1,17 @@
+import type { Metadata } from '@/app/api/og/route'
 import { ViewAnimation } from '@/components/providers/ViewAnimation'
 import { Badge } from '@/components/ui/badge'
-import { validateMetadata } from '@/lib/utils'
-import { MetadataAttributes } from '@/types/metadata'
 
 interface ValidateResultProps {
-  metadata: MetadataAttributes
+  metadata: Metadata
   hasSearched: boolean
+  validateMetadata: (metadata: Metadata) => string[]
 }
 
 export const ValidateResult = ({
   metadata,
-  hasSearched
+  hasSearched,
+  validateMetadata
 }: ValidateResultProps) => {
   const errors = validateMetadata(metadata)
 

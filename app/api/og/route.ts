@@ -1,6 +1,20 @@
 import * as cheerio from 'cheerio'
 import { NextResponse } from 'next/server'
 
+export interface Metadata {
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: string
+  ogUrl?: string
+  ogSiteName?: string
+  ogType?: string
+  twitterCard?: string
+  twitterSite?: string
+  twitterTitle?: string
+  twitterDescription?: string
+  twitterImage?: string
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const url = searchParams.get('url')
@@ -14,7 +28,7 @@ export async function GET(request: Request) {
     const html = await response.text()
     const $ = cheerio.load(html)
 
-    const metadata = {
+    const metadata: Metadata = {
       ogTitle: $('meta[property="og:title"]').attr('content'),
       ogDescription: $('meta[property="og:description"]').attr('content'),
       ogImage: $('meta[property="og:image"]').attr('content'),
@@ -30,11 +44,12 @@ export async function GET(request: Request) {
 
     return NextResponse.json(metadata)
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch URL' },
-        { status: 500 }
-      )
-    }
+    return NextResponse.json(
+      { error: 'Failed to fetch URL' },
+      {
+        status: 500,
+        statusText: error instanceof Error ? error.message : 'An error occurred'
+      }
+    )
   }
 }

@@ -2,13 +2,13 @@ import { ArrowUpRightIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import type { Metadata } from '@/app/api/og/route'
 import { Prose } from '@/components/Prose'
 import { ViewAnimation } from '@/components/providers/ViewAnimation'
 import { Button } from '@/components/ui/button'
-import { MetadataAttributes } from '@/types/metadata'
 
 interface MetadataResultProps {
-  metadata: MetadataAttributes
+  metadata: Metadata
 }
 
 export const MetadataResults = ({ metadata }: MetadataResultProps) => {
