@@ -13,6 +13,13 @@ export interface Metadata {
   twitterTitle?: string
   twitterDescription?: string
   twitterImage?: string
+  articleAuthor?: string
+  articlePublishedTime?: string
+  ogLocale?: string
+  ogVideoUrl?: string
+  ogVideoType?: string
+  favicon?: string
+  structuredData?: string
 }
 
 export async function GET(request: Request) {
@@ -39,7 +46,33 @@ export async function GET(request: Request) {
       twitterSite: $('meta[name="twitter:site"]').attr('content'),
       twitterTitle: $('meta[name="twitter:title"]').attr('content'),
       twitterDescription: $('meta[name="twitter:description"]').attr('content'),
-      twitterImage: $('meta[name="twitter:image"]').attr('content')
+      twitterImage: $('meta[name="twitter:image"]').attr('content'),
+
+      articleAuthor: $('meta[property="article:author"]').attr('content'),
+      articlePublishedTime: $('meta[property="article:published_time"]').attr(
+        'content'
+      ),
+      ogLocale: $('meta[property="og:locale"]').attr('content'),
+      ogVideoUrl: $('meta[property="og:video"]').attr('content'),
+      ogVideoType: $('meta[property="og:video:type"]').attr('content'),
+      favicon: (() => {
+        const faviconUrl =
+          $('link[rel="icon"]').attr('href') ||
+          $('link[rel="shortcut icon"]').attr('href') ||
+          $('link[rel="apple-touch-icon"]').attr('href') ||
+          $('link[rel="apple-touch-icon-precomposed"]').attr('href')
+
+        if (!faviconUrl) return undefined
+
+        // Handle relative URLs by resolving against the base URL
+        try {
+          return new URL(faviconUrl, url).toString()
+        } catch {
+          return undefined
+        }
+      })(),
+      structuredData:
+        $('script[type="application/ld+json"]').html() || undefined
     }
 
     return NextResponse.json(metadata)
