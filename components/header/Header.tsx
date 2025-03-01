@@ -27,7 +27,13 @@ export function Header() {
           delay={0.8}
         >
           <Button variant="outline" size="sm" asChild>
-            <Link href="https://www.pungrumpy.com/contact">Get in touch</Link>
+            <Link
+              href="https://www.pungrumpy.com/contact"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Get in touch
+            </Link>
           </Button>
         </ViewAnimation>
       </div>
