@@ -1,6 +1,10 @@
-import { ArrowUpRightIcon } from 'lucide-react'
+'use client'
+
+import { ArrowUpRightIcon, Check, Clipboard } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 import type { Metadata } from '@/app/api/og/route'
 import { Prose } from '@/components/Prose'
@@ -12,9 +16,27 @@ interface MetadataResultProps {
 }
 
 export const MetadataResults = ({ metadata }: MetadataResultProps) => {
+  const [copied, setCopied] = useState(false)
+
   const hasOgMetadata = metadata.ogTitle || metadata.ogDescription
   const hasTwitterMetadata =
     metadata.twitterTitle || metadata.twitterDescription
+
+  const copyToClipboard = async () => {
+    if (metadata.ogUrl) {
+      try {
+        await navigator.clipboard.writeText(metadata.ogUrl)
+        setCopied(true)
+        toast.success('URL copied to clipboard')
+
+        setTimeout(() => setCopied(false), 2000)
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Failed to copy URL'
+        toast.error(message)
+      }
+    }
+  }
 
   return (
     <section className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -64,20 +86,60 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                 </p>
               )}
             </Prose>
+
+            {metadata.favicon && (
+              <div className="flex items-center gap-2">
+                <small className="text-muted-foreground">Favicon</small>
+                <div className="rounded border p-1">
+                  <Image
+                    src={
+                      metadata.favicon.startsWith('http')
+                        ? metadata.favicon
+                        : `https:${metadata.favicon}`
+                    }
+                    alt="Favicon"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col items-start gap-1 md:flex-row">
             {metadata.ogUrl && (
-              <Button asChild variant="outline" key="website">
-                <Link
-                  href={metadata.ogUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
+              <>
+                <Button asChild variant="outline" key="website">
+                  <Link
+                    href={metadata.ogUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    Visit Website
+                    <ArrowUpRightIcon size={16} />
+                  </Link>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  key="copy"
+                  onClick={copyToClipboard}
+                  className="ml-2"
                 >
-                  Visit Website
-                  <ArrowUpRightIcon size={16} />
-                </Link>
-              </Button>
+                  {copied ? (
+                    <>
+                      <Check size={16} className="mr-1" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Clipboard size={16} className="mr-1" />
+                      Copy URL
+                    </>
+                  )}
+                </Button>
+              </>
             )}
 
             {metadata.ogImage && (

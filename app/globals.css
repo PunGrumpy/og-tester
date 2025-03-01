@@ -105,8 +105,8 @@
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
 
-    --warning: 36 100% 50%;
-    --warning-foreground: 0 0% 98%;
+    --warning: oklch(0.772 0.1738 64.55);
+    --warning-foreground: oklch(0.985 0 0);
 
     --backdrop: 0 0% 96.1%;
 
