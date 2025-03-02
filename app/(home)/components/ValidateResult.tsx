@@ -20,7 +20,7 @@ export const ValidateResult = ({
 
   if (seoIssues.length === 0) {
     return (
-      <section className="space-y-4 p-4">
+      <section className="space-y-4 p-8">
         <ViewAnimation
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
@@ -41,7 +41,7 @@ export const ValidateResult = ({
   const infoIssues = seoIssues.filter(issue => issue.severity === 'info')
 
   return (
-    <section className="space-y-4 p-4">
+    <section className="space-y-4 p-8">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-medium">Metadata Analysis</h2>
         <div className="flex items-center gap-2">
