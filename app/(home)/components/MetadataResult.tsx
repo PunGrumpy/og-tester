@@ -125,7 +125,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                   variant="outline"
                   key="copy"
                   onClick={copyToClipboard}
-                  className="ml-2"
+                  className="md:ml-2"
                 >
                   {copied ? (
                     <>
