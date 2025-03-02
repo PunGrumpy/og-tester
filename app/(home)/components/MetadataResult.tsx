@@ -90,7 +90,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             {metadata.favicon && (
               <div className="flex items-center gap-2">
                 <small className="text-muted-foreground">Favicon</small>
-                <div className="rounded border p-1">
+                <div className="bg-accent/75 rounded border p-1">
                   <Image
                     src={
                       metadata.favicon.startsWith('http')
