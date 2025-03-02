@@ -27,7 +27,7 @@ export const ValidateResult = ({
         >
           <Badge
             variant="outline"
-            className="border-success bg-success/15 text-success-foreground rounded-full px-3 py-2"
+            className="border-success bg-success/15 text-success rounded-full px-3 py-2"
           >
             All metadata looks good!
           </Badge>
