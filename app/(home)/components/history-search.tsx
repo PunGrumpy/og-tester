@@ -35,12 +35,13 @@ export const HistorySearch = ({
             key={index}
             className="group mb-2 flex items-center justify-between"
           >
-            <h3
-              className="cursor-pointer hover:underline hover:underline-offset-4"
+            <button
+              type="button"
+              className="cursor-pointer duration-300 hover:underline hover:underline-offset-4"
               onClick={() => onSelectHistoryItem(item)}
             >
               {item.url}
-            </h3>
+            </button>
             <div className="flex items-center space-x-2">
               <span className="text-muted-foreground">
                 {new Date(item.timestamp).toLocaleString().split(',')[0]}
@@ -51,7 +52,7 @@ export const HistorySearch = ({
                 onClick={() => onDeleteHistoryItem(item.url)}
                 className="cursor-pointer"
               >
-                <Trash className="text-destructive size-4" />
+                <Trash className="size-4 text-destructive" />
                 <span className="sr-only">Delete</span>
               </Button>
             </div>

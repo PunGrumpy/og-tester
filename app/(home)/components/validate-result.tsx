@@ -1,9 +1,10 @@
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
 
-import { Metadata } from '@/app/api/og/route'
+import type { Metadata } from '@/app/api/og/route'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { Badge } from '@/components/ui/badge'
 import { analyzeSEO } from '@/lib/seo-analyzer'
+import { cn } from '@/lib/utils'
 
 interface ValidateResultProps {
   metadata: Metadata
@@ -14,7 +15,9 @@ export const ValidateResult = ({
   metadata,
   hasSearched
 }: ValidateResultProps) => {
-  if (!hasSearched) return null
+  if (!hasSearched) {
+    return null
+  }
 
   const seoIssues = analyzeSEO(metadata)
 
@@ -27,7 +30,7 @@ export const ValidateResult = ({
         >
           <Badge
             variant="outline"
-            className="border-success bg-success/15 text-success rounded-full px-3 py-2"
+            className="rounded-full border-success bg-success/15 px-3 py-2 text-success"
           >
             All metadata looks good!
           </Badge>
@@ -43,7 +46,7 @@ export const ValidateResult = ({
   return (
     <section className="space-y-4 p-8">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-medium">Metadata Analysis</h2>
+        <h2 className="font-medium text-xl">Metadata Analysis</h2>
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
@@ -76,20 +79,24 @@ export const ValidateResult = ({
           >
             <Badge
               variant="outline"
-              className={`flex items-center gap-1 rounded-full px-3 py-2 ${
-                issue.severity === 'error'
-                  ? 'border-destructive bg-destructive/15 text-destructive-foreground'
-                  : issue.severity === 'warning'
-                    ? 'border-warning bg-warning/15 text-warning'
-                    : 'border-foreground bg-foreground/15 text-foreground'
-              }`}
+              className={cn(
+                'flex items-center gap-1 rounded-full px-3 py-2',
+                issue.severity === 'error' &&
+                  'border-destructive bg-destructive/15 text-destructive-foreground',
+                issue.severity === 'warning' &&
+                  'border-warning bg-warning/10 text-warning',
+                issue.severity === 'info' &&
+                  'border-foreground bg-primary/10 text-foreground'
+              )}
             >
-              {issue.severity === 'error' ? (
-                <AlertCircle className="h-3 w-3" />
-              ) : issue.severity === 'warning' ? (
-                <AlertTriangle className="h-3 w-3" />
-              ) : (
-                <Info className="h-3 w-3" />
+              {issue.severity === 'error' && (
+                <AlertCircle className="h-3 w-3 text-destructive" />
+              )}
+              {issue.severity === 'warning' && (
+                <AlertTriangle className="h-3 w-3 text-warning" />
+              )}
+              {issue.severity === 'info' && (
+                <Info className="h-3 w-3 text-foreground" />
               )}
               {issue.message}
             </Badge>

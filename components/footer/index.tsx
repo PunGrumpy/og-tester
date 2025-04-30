@@ -28,11 +28,11 @@ export function Footer() {
             whileInView={{ opacity: 1, translateY: 0 }}
             delay={0.8}
           >
-            <p className="text-muted-foreground text-sm whitespace-nowrap">
+            <p className="whitespace-nowrap text-muted-foreground text-sm">
               © {new Date().getFullYear()}{' '}
               <Link
                 href="https://pungrumpy.com"
-                className="hover:text-primary transition-colors hover:underline"
+                className="transition-colors hover:text-primary hover:underline"
               >
                 PunGrumpy
               </Link>

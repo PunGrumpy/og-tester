@@ -119,7 +119,7 @@ export const Status = async () => {
           className={`relative inline-flex size-2 rounded-full ${statusColor}`}
         />
       </span>
-      <span className="text-muted-foreground hover:text-foreground transition-colors duration-500">
+      <span className="text-muted-foreground transition-colors duration-500 hover:text-foreground">
         {statusLabel}
       </span>
     </a>

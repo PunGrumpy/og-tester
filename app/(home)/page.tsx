@@ -71,7 +71,6 @@ export default function HomePage() {
 
     if (!response.ok) {
       const errorData = await response.json()
-      console.error('API Error:', errorData)
       throw new Error(
         `Failed to fetch metadata: ${errorData.error || response.statusText}`
       )
@@ -90,7 +89,7 @@ export default function HomePage() {
               whileInView={{ opacity: 1, translateY: 0 }}
               delay={0.2}
             >
-              <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl">
+              <h1 className="font-bold text-3xl leading-tight tracking-tight sm:text-4xl md:text-5xl">
                 Open Graph Tester
               </h1>
             </ViewAnimation>
@@ -99,7 +98,7 @@ export default function HomePage() {
               whileInView={{ opacity: 1, translateY: 0 }}
               delay={0.4}
             >
-              <p className="text-muted-foreground mt-2">
+              <p className="mt-2 text-muted-foreground">
                 Enter a URL to fetch its Open Graph metadata
               </p>
             </ViewAnimation>
@@ -142,7 +141,7 @@ export default function HomePage() {
           }}
           onDeleteHistoryItem={deleteHistoryItem}
         />
-        <div className="to-backdrop pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent" />
+        <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent to-backdrop" />
       </Section>
     </>
   )

@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
+import type { ReactNode } from 'react'
 
 const protocol = env.VERCEL_PROJECT_PRODUCTION_URL.includes('localhost')
   ? 'http'
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
     default: 'OG Tester',
-    template: `%s | OG Tester`
+    template: '%s | OG Tester'
   },
   description: 'Test Open Graph and Twitter Card metadata',
   robots: {
@@ -114,7 +115,7 @@ const geistMono = Geist_Mono({
 })
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
@@ -122,7 +123,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'bg-backdrop overflow-x-hidden overscroll-contain font-sans antialiased',
+          'overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased',
           geistSans.variable,
           geistMono.variable
         )}

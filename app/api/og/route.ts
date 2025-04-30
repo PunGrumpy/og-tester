@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export interface Metadata {
   ogTitle?: string
@@ -62,7 +62,9 @@ export const GET = async (request: NextRequest) => {
           $('link[rel="apple-touch-icon"]').attr('href') ||
           $('link[rel="apple-touch-icon-precomposed"]').attr('href')
 
-        if (!faviconUrl) return undefined
+        if (!faviconUrl) {
+          return undefined
+        }
 
         // Handle relative URLs by resolving against the base URL
         try {

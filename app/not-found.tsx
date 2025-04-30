@@ -14,7 +14,7 @@ export default function NotFoundPage() {
           whileInView={{ opacity: 1, translateY: 0 }}
           delay={0.2}
         >
-          <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl md:text-5xl">
+          <h1 className="font-bold text-3xl leading-tight tracking-tight sm:text-4xl md:text-5xl">
             Not Found
           </h1>
         </ViewAnimation>

@@ -90,7 +90,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             {metadata.favicon && (
               <div className="flex items-center gap-2">
                 <small className="text-muted-foreground">Favicon</small>
-                <div className="bg-accent/75 rounded border p-1">
+                <div className="rounded border bg-accent/75 p-1">
                   <Image
                     src={
                       metadata.favicon.startsWith('http')
@@ -157,7 +157,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
         </ViewAnimation>
       </div>
 
-      {metadata.ogImage && metadata.ogImage.startsWith('https') ? (
+      {metadata.ogImage?.startsWith('https') ? (
         <div className="bg-dashed sm:col-span-2">
           <ViewAnimation
             initial={{ opacity: 0 }}

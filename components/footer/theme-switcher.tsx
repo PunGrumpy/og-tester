@@ -39,7 +39,7 @@ export function ThemeSwitcher() {
   ]
 
   return (
-    <div className="bg-backdrop ring-border relative flex h-8 rounded-full p-1 ring-1">
+    <div className="relative flex h-8 rounded-full bg-backdrop p-1 ring-1 ring-border">
       {themes.map(({ key, icon: Icon, label }) => {
         const isActive = theme === key
 
@@ -54,7 +54,7 @@ export function ThemeSwitcher() {
             {isActive && (
               <motion.div
                 layoutId="activeTheme"
-                className="bg-background absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-full bg-background"
                 transition={{ type: 'spring', duration: 0.5 }}
               />
             )}

@@ -6,10 +6,9 @@ export interface SEOIssue {
   recommendation: string
 }
 
-export function analyzeSEO(metadata: Metadata): SEOIssue[] {
+function checkTitle(metadata: Metadata): SEOIssue[] {
   const issues: SEOIssue[] = []
 
-  // Title checks
   if (!metadata.ogTitle) {
     issues.push({
       severity: 'error',
@@ -32,7 +31,12 @@ export function analyzeSEO(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  // Description checks
+  return issues
+}
+
+function checkDescription(metadata: Metadata): SEOIssue[] {
+  const issues: SEOIssue[] = []
+
   if (!metadata.ogDescription) {
     issues.push({
       severity: 'error',
@@ -58,6 +62,12 @@ export function analyzeSEO(metadata: Metadata): SEOIssue[] {
       recommendation: 'Consider making the description more informative'
     })
   }
+
+  return issues
+}
+
+function checkBasicOpenGraph(metadata: Metadata): SEOIssue[] {
+  const issues: SEOIssue[] = []
 
   // Image checks
   if (!metadata.ogImage) {
@@ -97,7 +107,12 @@ export function analyzeSEO(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  // Twitter-specific checks
+  return issues
+}
+
+function checkTwitterCards(metadata: Metadata): SEOIssue[] {
+  const issues: SEOIssue[] = []
+
   if (!metadata.twitterCard) {
     issues.push({
       severity: 'warning',
@@ -134,7 +149,12 @@ export function analyzeSEO(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  // Additional checks
+  return issues
+}
+
+function checkCrossPlatformConsistency(metadata: Metadata): SEOIssue[] {
+  const issues: SEOIssue[] = []
+
   if (
     metadata.ogTitle &&
     metadata.twitterTitle &&
@@ -162,4 +182,14 @@ export function analyzeSEO(metadata: Metadata): SEOIssue[] {
   }
 
   return issues
+}
+
+export function analyzeSEO(metadata: Metadata): SEOIssue[] {
+  return [
+    ...checkTitle(metadata),
+    ...checkDescription(metadata),
+    ...checkBasicOpenGraph(metadata),
+    ...checkTwitterCards(metadata),
+    ...checkCrossPlatformConsistency(metadata)
+  ]
 }
