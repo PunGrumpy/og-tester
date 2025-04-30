@@ -8,8 +8,8 @@ import { ViewAnimation } from '@/components/providers/ViewAnimation'
 import { Section } from '@/components/sections/Section'
 import { cn } from '@/lib/utils'
 
-import { ContactForm } from './components/ContactForm'
 import { HistorySearch } from './components/HistorySearch'
+import { InputForm } from './components/InputForm'
 import { MetadataResults } from './components/MetadataResult'
 import { ValidateResult } from './components/ValidateResult'
 
@@ -105,7 +105,7 @@ export default function HomePage() {
             </ViewAnimation>
           </div>
 
-          <ContactForm
+          <InputForm
             onMetadataUpdate={handleMetadataUpdate}
             fetchMetadata={fetchMetadata}
             updateHistory={updateHistory}

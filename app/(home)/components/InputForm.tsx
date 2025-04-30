@@ -12,17 +12,17 @@ import { Button } from '@/components/ui/button'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-interface ContactFormProps {
+interface InputFormProps {
   onMetadataUpdate: (metadata: Metadata) => void
   fetchMetadata: (url: string) => Promise<Metadata>
   updateHistory: (url: string, metadata: Metadata) => void
 }
 
-export const ContactForm = ({
+export const InputForm = ({
   onMetadataUpdate,
   fetchMetadata,
   updateHistory
-}: ContactFormProps) => {
+}: InputFormProps) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
