@@ -1,5 +1,5 @@
+import * as cheerio from 'cheerio'
 import { NextRequest, NextResponse } from 'next/server'
-import puppeteer from 'puppeteer'
 
 export interface Metadata {
   ogTitle?: string
@@ -31,68 +31,58 @@ export const GET = async (request: NextRequest) => {
   }
 
   try {
-    const browser = await puppeteer.launch({
-      headless: 'shell',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    })
-    const page = await browser.newPage()
-    await page.goto(url, { waitUntil: 'domcontentloaded' })
+    const response = await fetch(url)
+    const html = await response.text()
+    const $ = cheerio.load(html)
 
-    const metadata: Metadata = await page.evaluate(() => {
-      const getMeta = (selector: string, attr: string = 'content') =>
-        document.querySelector(selector)?.getAttribute(attr) || undefined
+    const metadata: Metadata = {
+      ogTitle: $('meta[property="og:title"]').attr('content'),
+      ogDescription: $('meta[property="og:description"]').attr('content'),
+      ogImage: $('meta[property="og:image"]').attr('content'),
+      ogUrl: $('meta[property="og:url"]').attr('content'),
+      ogSiteName: $('meta[property="og:site_name"]').attr('content'),
+      ogType: $('meta[property="og:type"]').attr('content'),
+      twitterCard: $('meta[name="twitter:card"]').attr('content'),
+      twitterSite: $('meta[name="twitter:site"]').attr('content'),
+      twitterTitle: $('meta[name="twitter:title"]').attr('content'),
+      twitterDescription: $('meta[name="twitter:description"]').attr('content'),
+      twitterImage: $('meta[name="twitter:image"]').attr('content'),
 
-      const favicon =
-        getMeta('link[rel="icon"]', 'href') ||
-        getMeta('link[rel="shortcut icon"]', 'href') ||
-        getMeta('link[rel="apple-touch-icon"]', 'href') ||
-        getMeta('link[rel="apple-touch-icon-precomposed"]', 'href')
+      articleAuthor: $('meta[property="article:author"]').attr('content'),
+      articlePublishedTime: $('meta[property="article:published_time"]').attr(
+        'content'
+      ),
+      ogLocale: $('meta[property="og:locale"]').attr('content'),
+      ogVideoUrl: $('meta[property="og:video"]').attr('content'),
+      ogVideoType: $('meta[property="og:video:type"]').attr('content'),
+      favicon: (() => {
+        const faviconUrl =
+          $('link[rel="icon"]').attr('href') ||
+          $('link[rel="shortcut icon"]').attr('href') ||
+          $('link[rel="apple-touch-icon"]').attr('href') ||
+          $('link[rel="apple-touch-icon-precomposed"]').attr('href')
 
-      const structuredData =
-        document.querySelector('script[type="application/ld+json"]')
-          ?.textContent || undefined
+        if (!faviconUrl) return undefined
 
-      return {
-        ogTitle: getMeta('meta[property="og:title"]'),
-        ogDescription: getMeta('meta[property="og:description"]'),
-        ogImage: getMeta('meta[property="og:image"]'),
-        ogUrl: getMeta('meta[property="og:url"]'),
-        ogSiteName: getMeta('meta[property="og:site_name"]'),
-        ogType: getMeta('meta[property="og:type"]'),
-
-        twitterCard: getMeta('meta[name="twitter:card"]'),
-        twitterSite: getMeta('meta[name="twitter:site"]'),
-        twitterTitle: getMeta('meta[name="twitter:title"]'),
-        twitterDescription: getMeta('meta[name="twitter:description"]'),
-        twitterImage: getMeta('meta[name="twitter:image"]'),
-
-        articleAuthor: getMeta('meta[property="article:author"]'),
-        articlePublishedTime: getMeta(
-          'meta[property="article:published_time"]'
-        ),
-        ogLocale: getMeta('meta[property="og:locale"]'),
-        ogVideoUrl: getMeta('meta[property="og:video"]'),
-        ogVideoType: getMeta('meta[property="og:video:type"]'),
-        favicon,
-        structuredData
-      }
-    })
-
-    // Convert favicon to absolute URL
-    if (metadata.favicon) {
-      try {
-        metadata.favicon = new URL(metadata.favicon, url).toString()
-      } catch {
-        metadata.favicon = undefined
-      }
+        // Handle relative URLs by resolving against the base URL
+        try {
+          return new URL(faviconUrl, url).toString()
+        } catch {
+          return undefined
+        }
+      })(),
+      structuredData:
+        $('script[type="application/ld+json"]').html() || undefined
     }
 
-    await browser.close()
     return NextResponse.json(metadata)
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'An error occurred' },
-      { status: 500 }
+      { error: 'Failed to fetch URL' },
+      {
+        status: 500,
+        statusText: error instanceof Error ? error.message : 'An error occurred'
+      }
     )
   }
 }
