@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-
-@plugin "tailwindcss-animate";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -155,10 +154,48 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  @supports (font: -apple-system-body) and (-webkit-appearance: none) {
+    [data-wrapper] {
+      @apply min-[1800px]:border-t;
+    }
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-muted-foreground;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+
+  input:is(:-webkit-autofill, :autofill) {
+    --input-max-height: 2rem;
+
+    -webkit-text-fill-color: var(--foreground);
+    --webkit-background-color: var(--input);
+    -webkit-box-shadow: 0 0 0 var(--input-max-height)
+      color-mix(in srgb, var(--input) 30%, var(--background)) inset !important;
   }
 }
 
