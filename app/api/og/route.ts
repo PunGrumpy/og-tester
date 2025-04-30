@@ -91,11 +91,8 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(metadata)
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch or parse the page' },
-      {
-        status: 500,
-        statusText: error instanceof Error ? error.message : 'An error occurred'
-      }
+      { error: error instanceof Error ? error.message : 'An error occurred' },
+      { status: 500 }
     )
   }
 }
