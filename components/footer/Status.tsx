@@ -106,20 +106,22 @@ export const Status = async () => {
 
   return (
     <a
-      className="flex items-center gap-3 text-sm"
+      className="flex items-center gap-2 text-sm"
       target="_blank"
       rel="noreferrer"
       href={env.BETTERSTACK_URL}
     >
-      <span className="relative flex h-2 w-2">
+      <span className="relative flex size-2">
         <span
           className={`absolute inline-flex size-full animate-ping rounded-full opacity-75 ${statusColor}`}
         />
         <span
-          className={`relative inline-flex h-2 w-2 rounded-full ${statusColor}`}
+          className={`relative inline-flex size-2 rounded-full ${statusColor}`}
         />
       </span>
-      <span className="text-muted-foreground">{statusLabel}</span>
+      <span className="text-muted-foreground hover:text-foreground transition-colors duration-500">
+        {statusLabel}
+      </span>
     </a>
   )
 }
