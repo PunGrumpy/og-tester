@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 
-import { Icons } from '@/components/Icons'
-import { HeaderProvider } from '@/components/providers/HeaderProvider'
-import { ViewAnimation } from '@/components/providers/ViewAnimation'
+import { Icons } from '@/components/icons'
+import { HeaderProvider } from '@/components/providers/header-provider'
+import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
 
 export function Header() {

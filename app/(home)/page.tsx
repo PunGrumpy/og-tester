@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import type { Metadata } from '@/app/api/og/route'
-import { ViewAnimation } from '@/components/providers/ViewAnimation'
-import { Section } from '@/components/sections/Section'
+import { ViewAnimation } from '@/components/providers/view-animation'
+import { Section } from '@/components/section'
 import { cn } from '@/lib/utils'
 
-import { HistorySearch } from './components/HistorySearch'
-import { InputForm } from './components/InputForm'
-import { MetadataResults } from './components/MetadataResult'
-import { ValidateResult } from './components/ValidateResult'
+import { HistorySearch } from './components/history-search'
+import { InputForm } from './components/input-form'
+import { MetadataResults } from './components/metadata-result'
+import { ValidateResult } from './components/validate-result'
 
 interface HistoryItem {
   url: string

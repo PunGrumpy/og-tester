@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
-import { Prose } from '@/components/Prose'
-import { ViewAnimation } from '@/components/providers/ViewAnimation'
-import { Section } from '@/components/sections/Section'
+import { Prose } from '@/components/prose'
+import { ViewAnimation } from '@/components/providers/view-animation'
+import { Section } from '@/components/section'
 import { Button } from '@/components/ui/button'
 
 export default function NotFoundPage() {

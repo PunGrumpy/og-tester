@@ -7,8 +7,8 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import type { Metadata } from '@/app/api/og/route'
-import { Prose } from '@/components/Prose'
-import { ViewAnimation } from '@/components/providers/ViewAnimation'
+import { Prose } from '@/components/prose'
+import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
 
 interface MetadataResultProps {

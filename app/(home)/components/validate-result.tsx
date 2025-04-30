@@ -1,7 +1,7 @@
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
 
 import { Metadata } from '@/app/api/og/route'
-import { ViewAnimation } from '@/components/providers/ViewAnimation'
+import { ViewAnimation } from '@/components/providers/view-animation'
 import { Badge } from '@/components/ui/badge'
 import { analyzeSEO } from '@/lib/seo-analyzer'
 
