@@ -5,9 +5,8 @@
   "scripts": {
     "build": "next build --turbo",
     "dev": "next dev --turbo",
-    "format": "prettier --write .",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "format": "ultracite format",
+    "lint": "ultracite lint",
     "start": "next start --turbo"
   },
   "dependencies": {
@@ -34,19 +33,13 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.1",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-tailwindcss": "^3.18.0",
-    "prettier": "^3.5.3",
-    "prettier-plugin-packagejson": "^2.5.10",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.1.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ultracite": "^4.2.1"
   }
 }
