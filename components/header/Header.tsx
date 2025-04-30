@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 
 export function Header() {
   return (
-    <HeaderProvider className="bg-backdrop/90 fixed top-0 right-0 left-0 z-50 container mx-auto flex items-center justify-between border-x px-4 py-2 backdrop-blur-md transition-all sm:py-4">
+    <HeaderProvider className="bg-backdrop/90 fixed top-0 right-0 left-0 z-50 container mx-auto flex items-center justify-between px-4 py-2 backdrop-blur-md transition-all sm:border-x sm:py-4">
       <div className="w-32">
         <ViewAnimation
           initial={{ opacity: 0, translateY: -8 }}
