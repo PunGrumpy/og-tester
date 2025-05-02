@@ -18,6 +18,8 @@ interface InputFormProps {
   updateHistory: (url: string, metadata: Metadata) => void
 }
 
+const worldWideWeb = /^www\./
+
 export const InputForm = ({
   onMetadataUpdate,
   fetchMetadata,
@@ -25,25 +27,33 @@ export const InputForm = ({
 }: InputFormProps) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      url: ''
-    }
+    defaultValues: { url: '' }
   })
+
+  const normalizeUrl = (url: string) => {
+    try {
+      const urlObj = new URL(url)
+      return urlObj.hostname.replace(worldWideWeb, '')
+    } catch {
+      return url
+    }
+  }
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
-      const formattedUrl = data.url.startsWith('http')
-        ? data.url
-        : `https://${data.url}`
+      let formattedUrl = data.url.trim()
+      if (
+        !formattedUrl.startsWith('http://') &&
+        !formattedUrl.startsWith('https://')
+      ) {
+        formattedUrl = `https://${formattedUrl}`
+      }
       const response = await fetchMetadata(formattedUrl)
       onMetadataUpdate(response)
       updateHistory(formattedUrl, response)
-
       toast.success(`Metadata fetched successfully for ${formattedUrl}`)
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'An error occurred'
-      toast.error(message)
+      toast.error(error instanceof Error ? error.message : 'An error occurred')
     }
   }
 
@@ -60,6 +70,10 @@ export const InputForm = ({
                   placeholder="Enter a URL (e.g. pungrumpy.com)"
                   className="bg-background"
                   {...field}
+                  onChange={e => {
+                    const normalizedUrl = normalizeUrl(e.target.value)
+                    field.onChange(normalizedUrl)
+                  }}
                 />
                 <FormMessage />
               </div>
