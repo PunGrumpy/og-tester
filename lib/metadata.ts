@@ -26,6 +26,7 @@ export const createMetadata = (
   openGraph: {
     title,
     description,
+    url: baseUrl,
     siteName: title,
     locale: 'en_US',
     type: 'website',
