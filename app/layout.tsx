@@ -7,8 +7,10 @@ import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { env } from '@/lib/env'
 import { createMetadata } from '@/lib/metadata'
 import { cn } from '@/lib/utils'
+import Script from 'next/script'
 import type { ReactNode } from 'react'
 
 const title = 'OG Tester'
@@ -47,6 +49,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Script
+        defer
+        src="https://app.rybbit.io/api/script.js"
+        data-site-id={env.RYBBIT_ID}
+      />
       <body
         className={cn(
           'overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased',
