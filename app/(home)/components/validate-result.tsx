@@ -1,8 +1,8 @@
 import type { Metadata } from '@/app/api/og/route'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { Badge } from '@/components/ui/badge'
 import { analyzeSEO } from '@/lib/seo-analyzer'
 import { cn } from '@/lib/utils'
+import { ViewAnimation } from '@/providers/view-animation'
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
 
 type ValidateResultProps = {

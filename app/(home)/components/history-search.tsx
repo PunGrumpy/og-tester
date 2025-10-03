@@ -1,7 +1,7 @@
 import type { Metadata } from '@/app/api/og/route'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { ViewAnimation } from '@/providers/view-animation'
 import { Trash } from 'lucide-react'
 
 type HistoryItem = {

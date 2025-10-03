@@ -1,9 +1,9 @@
 'use client'
 
 import { Icons } from '@/components/icons'
-import { HeaderProvider } from '@/components/providers/header-provider'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
+import { HeaderProvider } from '@/providers/header-provider'
+import { ViewAnimation } from '@/providers/view-animation'
 import Link from 'next/link'
 
 export function Header() {

@@ -1,5 +1,5 @@
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { cn } from '@/lib/utils'
+import { ViewAnimation } from '@/providers/view-animation'
 import { PlusIcon } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
 

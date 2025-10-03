@@ -1,9 +1,9 @@
 import Link from 'next/link'
 
 import { Prose } from '@/components/prose'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { Section } from '@/components/section'
 import { Button } from '@/components/ui/button'
+import { ViewAnimation } from '@/providers/view-animation'
 
 export default function NotFoundPage() {
   return (

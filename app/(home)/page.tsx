@@ -1,9 +1,9 @@
 'use client'
 
 import type { Metadata } from '@/app/api/og/route'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { Section } from '@/components/section'
 import { cn } from '@/lib/utils'
+import { ViewAnimation } from '@/providers/view-animation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { HistorySearch } from './components/history-search'

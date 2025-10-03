@@ -1,6 +1,6 @@
 import { Status } from '@/components/footer/status'
-import { ViewAnimation } from '@/components/providers/view-animation'
 import { cn } from '@/lib/utils'
+import { ViewAnimation } from '@/providers/view-animation'
 import Link from 'next/link'
 import { ThemeSwitcher } from './theme-switcher'
 

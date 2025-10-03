@@ -1,15 +1,14 @@
 import '@/app/globals.css'
 
-import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
-import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { env } from '@/lib/env'
 import { createMetadata } from '@/lib/metadata'
 import { cn } from '@/lib/utils'
+import { ThemeProvider } from '@/providers/theme-provider'
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import Script from 'next/script'
 import type { ReactNode } from 'react'
 
