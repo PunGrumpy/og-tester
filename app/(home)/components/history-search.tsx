@@ -1,17 +1,16 @@
-import { Trash } from 'lucide-react'
-
 import type { Metadata } from '@/app/api/og/route'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Trash } from 'lucide-react'
 
-interface HistoryItem {
+type HistoryItem = {
   url: string
   timestamp: number
   metadata: Metadata
 }
 
-interface HistorySearchProps {
+type HistorySearchProps = {
   history: HistoryItem[]
   onSelectHistoryItem: (item: HistoryItem) => void
   onDeleteHistoryItem: (url: string) => void

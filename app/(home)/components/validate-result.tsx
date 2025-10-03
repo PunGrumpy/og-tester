@@ -1,12 +1,11 @@
-import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
-
 import type { Metadata } from '@/app/api/og/route'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { Badge } from '@/components/ui/badge'
 import { analyzeSEO } from '@/lib/seo-analyzer'
 import { cn } from '@/lib/utils'
+import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
 
-interface ValidateResultProps {
+type ValidateResultProps = {
   metadata: Metadata
   hasSearched: boolean
 }

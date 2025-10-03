@@ -1,19 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-
 import type { Metadata } from '@/app/api/og/route'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { Section } from '@/components/section'
 import { cn } from '@/lib/utils'
-
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { HistorySearch } from './components/history-search'
 import { InputForm } from './components/input-form'
 import { MetadataResults } from './components/metadata-result'
 import { ValidateResult } from './components/validate-result'
 
-interface HistoryItem {
+type HistoryItem = {
   url: string
   timestamp: number
   metadata: Metadata

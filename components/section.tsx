@@ -1,8 +1,7 @@
-import { PlusIcon } from 'lucide-react'
-import type { HTMLAttributes } from 'react'
-
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { cn } from '@/lib/utils'
+import { PlusIcon } from 'lucide-react'
+import type { HTMLAttributes } from 'react'
 
 type SectionProps = HTMLAttributes<HTMLDivElement>
 

@@ -1,9 +1,7 @@
-import Link from 'next/link'
-
 import { Status } from '@/components/footer/status'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { cn } from '@/lib/utils'
-
+import Link from 'next/link'
 import { ThemeSwitcher } from './theme-switcher'
 
 export function Footer() {

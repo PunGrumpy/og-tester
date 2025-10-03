@@ -1,6 +1,5 @@
-import { cache } from 'react'
-
 import type { Metadata } from '@/app/api/og/route'
+import { cache } from 'react'
 
 export const fetchMetadata = cache(async (url: string): Promise<Metadata> => {
   const formattedUrl = url.startsWith('http') ? url : `https://${url}`

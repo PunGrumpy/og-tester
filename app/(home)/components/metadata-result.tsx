@@ -1,17 +1,16 @@
 'use client'
 
+import type { Metadata } from '@/app/api/og/route'
+import { Prose } from '@/components/prose'
+import { ViewAnimation } from '@/components/providers/view-animation'
+import { Button } from '@/components/ui/button'
 import { ArrowUpRightIcon, Check, Clipboard } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import type { Metadata } from '@/app/api/og/route'
-import { Prose } from '@/components/prose'
-import { ViewAnimation } from '@/components/providers/view-animation'
-import { Button } from '@/components/ui/button'
-
-interface MetadataResultProps {
+type MetadataResultProps = {
   metadata: Metadata
 }
 

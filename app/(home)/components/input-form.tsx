@@ -1,18 +1,17 @@
 'use client'
 
+import { schema } from '@/app/(home)/schema'
+import type { Metadata } from '@/app/api/og/route'
+import { Button } from '@/components/ui/button'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { z } from 'zod'
 
-import { schema } from '@/app/(home)/schema'
-import type { Metadata } from '@/app/api/og/route'
-import { Button } from '@/components/ui/button'
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-
-interface InputFormProps {
+type InputFormProps = {
   onMetadataUpdate: (metadata: Metadata) => void
   fetchMetadata: (url: string) => Promise<Metadata>
   updateHistory: (url: string, metadata: Metadata) => void

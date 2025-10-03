@@ -1,11 +1,10 @@
 'use client'
 
-import Link from 'next/link'
-
 import { Icons } from '@/components/icons'
 import { HeaderProvider } from '@/components/providers/header-provider'
 import { ViewAnimation } from '@/components/providers/view-animation'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export function Header() {
   return (
