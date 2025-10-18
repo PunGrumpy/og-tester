@@ -1,5 +1,6 @@
 import { AlertCircle, AlertTriangle, Info } from 'lucide-react'
 import type { Metadata } from '@/app/api/og/route'
+import { Section } from '@/components/section'
 import { Badge } from '@/components/ui/badge'
 import { analyzeSEO } from '@/lib/seo-analyzer'
 import { cn } from '@/lib/utils'
@@ -22,7 +23,7 @@ export const ValidateResult = ({
 
   if (seoIssues.length === 0) {
     return (
-      <section className="space-y-4 p-8">
+      <Section className="space-y-4 p-8">
         <ViewAnimation
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
@@ -34,7 +35,7 @@ export const ValidateResult = ({
             All metadata looks good!
           </Badge>
         </ViewAnimation>
-      </section>
+      </Section>
     )
   }
 
@@ -43,7 +44,7 @@ export const ValidateResult = ({
   const infoIssues = seoIssues.filter(issue => issue.severity === 'info')
 
   return (
-    <section className="space-y-4 p-8">
+    <Section className="space-y-4 p-8">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-medium text-xl">Metadata Analysis</h2>
         <div className="flex items-center gap-2">
@@ -102,6 +103,6 @@ export const ValidateResult = ({
           </ViewAnimation>
         ))}
       </div>
-    </section>
+    </Section>
   )
 }

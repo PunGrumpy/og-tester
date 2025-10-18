@@ -114,9 +114,7 @@ export default function HomePage() {
         <MetadataResults metadata={metadata} />
       </Section>
 
-      <Section>
-        <ValidateResult hasSearched={hasSearched} metadata={metadata} />
-      </Section>
+      <ValidateResult hasSearched={hasSearched} metadata={metadata} />
 
       <Section
         className={cn(
