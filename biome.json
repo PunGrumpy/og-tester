@@ -1,10 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
   "formatter": {
     "bracketSpacing": true,
     "lineEnding": "lf",
     "indentWidth": 2
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "noMagicNumbers": "off"
+      }
+    }
   },
   "javascript": {
     "globals": ["Liveblocks"],
@@ -19,6 +26,6 @@
     }
   },
   "files": {
-    "ignore": ["components/ui/**"]
+    "includes": ["**", "!components/ui"]
   }
 }
