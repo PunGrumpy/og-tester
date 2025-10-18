@@ -1,16 +1,12 @@
-import '@/app/globals.css'
-
+import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import Script from 'next/script'
 import type { ReactNode } from 'react'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
-import { Toaster } from '@/components/ui/sonner'
-import { env } from '@/lib/env'
 import { createMetadata } from '@/lib/metadata'
 import { cn } from '@/lib/utils'
-import { ThemeProvider } from '@/providers/theme-provider'
+import { Provider } from '@/providers'
 
 const title = 'OG Tester'
 const description = 'Test Open Graph and Twitter Card metadata'
@@ -48,11 +44,6 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Script
-        data-site-id={env.RYBBIT_ID}
-        defer
-        src="https://app.rybbit.io/api/script.js"
-      />
       <body
         className={cn(
           'overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased',
@@ -60,18 +51,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
           geistMono.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
+        <Provider>
           <Header />
           <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
           <main className="divide-y sm:border-b">{children}</main>
           <Footer />
-        </ThemeProvider>
-        <Toaster />
+        </Provider>
       </body>
     </html>
   )
