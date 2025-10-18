@@ -1,5 +1,6 @@
-import { type CheerioAPI, load } from 'cheerio'
 import { type NextRequest, NextResponse } from 'next/server'
+import { type HTMLElement, parse } from 'node-html-parser'
+import { createQueryHelpers, getAttribute } from '@/lib/html-parser'
 
 export type Metadata = {
   ogTitle?: string
@@ -47,69 +48,69 @@ const fetchWithTimeout = async (
   }
 }
 
-const extractMetadata = ($: CheerioAPI, baseUrl: string): Metadata => {
-  // Build maps for fast O(1) lookup instead of repeated DOM traversal
-  const metaPropertyMap = new Map<string, string>()
-  const metaNameMap = new Map<string, string>()
+const extractFavicon = (helpers: ReturnType<typeof createQueryHelpers>) => {
+  const faviconLinks = helpers.selectAll('link[rel~=icon]')
 
-  // Single pass through all meta tags
-  $('meta').each((_, element) => {
-    const el = $(element)
-    const content = el.attr('content')
-    if (!content) {
-      return
-    }
-
-    const property = el.attr('property')
-    if (property) {
-      metaPropertyMap.set(property, content)
-    }
-
-    const name = el.attr('name')
-    if (name) {
-      metaNameMap.set(name, content)
-    }
-  })
-
-  // Extract favicon with single query
-  const faviconLinks = $('link[rel*="icon"]')
-  let favicon: string | undefined
-
-  for (const link of faviconLinks.toArray()) {
-    const href = $(link).attr('href')
+  for (const link of faviconLinks) {
+    const href = getAttribute(link, 'href')
     if (href) {
-      try {
-        favicon = new URL(href, baseUrl).toString()
-        break
-      } catch {
-        // Skip invalid URLs
+      const resolved = helpers.resolveUrl(href)
+      if (resolved) {
+        return resolved
       }
     }
   }
 
-  // Extract structured data
-  const structuredData =
-    $('script[type="application/ld+json"]').first().html() || undefined
+  return
+}
+
+const extractStructuredData = (
+  helpers: ReturnType<typeof createQueryHelpers>
+) => {
+  const element = helpers.select('script[type="application/ld+json"]')
+  return element?.text
+}
+
+const extractOpenGraphMetadata = (
+  helpers: ReturnType<typeof createQueryHelpers>
+) => ({
+  ogTitle: helpers.getOg('og:title') ?? undefined,
+  ogDescription: helpers.getOg('og:description') ?? undefined,
+  ogImage: helpers.getOg('og:image') ?? undefined,
+  ogUrl: helpers.getOg('og:url') ?? undefined,
+  ogSiteName: helpers.getOg('og:site_name') ?? undefined,
+  ogType: helpers.getOg('og:type') ?? undefined,
+  ogLocale: helpers.getOg('og:locale') ?? undefined,
+  ogVideoUrl: helpers.getOg('og:video') ?? undefined,
+  ogVideoType: helpers.getOg('og:video:type') ?? undefined
+})
+
+const extractArticleMetadata = (
+  helpers: ReturnType<typeof createQueryHelpers>
+) => ({
+  articleAuthor: helpers.getOg('og:article:author') ?? undefined,
+  articlePublishedTime: helpers.getOg('og:article:published_time') ?? undefined
+})
+
+const extractTwitterMetadata = (
+  helpers: ReturnType<typeof createQueryHelpers>
+) => ({
+  twitterCard: helpers.getTwitter('twitter:card') ?? undefined,
+  twitterSite: helpers.getTwitter('twitter:site') ?? undefined,
+  twitterTitle: helpers.getTwitter('twitter:title') ?? undefined,
+  twitterDescription: helpers.getTwitter('twitter:description') ?? undefined,
+  twitterImage: helpers.getTwitter('twitter:image') ?? undefined
+})
+
+const extractMetadata = (root: HTMLElement, baseUrl: string): Metadata => {
+  const helpers = createQueryHelpers(root, baseUrl)
 
   return {
-    ogTitle: metaPropertyMap.get('og:title'),
-    ogDescription: metaPropertyMap.get('og:description'),
-    ogImage: metaPropertyMap.get('og:image'),
-    ogUrl: metaPropertyMap.get('og:url'),
-    ogSiteName: metaPropertyMap.get('og:site_name'),
-    ogType: metaPropertyMap.get('og:type'),
-    ogLocale: metaPropertyMap.get('og:locale'),
-    ogVideoUrl: metaPropertyMap.get('og:video'),
-    ogVideoType: metaPropertyMap.get('og:video:type'),
-    articleAuthor: metaPropertyMap.get('article:author'),
-    articlePublishedTime: metaPropertyMap.get('article:published_time'),
-    twitterCard: metaNameMap.get('twitter:card'),
-    twitterSite: metaNameMap.get('twitter:site'),
-    twitterTitle: metaNameMap.get('twitter:title'),
-    twitterDescription: metaNameMap.get('twitter:description'),
-    twitterImage: metaNameMap.get('twitter:image'),
-    favicon,
-    structuredData
+    ...extractOpenGraphMetadata(helpers),
+    ...extractArticleMetadata(helpers),
+    ...extractTwitterMetadata(helpers),
+    favicon: extractFavicon(helpers),
+    structuredData: extractStructuredData(helpers)
   }
 }
 
@@ -139,8 +140,8 @@ export const GET = async (request: NextRequest) => {
     }
 
     const html = await response.text()
-    const $ = load(html)
-    const metadata = extractMetadata($, url)
+    const root = parse(html)
+    const metadata = extractMetadata(root, url)
 
     return NextResponse.json(metadata, {
       headers: {
