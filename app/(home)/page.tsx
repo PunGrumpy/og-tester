@@ -1,11 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import type { Metadata } from '@/app/api/og/route'
 import { Section } from '@/components/section'
 import { cn } from '@/lib/utils'
 import { ViewAnimation } from '@/providers/view-animation'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 import { HistorySearch } from './components/history-search'
 import { InputForm } from './components/input-form'
 import { MetadataResults } from './components/metadata-result'
@@ -34,19 +34,19 @@ export default function HomePage() {
     setHasSearched(true)
   }
 
-  const updateHistory = (url: string, metadata: Metadata) => {
+  const updateHistory = (url: string, newMetadata: Metadata) => {
     const now = Date.now()
     const existingIndex = history.findIndex(item => item.url === url)
     let newHistory: HistoryItem[]
 
     if (existingIndex !== -1) {
       newHistory = [
-        { url, timestamp: now, metadata },
+        { url, timestamp: now, metadata: newMetadata },
         ...history.slice(0, existingIndex),
         ...history.slice(existingIndex + 1)
       ]
     } else {
-      newHistory = [{ url, timestamp: now, metadata }, ...history]
+      newHistory = [{ url, timestamp: now, metadata: newMetadata }, ...history]
     }
 
     newHistory = newHistory.slice(0, 10)
@@ -83,18 +83,18 @@ export default function HomePage() {
         <div className="space-y-8 p-8">
           <div className="text-center">
             <ViewAnimation
+              delay={0.2}
               initial={{ opacity: 0, translateY: -8 }}
               whileInView={{ opacity: 1, translateY: 0 }}
-              delay={0.2}
             >
               <h1 className="font-bold text-3xl leading-tight tracking-tight sm:text-4xl md:text-5xl">
                 Open Graph Tester
               </h1>
             </ViewAnimation>
             <ViewAnimation
+              delay={0.4}
               initial={{ opacity: 0, translateY: -8 }}
               whileInView={{ opacity: 1, translateY: 0 }}
-              delay={0.4}
             >
               <p className="mt-2 text-muted-foreground">
                 Enter a URL to fetch its Open Graph metadata
@@ -103,8 +103,8 @@ export default function HomePage() {
           </div>
 
           <InputForm
-            onMetadataUpdate={handleMetadataUpdate}
             fetchMetadata={fetchMetadata}
+            onMetadataUpdate={handleMetadataUpdate}
             updateHistory={updateHistory}
           />
         </div>
@@ -115,7 +115,7 @@ export default function HomePage() {
       </Section>
 
       <Section>
-        <ValidateResult metadata={metadata} hasSearched={hasSearched} />
+        <ValidateResult hasSearched={hasSearched} metadata={metadata} />
       </Section>
 
       <Section
@@ -126,6 +126,7 @@ export default function HomePage() {
       >
         <HistorySearch
           history={history}
+          onDeleteHistoryItem={deleteHistoryItem}
           onSelectHistoryItem={item => {
             fetchMetadata(item.url)
               .then(response => {
@@ -137,7 +138,6 @@ export default function HomePage() {
                 )
               })
           }}
-          onDeleteHistoryItem={deleteHistoryItem}
         />
         <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent to-backdrop" />
       </Section>

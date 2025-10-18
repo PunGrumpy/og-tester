@@ -6,12 +6,7 @@ export const schema = z.object({
   url: z
     .string()
     .min(1)
-    .refine(
-      val => {
-        return urlPattern.test(val)
-      },
-      {
-        message: 'Please enter a valid URL'
-      }
-    )
+    .refine(val => urlPattern.test(val), {
+      message: 'Please enter a valid URL'
+    })
 })

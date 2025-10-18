@@ -1,14 +1,14 @@
 'use client'
 
-import type { Metadata } from '@/app/api/og/route'
-import { Prose } from '@/components/prose'
-import { Button } from '@/components/ui/button'
-import { ViewAnimation } from '@/providers/view-animation'
 import { ArrowUpRightIcon, Check, Clipboard } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import type { Metadata } from '@/app/api/og/route'
+import { Prose } from '@/components/prose'
+import { Button } from '@/components/ui/button'
+import { ViewAnimation } from '@/providers/view-animation'
 
 type MetadataResultProps = {
   metadata: Metadata
@@ -91,15 +91,15 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                 <small className="text-muted-foreground">Favicon</small>
                 <div className="rounded border bg-accent/75 p-1">
                   <Image
+                    alt="Favicon"
+                    className="h-4 w-4"
+                    height={16}
                     src={
                       metadata.favicon.startsWith('http')
                         ? metadata.favicon
                         : `https:${metadata.favicon}`
                     }
-                    alt="Favicon"
                     width={16}
-                    height={16}
-                    className="h-4 w-4"
                   />
                 </div>
               </div>
@@ -109,11 +109,11 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
           <div className="flex flex-col items-start gap-1 md:flex-row">
             {metadata.ogUrl && (
               <>
-                <Button asChild variant="outline" key="website">
+                <Button asChild key="website" variant="outline">
                   <Link
                     href={metadata.ogUrl}
-                    target="_blank"
                     rel="noreferrer noopener"
+                    target="_blank"
                   >
                     Visit Website
                     <ArrowUpRightIcon size={16} />
@@ -121,19 +121,19 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                 </Button>
 
                 <Button
-                  variant="outline"
+                  className="md:ml-2"
                   key="copy"
                   onClick={copyToClipboard}
-                  className="md:ml-2"
+                  variant="outline"
                 >
                   {copied ? (
                     <>
-                      <Check size={16} className="mr-1" />
+                      <Check className="mr-1" size={16} />
                       Copied
                     </>
                   ) : (
                     <>
-                      <Clipboard size={16} className="mr-1" />
+                      <Clipboard className="mr-1" size={16} />
                       Copy URL
                     </>
                   )}
@@ -142,11 +142,11 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
             )}
 
             {metadata.ogImage && (
-              <Button asChild variant="link" key="image">
+              <Button asChild key="image" variant="link">
                 <Link
                   href={metadata.ogImage}
-                  target="_blank"
                   rel="noreferrer noopener"
+                  target="_blank"
                 >
                   View Image
                 </Link>
@@ -159,20 +159,20 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
       {metadata.ogImage?.startsWith('https') ? (
         <div className="bg-dashed sm:col-span-2">
           <ViewAnimation
+            className="relative h-full"
+            delay={0.4}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            delay={0.4}
-            className="relative h-full"
           >
             <div className="h-full pt-4 pl-4 sm:pt-8 sm:pl-8">
               <div className="dashed-line-top" />
               <div className="dashed-line-left" />
               <Image
-                src={metadata.ogImage}
                 alt={metadata.ogTitle || 'No title found'}
-                width={820}
-                height={500}
                 className="h-full w-full rounded-tl-lg border-t border-l sm:rounded-tl-2xl"
+                height={500}
+                src={metadata.ogImage}
+                width={820}
               />
             </div>
           </ViewAnimation>
@@ -180,10 +180,10 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
       ) : (
         <div className="bg-dashed sm:col-span-2">
           <ViewAnimation
+            className="relative"
+            delay={0.4}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            delay={0.4}
-            className="relative"
           >
             <div className="flex h-full min-h-[500px] items-center justify-center">
               <p className="text-muted-foreground text-sm italic">

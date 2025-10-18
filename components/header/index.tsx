@@ -1,10 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { HeaderProvider } from '@/providers/header-provider'
 import { ViewAnimation } from '@/providers/view-animation'
-import Link from 'next/link'
 
 export function Header() {
   return (
@@ -14,22 +14,22 @@ export function Header() {
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
-          <Link href="/" className="flex items-center space-x-2">
+          <Link className="flex items-center space-x-2" href="/">
             <Icons.logo className="size-8" />
           </Link>
         </ViewAnimation>
       </div>
       <div className="hidden w-32 justify-end md:flex">
         <ViewAnimation
+          delay={0.8}
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
-          delay={0.8}
         >
-          <Button variant="outline" size="sm" asChild>
+          <Button asChild size="sm" variant="outline">
             <Link
               href="https://www.pungrumpy.com/contact"
-              target="_blank"
               rel="noopener noreferrer"
+              target="_blank"
             >
               Get in touch
             </Link>

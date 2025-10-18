@@ -29,12 +29,12 @@ export const ViewAnimation = ({
 
   return (
     <motion.div
-      initial={{ filter: 'blur(4px)', ...initial }}
-      whileInView={{ filter: 'blur(0px)', ...whileInView }}
       animate={animate}
       className={className}
-      viewport={{ once: true, amount: 0.5 }}
+      initial={{ filter: 'blur(4px)', ...initial }}
       transition={{ delay, duration: 0.8 }}
+      viewport={{ once: true, amount: 0.5 }}
+      whileInView={{ filter: 'blur(0px)', ...whileInView }}
     >
       {children}
     </motion.div>

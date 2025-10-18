@@ -106,9 +106,9 @@ export const Status = async () => {
   return (
     <a
       className="flex items-center gap-2 text-sm"
-      target="_blank"
-      rel="noreferrer"
       href={env.BETTERSTACK_URL}
+      rel="noreferrer"
+      target="_blank"
     >
       <span className="relative flex size-2">
         <span

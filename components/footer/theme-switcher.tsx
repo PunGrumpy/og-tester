@@ -45,16 +45,16 @@ export function ThemeSwitcher() {
 
         return (
           <button
-            type="button"
-            key={key}
-            className="relative h-6 w-6 rounded-full"
-            onClick={() => setTheme(key)}
             aria-label={label}
+            className="relative h-6 w-6 rounded-full"
+            key={key}
+            onClick={() => setTheme(key)}
+            type="button"
           >
             {isActive && (
               <motion.div
-                layoutId="activeTheme"
                 className="absolute inset-0 rounded-full bg-background"
+                layoutId="activeTheme"
                 transition={{ type: 'spring', duration: 0.5 }}
               />
             )}

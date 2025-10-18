@@ -7,7 +7,7 @@ export const env = createEnv({
   client: {},
   server: {
     BETTERSTACK_API_KEY: z.string().optional(),
-    BETTERSTACK_URL: z.string().url().optional(),
+    BETTERSTACK_URL: z.url().optional(),
     RYBBIT_ID: z.string().optional()
   },
   runtimeEnv: {

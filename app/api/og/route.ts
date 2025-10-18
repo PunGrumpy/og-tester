@@ -1,7 +1,7 @@
-import * as cheerio from 'cheerio'
+import { type CheerioAPI, load } from 'cheerio'
 import { type NextRequest, NextResponse } from 'next/server'
 
-export interface Metadata {
+export type Metadata = {
   ogTitle?: string
   ogDescription?: string
   ogImage?: string
@@ -22,7 +22,7 @@ export interface Metadata {
   structuredData?: string
 }
 
-const FETCH_TIMEOUT = 10000 // 10 seconds
+const FETCH_TIMEOUT = 10_000 // 10 seconds
 const CACHE_MAX_AGE = 300 // 5 minutes
 
 const fetchWithTimeout = async (
@@ -47,7 +47,7 @@ const fetchWithTimeout = async (
   }
 }
 
-const extractMetadata = ($: cheerio.CheerioAPI, baseUrl: string): Metadata => {
+const extractMetadata = ($: CheerioAPI, baseUrl: string): Metadata => {
   // Build maps for fast O(1) lookup instead of repeated DOM traversal
   const metaPropertyMap = new Map<string, string>()
   const metaNameMap = new Map<string, string>()
@@ -139,7 +139,7 @@ export const GET = async (request: NextRequest) => {
     }
 
     const html = await response.text()
-    const $ = cheerio.load(html)
+    const $ = load(html)
     const metadata = extractMetadata($, url)
 
     return NextResponse.json(metadata, {

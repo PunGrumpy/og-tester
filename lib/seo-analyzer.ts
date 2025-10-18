@@ -1,6 +1,6 @@
 import type { Metadata } from '@/app/api/og/route'
 
-export interface SEOIssue {
+export type SEOIssue = {
   severity: 'error' | 'warning' | 'info'
   message: string
   recommendation: string
@@ -122,7 +122,7 @@ function checkTwitterCards(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  if (!metadata.twitterTitle && !metadata.ogTitle) {
+  if (!(metadata.twitterTitle || metadata.ogTitle)) {
     issues.push({
       severity: 'warning',
       message: 'Missing twitter:title and og:title',
@@ -131,7 +131,7 @@ function checkTwitterCards(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  if (!metadata.twitterDescription && !metadata.ogDescription) {
+  if (!(metadata.twitterDescription || metadata.ogDescription)) {
     issues.push({
       severity: 'warning',
       message: 'Missing twitter:description and og:description',
@@ -140,7 +140,7 @@ function checkTwitterCards(metadata: Metadata): SEOIssue[] {
     })
   }
 
-  if (!metadata.twitterImage && !metadata.ogImage) {
+  if (!(metadata.twitterImage || metadata.ogImage)) {
     issues.push({
       severity: 'warning',
       message: 'Missing twitter:image and og:image',

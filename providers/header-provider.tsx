@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { type HTMLAttributes, useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 type HeaderProviderProps = HTMLAttributes<HTMLDivElement>
 

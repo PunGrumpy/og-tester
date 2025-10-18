@@ -1,15 +1,15 @@
 'use client'
 
-import { schema } from '@/app/(home)/schema'
-import type { Metadata } from '@/app/api/og/route'
-import { Button } from '@/components/ui/button'
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { z } from 'zod'
+import { schema } from '@/app/(home)/schema'
+import type { Metadata } from '@/app/api/og/route'
+import { Button } from '@/components/ui/button'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 type InputFormProps = {
   onMetadataUpdate: (metadata: Metadata) => void
@@ -42,8 +42,10 @@ export const InputForm = ({
     try {
       let formattedUrl = data.url.trim()
       if (
-        !formattedUrl.startsWith('http://') &&
-        !formattedUrl.startsWith('https://')
+        !(
+          formattedUrl.startsWith('http://') ||
+          formattedUrl.startsWith('https://')
+        )
       ) {
         formattedUrl = `https://${formattedUrl}`
       }
@@ -58,7 +60,7 @@ export const InputForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
+      <form className="w-full space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="url"
@@ -66,8 +68,8 @@ export const InputForm = ({
             <FormItem className="flex space-x-2">
               <div className="flex-1">
                 <Input
-                  placeholder="Enter a URL (e.g. pungrumpy.com)"
                   className="bg-background"
+                  placeholder="Enter a URL (e.g. pungrumpy.com)"
                   {...field}
                   onChange={e => {
                     const normalizedUrl = normalizeUrl(e.target.value)
@@ -77,9 +79,9 @@ export const InputForm = ({
                 <FormMessage />
               </div>
               <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
                 className="hover:cursor-pointer"
+                disabled={form.formState.isSubmitting}
+                type="submit"
               >
                 {form.formState.isSubmitting ? (
                   <>

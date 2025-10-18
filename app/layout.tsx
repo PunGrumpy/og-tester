@@ -1,5 +1,9 @@
 import '@/app/globals.css'
 
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import Script from 'next/script'
+import type { ReactNode } from 'react'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Toaster } from '@/components/ui/sonner'
@@ -7,10 +11,6 @@ import { env } from '@/lib/env'
 import { createMetadata } from '@/lib/metadata'
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/providers/theme-provider'
-import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import Script from 'next/script'
-import type { ReactNode } from 'react'
 
 const title = 'OG Tester'
 const description = 'Test Open Graph and Twitter Card metadata'
@@ -41,7 +41,7 @@ const geistMono = Geist_Mono({
   adjustFontFallback: true
 })
 
-interface RootLayoutProps {
+type RootLayoutProps = {
   children: ReactNode
 }
 
@@ -49,9 +49,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <Script
+        data-site-id={env.RYBBIT_ID}
         defer
         src="https://app.rybbit.io/api/script.js"
-        data-site-id={env.RYBBIT_ID}
       />
       <body
         className={cn(
@@ -63,8 +63,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
-          enableSystem
           disableTransitionOnChange
+          enableSystem
         >
           <Header />
           <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
