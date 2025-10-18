@@ -7,10 +7,10 @@ import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
 import { Provider } from '@/providers'
 
-const title = 'OG Tester'
-const description = 'Test Open Graph and Twitter Card metadata'
-
-export const metadata: Metadata = createMetadata(title, description)
+export const metadata: Metadata = createMetadata(
+  'OG Tester',
+  'Test Open Graph and Twitter Card metadata'
+)
 
 export const viewport: Viewport = {
   themeColor: [
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className="overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased">
         <Provider>
           <Header />
-          <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
+          <div className="h-[52px] sm:h-16" />
           <main className="divide-y sm:border-b">{children}</main>
           <Footer />
         </Provider>
