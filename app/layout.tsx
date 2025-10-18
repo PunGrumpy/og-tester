@@ -1,11 +1,10 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
-import { cn } from '@/lib/utils'
 import { Provider } from '@/providers'
 
 const title = 'OG Tester'
@@ -20,37 +19,14 @@ export const viewport: Viewport = {
   ]
 }
 
-const geistSans = Geist({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  fallback: ['ui-sans-serif', 'system-ui'],
-  display: 'swap',
-  preload: true,
-  adjustFontFallback: true
-})
-const geistMono = Geist_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-  fallback: ['ui-monospace', 'monospace'],
-  display: 'swap',
-  preload: true,
-  adjustFontFallback: true
-})
-
 type RootLayoutProps = {
   children: ReactNode
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          'overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased',
-          geistSans.variable,
-          geistMono.variable
-        )}
-      >
+    <html className={fonts} lang="en" suppressHydrationWarning>
+      <body className="overflow-x-hidden overscroll-contain bg-backdrop font-sans antialiased">
         <Provider>
           <Header />
           <div className="container mx-auto h-[52px] sm:h-16 sm:border-x" />
