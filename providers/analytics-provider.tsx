@@ -1,16 +1,15 @@
-import Script from 'next/script'
+import { Databuddy } from '@databuddy/sdk/react'
 import { env } from '@/lib/env'
 
-const { RYBBIT_ID } = env
-
 export const AnalyticsProvider = () => (
-  <>
-    {RYBBIT_ID && (
-      <Script
-        data-site-id={RYBBIT_ID}
-        defer
-        src="https://app.rybbit.io/api/script.js"
-      />
-    )}
-  </>
+  <Databuddy
+    clientId={env.NEXT_PUBLIC_DATABUDDY_CLIENT_ID}
+    trackAttributes={true}
+    trackErrors={true}
+    trackHashChanges={true}
+    trackInteractions={true}
+    trackOutgoingLinks={true}
+    trackScrollDepth={true}
+    trackWebVitals={true}
+  />
 )
