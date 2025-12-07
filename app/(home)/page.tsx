@@ -137,7 +137,7 @@ export default function HomePage() {
               })
           }}
         />
-        <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-gradient-to-b from-transparent to-backdrop" />
+        <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 h-40 bg-linear-to-b from-transparent to-backdrop" />
       </Section>
     </>
   )

@@ -14,7 +14,7 @@ export const Header = () => {
     <header
       className={cn(
         'container fixed top-0 right-0 left-0 z-50 mx-auto flex items-center justify-between bg-backdrop/90 px-4 py-2 backdrop-blur-md transition-all sm:border-x sm:py-4',
-        isScrolled && 'border-b'
+        isScrolled ? 'border-b' : ''
       )}
     >
       <div className="w-32">

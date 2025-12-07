@@ -14,6 +14,7 @@ type MetadataResultProps = {
   metadata: Metadata
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component that needs to be refactored
 export const MetadataResults = ({ metadata }: MetadataResultProps) => {
   const [copied, setCopied] = useState(false)
 
@@ -50,14 +51,14 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
               <small className="text-muted-foreground">Open Graph</small>
               {hasOgMetadata ? (
                 <>
-                  {metadata.ogTitle && (
+                  {metadata.ogTitle ? (
                     <h2 className="my-2 text-3xl">{metadata.ogTitle}</h2>
-                  )}
-                  {metadata.ogDescription && (
+                  ) : null}
+                  {metadata.ogDescription ? (
                     <p className="text-foreground/80">
                       {metadata.ogDescription}
                     </p>
-                  )}
+                  ) : null}
                 </>
               ) : (
                 <p className="text-muted-foreground text-sm italic">
@@ -70,14 +71,14 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
               <small className="text-muted-foreground">Twitter Card</small>
               {hasTwitterMetadata ? (
                 <>
-                  {metadata.twitterTitle && (
+                  {metadata.twitterTitle ? (
                     <h2 className="my-2 text-3xl">{metadata.twitterTitle}</h2>
-                  )}
-                  {metadata.twitterDescription && (
+                  ) : null}
+                  {metadata.twitterDescription ? (
                     <p className="text-foreground/80">
                       {metadata.twitterDescription}
                     </p>
-                  )}
+                  ) : null}
                 </>
               ) : (
                 <p className="text-muted-foreground text-sm italic">
@@ -86,7 +87,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
               )}
             </Prose>
 
-            {metadata.favicon && (
+            {metadata.favicon ? (
               <div className="flex items-center gap-2">
                 <small className="text-muted-foreground">Favicon</small>
                 <div className="rounded border bg-accent/75 p-1">
@@ -103,11 +104,11 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                   />
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
 
           <div className="flex flex-col items-start gap-1 md:flex-row">
-            {metadata.ogUrl && (
+            {metadata.ogUrl ? (
               <>
                 <Button asChild key="website" variant="outline">
                   <Link
@@ -139,9 +140,9 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                   )}
                 </Button>
               </>
-            )}
+            ) : null}
 
-            {metadata.ogImage && (
+            {metadata.ogImage ? (
               <Button asChild key="image" variant="link">
                 <Link
                   href={metadata.ogImage}
@@ -151,7 +152,7 @@ export const MetadataResults = ({ metadata }: MetadataResultProps) => {
                   View Image
                 </Link>
               </Button>
-            )}
+            ) : null}
           </div>
         </ViewAnimation>
       </div>
