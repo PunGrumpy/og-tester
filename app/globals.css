@@ -224,10 +224,16 @@
   }
 }
 
-@utility screen-line-before {
-  @apply relative before:absolute before:top-0 before:-left-[100vw] before:-z-1 before:h-px before:w-[200vw] before:bg-border;
-}
-
-@utility screen-line-after {
-  @apply relative after:absolute after:bottom-0 after:-left-[100vw] after:-z-1 after:h-px after:w-[200vw] after:bg-border;
+@utility pattern-background {
+  background-image: radial-gradient(
+    var(--pattern-foreground) 1px,
+    transparent 0
+  );
+  background-size: 10px 10px;
+  background-position: center;
+  --pattern-foreground: color-mix(
+    in oklch,
+    var(--color-foreground) 5%,
+    transparent
+  );
 }
