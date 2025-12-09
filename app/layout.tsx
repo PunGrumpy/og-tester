@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
+import { ThemeProvider } from '@/providers/theme'
 
 export const metadata: Metadata = createMetadata(
   'OG Tester',
@@ -15,7 +16,16 @@ export default function RootLayout({
 }>) {
   return (
     <html className={fonts} lang="en" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
