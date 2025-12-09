@@ -1,4 +1,24 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "ultracite/react", "ultracite/next"]
+  "extends": ["ultracite/core", "ultracite/react", "ultracite/next"],
+  "formatter": {
+    "bracketSpacing": true,
+    "lineEnding": "lf",
+    "indentWidth": 2
+  },
+  "javascript": {
+    "globals": ["Liveblocks"],
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
+    "formatter": {
+      "arrowParentheses": "asNeeded",
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "none"
+    }
+  },
+  "files": {
+    "includes": ["**", "!components/ui"]
+  }
 }
