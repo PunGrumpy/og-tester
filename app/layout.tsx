@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Header } from '@/components/header'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
 import { HooksProvider } from '@/providers/hooks'
@@ -24,7 +25,10 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          {children}
+          <main className="divide-y">
+            <Header />
+            {children}
+          </main>
         </ThemeProvider>
 
         <HooksProvider />
