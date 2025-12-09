@@ -1,18 +1,18 @@
+import { Geist } from 'next/font/google'
 import localFont from 'next/font/local'
 import { cn } from '../utils'
 
-const MartianGroteskSans = localFont({
-  src: './MartianGrotesk-VFVF.woff2',
-  variable: '--font-martian-grotesk'
+const GeistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans'
 })
-
 const MartianMono = localFont({
   src: './MartianMono-Regular.woff2',
   variable: '--font-martian-mono'
 })
 
 export const fonts = cn(
-  MartianGroteskSans.variable,
+  GeistSans.variable,
   MartianMono.variable,
   'touch-manipulation font-sans antialiased'
 )
