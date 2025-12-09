@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
@@ -28,6 +29,7 @@ export default function RootLayout({
           <main className="divide-y">
             <Header />
             {children}
+            <Footer />
           </main>
         </ThemeProvider>
 

@@ -49,6 +49,9 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --color-success: oklch(0.55 0.22 264.53);
+  --color-warning: oklch(0.81 0.17 75.35);
 }
 
 :root {
