@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
+import { HooksProvider } from '@/providers/hooks'
 import { ThemeProvider } from '@/providers/theme'
 
 export const metadata: Metadata = createMetadata(
@@ -25,6 +26,8 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+
+        <HooksProvider />
       </body>
     </html>
   )
