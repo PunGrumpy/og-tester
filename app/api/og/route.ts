@@ -6,7 +6,8 @@ import { parseOgTags } from '@/lib/parse-og-tags'
 
 export const GET = withUnkey(
   async (request: NextRequestWithUnkeyContext) => {
-    const url = request.nextUrl.searchParams.get('url')
+    const searchParams = request.nextUrl.searchParams
+    const url = searchParams.get('url')
 
     if (!url) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
@@ -20,7 +21,7 @@ export const GET = withUnkey(
 
     if (!response.ok) {
       const message = parseError(response.statusText)
-      return NextResponse.json({ error: message }, { status: 500 })
+      return NextResponse.json({ error: message }, { status: response.status })
     }
 
     const html = await response.text()

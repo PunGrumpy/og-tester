@@ -1,3 +1,5 @@
+import type { OgTags } from './schema'
+
 const TITLE_TAG_REGEX = /<title[^>]*>([^<]+)<\/title>/i
 
 const META_DESC_NAME_FIRST_REGEX =
@@ -17,25 +19,6 @@ const TWITTER_META_PROP_FIRST_REGEX =
 
 const TWITTER_META_CONTENT_FIRST_REGEX =
   /<meta[^>]*content=["']([^"']+)["'][^>]*(?:name|property)=["'](twitter:[^"']+)["'][^>]*>/gi
-
-export type OgTags = {
-  'twitter:image'?: string
-  'twitter:card'?: string
-  'twitter:title'?: string
-  'twitter:description'?: string
-  'twitter:site'?: string
-  'twitter:creator'?: string
-  title?: string
-  description?: string
-  'og:image'?: string
-  'og:site_name'?: string
-  'og:title'?: string
-  'og:description'?: string
-  'og:url'?: string
-  'og:type'?: string
-  'og:locale'?: string
-  [key: string]: string | undefined
-}
 
 const decodeHtmlEntities = (text: string): string =>
   text
