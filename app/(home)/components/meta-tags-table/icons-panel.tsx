@@ -44,7 +44,7 @@ export const IconsPanel = ({
     <div className="m-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {favicons.map((icon, index) => (
         <div
-          className="flex items-center gap-3 border p-3"
+          className="flex items-center gap-3 rounded-lg border px-3 py-2"
           key={index.toString()}
         >
           <div className="flex size-8 items-center justify-center overflow-hidden rounded border bg-muted">
