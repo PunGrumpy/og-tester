@@ -220,9 +220,9 @@ export const TagTable = ({
   const tags = getTags()
 
   return (
-    <div className="overflow-hidden p-4">
-      <table className="w-full border">
-        <tbody className="divide-y">
+    <div className="m-4 overflow-hidden rounded-lg border border-border">
+      <table className="w-full">
+        <tbody className="divide-y rounded-lg">
           {/** biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex function that needs to be refactored. */}
           {tags.map(({ key, value, isImage, imageUrl }, index) => {
             let content: React.ReactNode
