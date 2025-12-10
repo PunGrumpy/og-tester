@@ -3,6 +3,7 @@
 import { TabsContent } from '@radix-ui/react-tabs'
 import { Icons } from '@/components/icons'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ViewAnimation } from '@/components/view-animation'
 import { useOgStore } from '@/hooks/use-og-store'
 import type { OgData } from '@/lib/schemas/og'
 import { DiscordPreview } from './discord-preview'
@@ -49,7 +50,12 @@ export const SocialPreview = () => {
   const preview = getPreviewImage(data, url)
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <ViewAnimation
+      className="flex flex-col gap-4 p-4"
+      delay={0.8}
+      initial={{ opacity: 0, translateY: -8 }}
+      whileInView={{ opacity: 1, translateY: 0 }}
+    >
       <Tabs defaultValue="x">
         <TabsList className="h-10 gap-1">
           {PLATFORMS.map(platform => (
@@ -107,6 +113,6 @@ export const SocialPreview = () => {
           />
         </TabsContent>
       </Tabs>
-    </div>
+    </ViewAnimation>
   )
 }

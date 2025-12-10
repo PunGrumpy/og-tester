@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ViewAnimation } from '@/components/view-animation'
 import { useOgStore } from '@/hooks/use-og-store'
 import { cn } from '@/lib/utils'
 import { IconsPanel } from './icons-panel'
@@ -18,7 +19,11 @@ export const MetaTagsTable = () => {
   const { data } = useOgStore()
 
   return (
-    <div className="">
+    <ViewAnimation
+      delay={0.8}
+      initial={{ opacity: 0, translateY: -8 }}
+      whileInView={{ opacity: 1, translateY: 0 }}
+    >
       <div className="flex gap-1 border-b">
         {CATEGORIES.map(cat => (
           <button
@@ -45,6 +50,6 @@ export const MetaTagsTable = () => {
       ) : (
         <TagTable category={activeCategory} data={data} />
       )}
-    </div>
+    </ViewAnimation>
   )
 }
