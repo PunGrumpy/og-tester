@@ -10,7 +10,7 @@ export const Hero = () => (
       'pattern-background bg-foreground/2'
     )}
   >
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-6">
       <ViewAnimation
         delay={0.8}
         initial={{ opacity: 0, translateY: -8 }}
@@ -23,8 +23,9 @@ export const Hero = () => (
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
-        <p className="text-muted-foreground text-sm">
-          Test your Open Graph metadata with this tool
+        <p className="max-w-2xl text-pretty text-center text-lg text-muted-foreground">
+          Test and preview your Open Graph and Twitter Card metadata. See how
+          your links will appear when shared on social media platforms
         </p>
       </ViewAnimation>
     </div>
