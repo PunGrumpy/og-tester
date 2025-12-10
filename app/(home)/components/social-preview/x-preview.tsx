@@ -13,7 +13,7 @@ export const XPreview = ({
   title,
   description
 }: XPreviewProps) => (
-  <div className="overflow-hidden rounded-xl border border-border bg-card">
+  <div className="overflow-hidden rounded-xl border bg-card">
     <div className="relative aspect-[1.91/1] w-full bg-muted">
       {image ? (
         <Image

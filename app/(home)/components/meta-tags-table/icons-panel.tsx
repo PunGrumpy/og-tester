@@ -32,7 +32,7 @@ export const IconsPanel = ({
 
   if (!data?.favicons || data.favicons.length === 0) {
     return (
-      <div className="rounded-lg border border-border p-8 text-center">
+      <div className="rounded-lg p-8 text-center">
         <p className="text-muted-foreground text-sm">No icons found</p>
       </div>
     )
@@ -41,36 +41,32 @@ export const IconsPanel = ({
   const favicons = data.favicons
 
   return (
-    <div className="rounded-lg border border-border px-4 py-3">
-      <div className="flex flex-wrap gap-3">
-        {favicons.map(icon => (
-          <div
-            className="flex items-center gap-2"
-            key={`${icon.href}-${icon.rel}-${icon.sizes}-${icon.type}`}
-          >
-            <div className="flex size-8 items-center justify-center overflow-hidden rounded border border-border bg-muted">
-              <Image
-                alt={icon.rel}
-                className="size-full object-contain"
-                height={32}
-                src={icon.href}
-                width={32}
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-muted-foreground text-sm">
-                {icon.rel}
-              </p>
-              {icon.sizes ? (
-                <p className="text-muted-foreground/60 text-xs">{icon.sizes}</p>
-              ) : null}
-              {icon.type ? (
-                <p className="text-muted-foreground/60 text-xs">{icon.type}</p>
-              ) : null}
-            </div>
+    <div className="m-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {favicons.map((icon, index) => (
+        <div
+          className="flex items-center gap-3 border p-3"
+          key={index.toString()}
+        >
+          <div className="flex size-8 items-center justify-center overflow-hidden rounded border bg-muted">
+            <Image
+              alt={icon.rel}
+              className="size-full object-contain"
+              height={32}
+              src={icon.href}
+              width={32}
+            />
           </div>
-        ))}
-      </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-muted-foreground text-sm">{icon.rel}</p>
+            {icon.sizes ? (
+              <p className="text-muted-foreground/60 text-xs">{icon.sizes}</p>
+            ) : null}
+            {icon.type ? (
+              <p className="text-muted-foreground/60 text-xs">{icon.type}</p>
+            ) : null}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

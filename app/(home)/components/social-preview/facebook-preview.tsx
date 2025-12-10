@@ -13,7 +13,7 @@ export const FacebookPreview = ({
   title,
   description
 }: FacebookPreviewProps) => (
-  <div className="overflow-hidden rounded-lg border border-border bg-[#242526]">
+  <div className="overflow-hidden rounded-lg border bg-[#242526]">
     <div className="relative aspect-[1.91/1] w-full bg-muted">
       {image ? (
         <Image

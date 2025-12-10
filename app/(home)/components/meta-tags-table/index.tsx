@@ -18,12 +18,12 @@ export const MetaTagsTable = () => {
   const { data } = useOgStore()
 
   return (
-    <div className="space-y-4 p-4 md:p-6">
+    <div className="">
       <div className="flex gap-1 border-b">
         {CATEGORIES.map(cat => (
           <button
             className={cn(
-              'relative px-4 py-2 text-sm transition-colors',
+              'relative p-4 text-sm transition-colors',
               activeCategory === cat.id
                 ? 'text-foreground'
                 : 'text-muted-foreground hover:text-foreground'

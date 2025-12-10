@@ -89,7 +89,7 @@ const getGeneralTags = (data: OgData | null): MetaTagRow[] => {
             return (
               <div className="flex items-center gap-2" key={i.toString()}>
                 <span
-                  className="size-4 shrink-0 rounded border border-border"
+                  className="size-4 shrink-0 rounded border"
                   style={{ backgroundColor: colorValue }}
                 />
                 <span>{color}</span>
@@ -220,9 +220,9 @@ export const TagTable = ({
   const tags = getTags()
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full">
-        <tbody className="divide-y divide-border">
+    <div className="overflow-hidden p-4">
+      <table className="w-full border">
+        <tbody className="divide-y">
           {/** biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex function that needs to be refactored. */}
           {tags.map(({ key, value, isImage, imageUrl }, index) => {
             let content: React.ReactNode
@@ -239,7 +239,7 @@ export const TagTable = ({
                 content = (
                   <div className="space-y-2">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted">
+                      <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
                         <Image
                           alt={linkLabel}
                           className="h-full w-full object-cover"
@@ -291,10 +291,7 @@ export const TagTable = ({
             }
 
             return (
-              <tr
-                className="divide-x divide-border"
-                key={`${key}-${index.toString()}`}
-              >
+              <tr className="divide-x" key={`${key}-${index.toString()}`}>
                 <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
                   {key}
                 </td>
