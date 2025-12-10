@@ -4,7 +4,7 @@ import { TabsContent } from '@radix-ui/react-tabs'
 import { Icons } from '@/components/icons'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useOgStore } from '@/hooks/use-og-store'
-import type { OgTags } from '@/lib/schema'
+import type { OgData } from '@/lib/schemas/og'
 import { DiscordPreview } from './discord-preview'
 import { FacebookPreview } from './facebook-preview'
 import { LinkedinPreview } from './linkedin-preview'
@@ -35,7 +35,7 @@ const parseDisplayUrl = (url: string) => {
   return hostname
 }
 
-const getPreviewImage = (data: OgTags, url: string) => ({
+const getPreviewImage = (data: OgData, url: string) => ({
   title: data['og:title'] || data['twitter:title'] || data.title || 'No title',
   description:
     data['og:description'] || data['twitter:description'] || data.description,

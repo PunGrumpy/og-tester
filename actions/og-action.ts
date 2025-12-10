@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { env } from '@/lib/env'
 import { fetcher } from '@/lib/fetcher'
-import { ogSchema } from '@/lib/schema'
+import { ogSchema } from '@/lib/schemas/og'
 import { actionClientWithMeta } from './safe-action'
 
 export const ogAction = actionClientWithMeta

@@ -1,8 +1,7 @@
 import { type NextRequestWithUnkeyContext, withUnkey } from '@unkey/nextjs'
 import { NextResponse } from 'next/server'
 import { env } from '@/lib/env'
-import { parseError } from '@/lib/error'
-import { parseOgTags } from './parse-og-tags'
+import { parseSitemap } from './parse-sitemap'
 
 export const GET = withUnkey(
   async (request: NextRequestWithUnkeyContext) => {
@@ -13,24 +12,26 @@ export const GET = withUnkey(
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(`${url}/sitemap.xml`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; OGTester/1.0)'
       }
     })
 
     if (!response.ok) {
-      const message = parseError(response.statusText)
-      return NextResponse.json({ error: message }, { status: response.status })
+      return NextResponse.json(
+        { error: 'Failed to fetch sitemap.xml' },
+        { status: 500 }
+      )
     }
 
-    const html = await response.text()
-    const ogData = parseOgTags(html, url)
+    const data = await response.text()
+    const urls = parseSitemap(data)
 
-    return NextResponse.json(ogData)
+    return NextResponse.json({ content: data, urls })
   },
   {
     rootKey: env.UNKEY_ROOT_KEY,
-    tags: ['og-tester']
+    tags: ['og-tester', 'robots']
   }
 )

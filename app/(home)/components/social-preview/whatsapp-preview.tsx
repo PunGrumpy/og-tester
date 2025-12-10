@@ -16,13 +16,15 @@ export const WhatsappPreview = ({
   <div className="max-w-sm overflow-hidden rounded-lg bg-[#1f2c34]">
     <div className="flex gap-3 p-2">
       <div className="relative size-16 shrink-0 overflow-hidden rounded">
-        <Image
-          alt={title}
-          className="object-cover"
-          fill
-          sizes=""
-          src={image ?? ''}
-        />
+        {image ? (
+          <Image
+            alt={title}
+            className="object-cover"
+            fill
+            sizes="100vw"
+            src={image}
+          />
+        ) : null}
       </div>
       <div className="min-w-0 flex-1 space-y-0.5">
         <p className="text-[#8696a0] text-xs">{displayUrl}</p>

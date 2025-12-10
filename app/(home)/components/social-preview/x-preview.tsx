@@ -15,13 +15,15 @@ export const XPreview = ({
 }: XPreviewProps) => (
   <div className="overflow-hidden rounded-xl border border-border bg-card">
     <div className="relative aspect-[1.91/1] w-full bg-muted">
-      <Image
-        alt={title}
-        className="object-cover"
-        fill
-        sizes=""
-        src={image ?? ''}
-      />
+      {image ? (
+        <Image
+          alt={title}
+          className="object-cover"
+          fill
+          sizes="100vw"
+          src={image}
+        />
+      ) : null}
     </div>
 
     <div className="space-y-1 p-3">

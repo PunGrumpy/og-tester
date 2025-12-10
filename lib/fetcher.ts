@@ -1,7 +1,9 @@
 import { createFetch, createSchema } from '@better-fetch/fetch'
 import { z } from 'zod'
 import { env } from './env'
-import { ogSchema } from './schema'
+import { ogSchema } from './schemas/og'
+import { robotsSchema } from './schemas/robots'
+import { sitemapSchema } from './schemas/sitemap'
 
 const schema = createSchema({
   '/api/og': {
@@ -10,6 +12,20 @@ const schema = createSchema({
       url: z.url()
     }),
     output: ogSchema
+  },
+  '/api/robots': {
+    method: 'get',
+    query: z.object({
+      url: z.url()
+    }),
+    output: robotsSchema
+  },
+  '/api/sitemap': {
+    method: 'get',
+    query: z.object({
+      url: z.url()
+    }),
+    output: sitemapSchema
   }
 })
 

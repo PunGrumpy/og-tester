@@ -1,10 +1,10 @@
 import { create } from 'zustand'
-import type { OgTags } from '@/lib/schema'
+import type { OgData } from '@/lib/schemas/og'
 
 type OgStore = {
   url: string
-  data: OgTags
-  setResult: (url: string, data: OgTags) => void
+  data: OgData
+  setResult: (url: string, data: OgData) => void
 }
 
 export const useOgStore = create<OgStore>(set => ({

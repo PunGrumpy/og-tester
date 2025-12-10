@@ -10,3 +10,19 @@ export const Section = ({ children, className, ...props }: SectionProps) => (
     </div>
   </section>
 )
+
+type SectionSeparator = HTMLAttributes<HTMLDivElement>
+
+export const SectionSeparator = ({
+  children,
+  className,
+  ...props
+}: SectionSeparator) => (
+  <section {...props}>
+    <div className="relative mx-auto max-w-6xl">
+      <div className={cn('dash-background h-8 md:border-x', className)}>
+        {children}
+      </div>
+    </div>
+  </section>
+)

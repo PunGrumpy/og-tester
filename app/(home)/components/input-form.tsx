@@ -67,8 +67,8 @@ export const InputForm = () => {
                 <div className="flex flex-1 flex-col gap-2">
                   <FormControl>
                     <Input
-                      className="bg-background"
-                      placeholder="Enter a URL (e.g. https://pungrumpy.com)"
+                      className="bg-background!"
+                      placeholder="Enter a URL (e.g., pungrumpy.com)"
                       type="url"
                       {...field}
                       onChange={e => {

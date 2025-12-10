@@ -27,13 +27,15 @@ export const SlackPreview = ({
         </p>
       </div>
       <div className="relative size-20 shrink-0 overflow-hidden rounded">
-        <Image
-          alt={title}
-          className="object-cover"
-          fill
-          sizes=""
-          src={image ?? ''}
-        />
+        {image ? (
+          <Image
+            alt={title}
+            className="object-cover"
+            fill
+            sizes="100vw"
+            src={image}
+          />
+        ) : null}
       </div>
     </div>
   </div>

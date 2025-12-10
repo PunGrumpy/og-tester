@@ -21,13 +21,15 @@ export const DiscordPreview = ({
       </h3>
       <p className="line-clamp-3 text-[#dcddde] text-sm">{description}</p>
       <div className="relative mt-4 max-w-[300px] overflow-hidden rounded">
-        <Image
-          alt={title}
-          className="object-cover"
-          height={300}
-          src={image ?? ''}
-          width={300}
-        />
+        {image ? (
+          <Image
+            alt={title}
+            className="object-cover"
+            height={300}
+            src={image}
+            width={300}
+          />
+        ) : null}
       </div>
     </div>
   </div>
