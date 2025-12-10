@@ -10,12 +10,23 @@ export const Hero = () => (
       'pattern-background bg-foreground/2'
     )}
   >
-    <ViewAnimation
-      delay={0.8}
-      initial={{ opacity: 0, translateY: -8 }}
-      whileInView={{ opacity: 1, translateY: 0 }}
-    >
-      <h1 className="font-bold text-5xl md:text-7xl">OG Tester</h1>
-    </ViewAnimation>
+    <div className="flex flex-col items-center justify-center gap-4">
+      <ViewAnimation
+        delay={0.8}
+        initial={{ opacity: 0, translateY: -8 }}
+        whileInView={{ opacity: 1, translateY: 0 }}
+      >
+        <h1 className="font-bold text-5xl md:text-7xl">Open Graph Tester</h1>
+      </ViewAnimation>
+      <ViewAnimation
+        delay={1.2}
+        initial={{ opacity: 0, translateY: -8 }}
+        whileInView={{ opacity: 1, translateY: 0 }}
+      >
+        <p className="text-muted-foreground text-sm">
+          Test your Open Graph metadata with this tool
+        </p>
+      </ViewAnimation>
+    </div>
   </Section>
 )
