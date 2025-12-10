@@ -26,7 +26,7 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          <main className="divide-y">
+          <main className="relative divide-y">
             <Header />
             {children}
             <Footer />
