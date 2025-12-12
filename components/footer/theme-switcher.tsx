@@ -3,19 +3,18 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { cn } from '@/lib/utils'
 
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const isMounted = useSyncExternalStore(
+    () => () => true,
+    () => true,
+    () => false
+  )
 
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
+  if (!isMounted) {
     return null
   }
 
