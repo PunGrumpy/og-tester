@@ -1,5 +1,6 @@
 'use client'
 
+import { track } from '@databuddy/sdk/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Send } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -49,6 +50,9 @@ export const InputForm = () => {
   })
 
   const onSubmit = (data: SchemaType) => {
+    track('submit_url', {
+      url: data.url.toString()
+    })
     execute({ url: data.url })
   }
 
