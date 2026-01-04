@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
         hostname: '**'
       }
     ]
+  },
+  experimental: {
+    turbopackFileSystemCacheForDev: true
   }
 }
 
