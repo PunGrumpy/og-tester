@@ -4,6 +4,7 @@ import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
+import { AnalyticsProvider } from '@/providers/analytics'
 import { HooksProvider } from '@/providers/hooks'
 import { ThemeProvider } from '@/providers/theme'
 
@@ -20,20 +21,22 @@ export default function RootLayout({
   return (
     <html className={fonts} lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
-          <main className="relative divide-y">
-            <Header />
-            {children}
-            <Footer />
-          </main>
-        </ThemeProvider>
+        <AnalyticsProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            disableTransitionOnChange
+            enableSystem
+          >
+            <main className="relative divide-y">
+              <Header />
+              {children}
+              <Footer />
+            </main>
+          </ThemeProvider>
 
-        <HooksProvider />
+          <HooksProvider />
+        </AnalyticsProvider>
       </body>
     </html>
   )
