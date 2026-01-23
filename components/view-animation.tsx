@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
 
-type ViewAnimationProps = {
+interface ViewAnimationProps {
   initial?: Record<string, string | number>
   whileInView?: Record<string, string | number>
   animate?: Record<string, string | number>

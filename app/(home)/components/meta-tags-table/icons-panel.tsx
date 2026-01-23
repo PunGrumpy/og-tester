@@ -2,10 +2,16 @@
 
 import Image from 'next/image'
 import type { ReactElement } from 'react'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle
+} from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { OgData } from '@/lib/schemas/og'
 
-type IconsPanelProps = {
+interface IconsPanelProps {
   data: OgData | null
   isLoading?: boolean
 }
@@ -32,9 +38,14 @@ export const IconsPanel = ({
 
   if (!data?.favicons || data.favicons.length === 0) {
     return (
-      <div className="rounded-lg p-8 text-center">
-        <p className="text-muted-foreground text-sm">No icons found</p>
-      </div>
+      <Empty className="m-4 border">
+        <EmptyHeader>
+          <EmptyTitle>No icons found</EmptyTitle>
+          <EmptyDescription>
+            Enter a URL above to check for favicon and touch icons.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     )
   }
 

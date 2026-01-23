@@ -16,7 +16,7 @@ export const Hero = () => (
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
-        <h1 className="text-center font-bold text-5xl md:text-7xl">
+        <h1 className="text-balance text-center font-bold text-5xl md:text-7xl">
           Open Graph Tester
         </h1>
       </ViewAnimation>
@@ -27,7 +27,7 @@ export const Hero = () => (
       >
         <p className="max-w-2xl text-pretty text-center text-lg text-muted-foreground">
           Test and preview your Open Graph and Twitter Card metadata. See how
-          your links will appear when shared on social media platforms
+          your links will appear when shared on social media platforms.
         </p>
       </ViewAnimation>
     </div>

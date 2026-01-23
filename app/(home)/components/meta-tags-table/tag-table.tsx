@@ -6,13 +6,13 @@ import type { ReactElement } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { OgData } from '@/lib/schemas/og'
 
-type TagTableProps = {
+interface TagTableProps {
   data: OgData | null
   category: MetaCategory
   isLoading?: boolean
 }
 
-type MetaTagRow = {
+interface MetaTagRow {
   key: string
   value: string | React.ReactNode
   isImage?: boolean
@@ -24,7 +24,6 @@ export type MetaCategory = 'general' | 'openGraph' | 'twitter' | 'icons'
 const isUrl = (url: string): boolean =>
   url.startsWith('http://') || url.startsWith('https://')
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex function that needs to be refactored.
 const getGeneralTags = (data: OgData | null): MetaTagRow[] => {
   const defaultTags = [
     { key: 'title', value: '—' },
@@ -221,9 +220,14 @@ export const TagTable = ({
 
   return (
     <div className="m-4 overflow-hidden rounded-lg border border-border">
-      <table className="w-full">
+      <table aria-label={`${category} meta tags`} className="w-full">
+        <thead className="sr-only">
+          <tr>
+            <th scope="col">Property</th>
+            <th scope="col">Value</th>
+          </tr>
+        </thead>
         <tbody className="divide-y rounded-lg">
-          {/** biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex function that needs to be refactored. */}
           {tags.map(({ key, value, isImage, imageUrl }, index) => {
             let content: React.ReactNode
 
@@ -262,7 +266,11 @@ export const TagTable = ({
                         target="_blank"
                       >
                         {linkLabel}
-                        <ExternalLink className="h-3 w-3 shrink-0" />
+                        <ExternalLink
+                          aria-hidden="true"
+                          className="size-3 shrink-0"
+                        />
+                        <span className="sr-only">(opens in new tab)</span>
                       </a>
                     </div>
                   </div>
@@ -280,7 +288,11 @@ export const TagTable = ({
                     target="_blank"
                   >
                     {value}
-                    <ExternalLink className="h-3 w-3 shrink-0" />
+                    <ExternalLink
+                      aria-hidden="true"
+                      className="size-3 shrink-0"
+                    />
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 )
               } else {

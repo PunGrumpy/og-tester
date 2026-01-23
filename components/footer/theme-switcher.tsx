@@ -37,14 +37,18 @@ export const ThemeSwitcher = () => {
   ]
 
   return (
-    <div className="relative flex h-8 rounded-full bg-background/30 p-1 ring-1 ring-border">
+    <fieldset
+      aria-label="Theme selection"
+      className="relative flex h-8 items-center rounded-full border-none bg-background/30 p-1 ring-1 ring-border"
+    >
       {themes.map(({ key, icon: Icon, label }) => {
         const isActive = theme === key
 
         return (
           <button
             aria-label={label}
-            className="relative size-6"
+            aria-pressed={isActive}
+            className="relative flex size-6 items-center justify-center"
             key={key}
             onClick={() => setTheme(key)}
             type="button"
@@ -58,15 +62,15 @@ export const ThemeSwitcher = () => {
               />
             ) : null}
             <Icon
+              aria-hidden="true"
               className={cn(
-                'relative m-auto size-4',
+                'relative size-4',
                 isActive ? 'text-foreground' : 'text-muted-foreground'
               )}
             />
-            <span className="sr-only">{label}</span>
           </button>
         )
       })}
-    </div>
+    </fieldset>
   )
 }

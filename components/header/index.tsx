@@ -35,7 +35,11 @@ export const Header = () => {
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
-          <Link className="flex items-center space-x-2" href="/">
+          <Link
+            aria-label="Home"
+            className="flex items-center space-x-2"
+            href="/"
+          >
             <Icons.logo className="size-8" />
           </Link>
         </ViewAnimation>

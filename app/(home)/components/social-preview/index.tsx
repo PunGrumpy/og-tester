@@ -2,6 +2,12 @@
 
 import { TabsContent } from '@radix-ui/react-tabs'
 import { Icons } from '@/components/icons'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle
+} from '@/components/ui/empty'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ViewAnimation } from '@/components/view-animation'
 import { useOgStore } from '@/hooks/use-og-store'
@@ -36,18 +42,22 @@ const parseDisplayUrl = (url: string) => {
   return hostname
 }
 
-const getPreviewImage = (data: OgData, url: string) => ({
-  title: data['og:title'] || data['twitter:title'] || data.title || 'No title',
+const getPreviewData = (data: OgData | null, url: string) => ({
+  title:
+    data?.['og:title'] || data?.['twitter:title'] || data?.title || 'No title',
   description:
-    data['og:description'] || data['twitter:description'] || data.description,
-  image: data['og:image'] || data['twitter:image'],
-  siteName: data['og:site_name'],
+    data?.['og:description'] ||
+    data?.['twitter:description'] ||
+    data?.description,
+  image: data?.['og:image'] || data?.['twitter:image'],
+  siteName: data?.['og:site_name'],
   displayUrl: parseDisplayUrl(url)
 })
 
 export const SocialPreview = () => {
   const { url, data } = useOgStore()
-  const preview = getPreviewImage(data, url)
+  const preview = getPreviewData(data, url)
+  const hasData = Boolean(url && data)
 
   return (
     <ViewAnimation
@@ -59,59 +69,77 @@ export const SocialPreview = () => {
       <Tabs defaultValue="x">
         <TabsList className="h-10 gap-1">
           {PLATFORMS.map(platform => (
-            <TabsTrigger className="" key={platform.id} value={platform.id}>
+            <TabsTrigger
+              aria-label={platform.label}
+              key={platform.id}
+              value={platform.id}
+            >
               {platform.icon}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value="x">
-          <XPreview
-            description={preview.description}
-            displayUrl={preview.displayUrl}
-            image={preview.image}
-            title={preview.title}
-          />
-        </TabsContent>
-        <TabsContent value="slack">
-          <SlackPreview
-            description={preview.description}
-            image={preview.image}
-            siteName={preview.siteName}
-            title={preview.title}
-          />
-        </TabsContent>
-        <TabsContent value="facebook">
-          <FacebookPreview
-            description={preview.description}
-            displayUrl={preview.displayUrl}
-            image={preview.image}
-            title={preview.title}
-          />
-        </TabsContent>
-        <TabsContent value="linkedin">
-          <LinkedinPreview
-            displayUrl={preview.displayUrl}
-            image={preview.image}
-            title={preview.title}
-          />
-        </TabsContent>
-        <TabsContent value="discord">
-          <DiscordPreview
-            description={preview.description}
-            image={preview.image}
-            siteName={preview.siteName}
-            title={preview.title}
-          />
-        </TabsContent>
-        <TabsContent value="whatsapp">
-          <WhatsappPreview
-            description={preview.description}
-            displayUrl={preview.displayUrl}
-            image={preview.image}
-            title={preview.title}
-          />
-        </TabsContent>
+        {hasData ? (
+          <>
+            <TabsContent value="x">
+              <XPreview
+                description={preview.description}
+                displayUrl={preview.displayUrl}
+                image={preview.image}
+                title={preview.title}
+              />
+            </TabsContent>
+            <TabsContent value="slack">
+              <SlackPreview
+                description={preview.description}
+                image={preview.image}
+                siteName={preview.siteName}
+                title={preview.title}
+              />
+            </TabsContent>
+            <TabsContent value="facebook">
+              <FacebookPreview
+                description={preview.description}
+                displayUrl={preview.displayUrl}
+                image={preview.image}
+                title={preview.title}
+              />
+            </TabsContent>
+            <TabsContent value="linkedin">
+              <LinkedinPreview
+                displayUrl={preview.displayUrl}
+                image={preview.image}
+                title={preview.title}
+              />
+            </TabsContent>
+            <TabsContent value="discord">
+              <DiscordPreview
+                description={preview.description}
+                image={preview.image}
+                siteName={preview.siteName}
+                title={preview.title}
+              />
+            </TabsContent>
+            <TabsContent value="whatsapp">
+              <WhatsappPreview
+                description={preview.description}
+                displayUrl={preview.displayUrl}
+                image={preview.image}
+                title={preview.title}
+              />
+            </TabsContent>
+          </>
+        ) : (
+          <Empty className="mt-4 flex-1 border">
+            <EmptyHeader>
+              <EmptyTitle>No preview available</EmptyTitle>
+              <EmptyDescription>
+                Enter a URL above to see how your link will appear on social
+                media.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        )}
       </Tabs>
     </ViewAnimation>
   )

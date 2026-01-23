@@ -12,14 +12,14 @@ export const metadata: Metadata = createMetadata(
 )
 
 const NotFound = () => (
-  <Section className="flex h-screen items-center justify-center">
+  <Section className="flex h-dvh items-center justify-center">
     <div className="flex flex-col items-center justify-center gap-6">
       <ViewAnimation
         delay={0.8}
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
-        <h1 className="text-center font-bold text-5xl md:text-7xl">
+        <h1 className="text-balance text-center font-bold text-5xl md:text-7xl">
           Not Found
         </h1>
       </ViewAnimation>

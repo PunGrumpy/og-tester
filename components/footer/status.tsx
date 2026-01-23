@@ -1,7 +1,7 @@
 import 'server-only'
 import { env } from '@/lib/env'
 
-type BetterStackResponse = {
+interface BetterStackResponse {
   data: {
     id: string
     type: string
@@ -105,20 +105,21 @@ export const Status = async () => {
 
   return (
     <a
+      aria-label={`System status: ${statusLabel}`}
       className="flex items-center gap-2 text-sm"
       href={env.BETTERSTACK_URL}
       rel="noreferrer"
       target="_blank"
     >
-      <span className="relative flex size-2">
+      <span aria-hidden="true" className="relative flex size-2">
         <span
-          className={`absolute inline-flex size-full animate-ping rounded-full opacity-75 ${statusColor}`}
+          className={`absolute inline-flex size-full animate-ping rounded-full opacity-75 motion-reduce:animate-none ${statusColor}`}
         />
         <span
           className={`relative inline-flex size-2 rounded-full ${statusColor}`}
         />
       </span>
-      <span className="text-muted-foreground transition-colors duration-500 hover:text-foreground">
+      <span className="text-muted-foreground hover:text-foreground">
         {statusLabel}
       </span>
     </a>
