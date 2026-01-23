@@ -26,7 +26,7 @@ export const MetaTagsTable = () => {
         <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b bg-transparent p-0">
           {CATEGORIES.map(cat => (
             <TabsTrigger
-              className="relative -mb-px rounded-none border-transparent px-4 py-3 data-[state=active]:border-border data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="relative rounded-none border-transparent border-y-0 px-4 py-3 first:border-l-0 last:border-r-0 data-[state=active]:border-border! data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               key={cat.id}
               value={cat.id}
             >
