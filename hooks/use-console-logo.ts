@@ -1,8 +1,12 @@
-import { useEffect } from 'react'
+let logged = false
 
 export const useConsoleLogo = () => {
-  useEffect(() => {
-    console.log(`
+  if (logged || typeof window === 'undefined') {
+    return
+  }
+
+  logged = true
+  console.log(`
 ██████╗ ██╗   ██╗███╗   ██╗
 ██╔══██╗██║   ██║████╗  ██║
 ██████╔╝██║   ██║██╔██╗ ██║
@@ -10,5 +14,4 @@ export const useConsoleLogo = () => {
 ██║     ╚██████╔╝██║ ╚████║
 ╚═╝      ╚═════╝ ╚═╝  ╚═══╝
 Developing and building that shit.`)
-  }, [])
 }
