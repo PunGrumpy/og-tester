@@ -3,6 +3,7 @@
 import { ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import type { ReactElement } from 'react'
+import { useMemo } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { OgData } from '@/lib/schemas/og'
 
@@ -203,7 +204,7 @@ export const TagTable = ({
   category,
   isLoading
 }: TagTableProps): ReactElement => {
-  const getTags = (): MetaTagRow[] => {
+  const tags = useMemo(() => {
     switch (category) {
       case 'general':
         return getGeneralTags(data)
@@ -214,9 +215,7 @@ export const TagTable = ({
       default:
         return []
     }
-  }
-
-  const tags = getTags()
+  }, [category, data])
 
   return (
     <div className="m-4 overflow-hidden rounded-lg border border-border">
