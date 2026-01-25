@@ -1,8 +1,15 @@
-import { Databuddy } from '@databuddy/sdk/react'
+'use client'
+
+import dynamic from 'next/dynamic'
 import type { ReactNode } from 'react'
 import { env } from '@/lib/env'
 
-type AnalyticsProviderProps = {
+const Databuddy = dynamic(
+  () => import('@databuddy/sdk/react').then(mod => mod.Databuddy),
+  { ssr: false }
+)
+
+interface AnalyticsProviderProps {
   children: ReactNode
 }
 

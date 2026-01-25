@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'motion/react'
-import type { ReactNode } from 'react'
+import { memo, type ReactNode, useMemo } from 'react'
 
 interface ViewAnimationProps {
   initial?: Record<string, string | number>
@@ -13,15 +13,29 @@ interface ViewAnimationProps {
   children: ReactNode
 }
 
-export const ViewAnimation = ({
+const VIEWPORT_CONFIG = { once: true, amount: 0.5 }
+
+export const ViewAnimation = memo(function ViewAnimation({
   initial,
   whileInView,
   animate,
   delay,
   className,
   children
-}: ViewAnimationProps) => {
+}: ViewAnimationProps) {
   const shouldReduceMotion = useReducedMotion()
+
+  const initialProps = useMemo(
+    () => ({ filter: 'blur(4px)', ...initial }),
+    [initial]
+  )
+
+  const whileInViewProps = useMemo(
+    () => ({ filter: 'blur(0px)', ...whileInView }),
+    [whileInView]
+  )
+
+  const transition = useMemo(() => ({ delay, duration: 0.8 }), [delay])
 
   if (shouldReduceMotion) {
     return children
@@ -31,12 +45,12 @@ export const ViewAnimation = ({
     <motion.div
       animate={animate}
       className={className}
-      initial={{ filter: 'blur(4px)', ...initial }}
-      transition={{ delay, duration: 0.8 }}
-      viewport={{ once: true, amount: 0.5 }}
-      whileInView={{ filter: 'blur(0px)', ...whileInView }}
+      initial={initialProps}
+      transition={transition}
+      viewport={VIEWPORT_CONFIG}
+      whileInView={whileInViewProps}
     >
       {children}
     </motion.div>
   )
-}
+})

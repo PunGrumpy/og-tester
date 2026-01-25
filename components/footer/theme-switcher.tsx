@@ -6,6 +6,12 @@ import { useTheme } from 'next-themes'
 import { useSyncExternalStore } from 'react'
 import { cn } from '@/lib/utils'
 
+const THEMES = [
+  { key: 'system', icon: Monitor, label: 'System theme' },
+  { key: 'light', icon: Sun, label: 'Light theme' },
+  { key: 'dark', icon: Moon, label: 'Dark theme' }
+] as const
+
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme()
   const isMounted = useSyncExternalStore(
@@ -18,30 +24,12 @@ export const ThemeSwitcher = () => {
     return null
   }
 
-  const themes = [
-    {
-      key: 'system',
-      icon: Monitor,
-      label: 'System theme'
-    },
-    {
-      key: 'light',
-      icon: Sun,
-      label: 'Light theme'
-    },
-    {
-      key: 'dark',
-      icon: Moon,
-      label: 'Dark theme'
-    }
-  ]
-
   return (
     <fieldset
       aria-label="Theme selection"
       className="relative flex h-8 items-center rounded-full border-none bg-background/30 p-1 ring-1 ring-border"
     >
-      {themes.map(({ key, icon: Icon, label }) => {
+      {THEMES.map(({ key, icon: Icon, label }) => {
         const isActive = theme === key
 
         return (
