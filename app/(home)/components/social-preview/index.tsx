@@ -1,6 +1,7 @@
 'use client'
 
 import { TabsContent } from '@radix-ui/react-tabs'
+import { useMemo } from 'react'
 import { Icons } from '@/components/icons'
 import {
   Empty,
@@ -20,13 +21,13 @@ import { WhatsappPreview } from './whatsapp-preview'
 import { XPreview } from './x-preview'
 
 const PLATFORMS = [
-  { id: 'x', icon: <Icons.x />, label: 'Twitter/X' },
-  { id: 'slack', icon: <Icons.slack />, label: 'Slack' },
-  { id: 'facebook', icon: <Icons.facebook />, label: 'Facebook' },
-  { id: 'linkedin', icon: <Icons.linkedin />, label: 'LinkedIn' },
-  { id: 'discord', icon: <Icons.discord />, label: 'Discord' },
-  { id: 'whatsapp', icon: <Icons.whatsapp />, label: 'WhatsApp' }
-]
+  { id: 'x', icon: Icons.x, label: 'Twitter/X' },
+  { id: 'slack', icon: Icons.slack, label: 'Slack' },
+  { id: 'facebook', icon: Icons.facebook, label: 'Facebook' },
+  { id: 'linkedin', icon: Icons.linkedin, label: 'LinkedIn' },
+  { id: 'discord', icon: Icons.discord, label: 'Discord' },
+  { id: 'whatsapp', icon: Icons.whatsapp, label: 'WhatsApp' }
+] as const
 
 const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//
 const WWW_REGEX = /^www\./
@@ -56,7 +57,7 @@ const getPreviewData = (data: OgData | null, url: string) => ({
 
 export const SocialPreview = () => {
   const { url, data } = useOgStore()
-  const preview = getPreviewData(data, url)
+  const preview = useMemo(() => getPreviewData(data, url), [data, url])
   const hasData = Boolean(url && data)
 
   return (
@@ -68,13 +69,9 @@ export const SocialPreview = () => {
     >
       <Tabs defaultValue="x">
         <TabsList className="h-10 gap-1">
-          {PLATFORMS.map(platform => (
-            <TabsTrigger
-              aria-label={platform.label}
-              key={platform.id}
-              value={platform.id}
-            >
-              {platform.icon}
+          {PLATFORMS.map(({ id, icon: Icon, label }) => (
+            <TabsTrigger aria-label={label} key={id} value={id}>
+              <Icon />
             </TabsTrigger>
           ))}
         </TabsList>
