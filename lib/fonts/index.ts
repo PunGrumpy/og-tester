@@ -4,11 +4,11 @@ import { cn } from '../utils'
 
 const GeistSans = Geist({
   subsets: ['latin'],
-  variable: '--font-geist-sans'
+  variable: '--font-sans'
 })
 const MartianMono = localFont({
   src: './MartianMono-Regular.woff2',
-  variable: '--font-martian-mono'
+  variable: '--font-mono'
 })
 
 export const fonts = cn(
