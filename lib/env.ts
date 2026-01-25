@@ -5,6 +5,8 @@ import { z } from 'zod'
 export const env = createEnv({
   extends: [vercel()],
   client: {
+    NEXT_PUBLIC_APPWRITE_ENDPOINT: z.url(),
+    NEXT_PUBLIC_APPWRITE_PROJECT_ID: z.string(),
     NEXT_PUBLIC_DATABUDDY_CLIENT_ID: z.string()
   },
   server: {
@@ -14,6 +16,9 @@ export const env = createEnv({
     BETTERSTACK_URL: z.url().optional()
   },
   runtimeEnv: {
+    NEXT_PUBLIC_APPWRITE_PROJECT_ID:
+      process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
+    NEXT_PUBLIC_APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT,
     NEXT_PUBLIC_DATABUDDY_CLIENT_ID:
       process.env.NEXT_PUBLIC_DATABUDDY_CLIENT_ID,
     UNKEY_ROOT_KEY: process.env.UNKEY_ROOT_KEY,
