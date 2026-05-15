@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { memo, type ReactNode, useMemo } from 'react'
 
 interface ViewAnimationProps {
@@ -42,7 +42,7 @@ export const ViewAnimation = memo(function ViewAnimation({
   }
 
   return (
-    <motion.div
+    <m.div
       animate={animate}
       className={className}
       initial={initialProps}
@@ -51,6 +51,6 @@ export const ViewAnimation = memo(function ViewAnimation({
       whileInView={whileInViewProps}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 })

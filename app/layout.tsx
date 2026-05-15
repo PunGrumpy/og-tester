@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { MotionProvider } from '@/components/motion-provider'
 import { fonts } from '@/lib/fonts'
 import { createMetadata } from '@/lib/metadata'
 import { AnalyticsProvider } from '@/providers/analytics'
@@ -22,18 +23,20 @@ export default function RootLayout({
     <html className={fonts} lang="en" suppressHydrationWarning>
       <body>
         <AnalyticsProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            disableTransitionOnChange
-            enableSystem
-          >
-            <main className="relative divide-y">
-              <Header />
-              {children}
-              <Footer />
-            </main>
-          </ThemeProvider>
+          <MotionProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              disableTransitionOnChange
+              enableSystem
+            >
+              <main className="relative divide-y">
+                <Header />
+                {children}
+                <Footer />
+              </main>
+            </ThemeProvider>
+          </MotionProvider>
 
           <HooksProvider />
         </AnalyticsProvider>

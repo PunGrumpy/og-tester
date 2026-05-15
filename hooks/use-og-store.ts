@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { OgData } from '@/lib/schemas/og'
 
-type OgStore = {
+interface OgStore {
   url: string
   data: OgData
   setResult: (url: string, data: OgData) => void

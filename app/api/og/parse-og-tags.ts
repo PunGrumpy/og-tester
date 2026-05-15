@@ -26,6 +26,8 @@ const THEME_COLOR_REGEX =
 const THEME_COLOR_REGEX_ALT =
   /<meta[^>]*content=["']([^"']+)["'][^>]*name=["']theme-color["'][^>]*(?:media=["']([^"']+)["'])?[^>]*>/gi
 
+const THEME_MEDIA_REGEX = /\b(dark|light)\b/
+
 const CANONICAL_LINK_REGEX =
   /<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i
 
@@ -210,10 +212,14 @@ const applyThemeColors = (html: string, result: OgData): void => {
   while (themeMatch !== null) {
     const color = themeMatch[1]
     const media = themeMatch[2]
+    const theme =
+      typeof media === 'string'
+        ? media.match(THEME_MEDIA_REGEX)?.[1]
+        : undefined
 
-    if (media?.includes('dark')) {
+    if (theme === 'dark') {
       result.themeColorDark = color
-    } else if (media?.includes('light')) {
+    } else if (theme === 'light') {
       result.themeColorLight = color
     } else {
       result.themeColor = color
@@ -226,10 +232,14 @@ const applyThemeColors = (html: string, result: OgData): void => {
   while (themeMatch !== null) {
     const color = themeMatch[1]
     const media = themeMatch[2]
+    const theme =
+      typeof media === 'string'
+        ? media.match(THEME_MEDIA_REGEX)?.[1]
+        : undefined
 
-    if (media?.includes('dark')) {
+    if (theme === 'dark') {
       result.themeColorDark = color
-    } else if (media?.includes('light')) {
+    } else if (theme === 'light') {
       result.themeColorLight = color
     } else {
       result.themeColor = color
@@ -263,7 +273,7 @@ const applyIcons = (
   result: OgData,
   baseOrigin?: string
 ): void => {
-  type FaviconData = {
+  interface FaviconData {
     rel: string
     href: string
     type?: string

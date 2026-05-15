@@ -23,8 +23,8 @@ export const IconsPanel = ({
   if (isLoading) {
     return (
       <div className="flex flex-wrap gap-4">
-        {[1, 2, 3].map(i => (
-          <div className="flex items-center gap-2" key={i}>
+        {['favicon', 'touch-icon', 'apple-icon'].map(label => (
+          <div className="flex items-center gap-2" key={label}>
             <Skeleton className="size-10 rounded" />
             <div className="space-y-1">
               <Skeleton className="h-3 w-16" />
@@ -53,10 +53,10 @@ export const IconsPanel = ({
 
   return (
     <div className="m-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {favicons.map((icon, index) => (
+      {favicons.map(icon => (
         <div
           className="flex items-center gap-3 rounded-lg border px-3 py-2"
-          key={index.toString()}
+          key={`${icon.rel}-${icon.href}-${icon.sizes ?? ''}`}
         >
           <div className="flex size-8 items-center justify-center overflow-hidden rounded border bg-muted">
             <Image

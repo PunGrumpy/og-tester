@@ -19,7 +19,7 @@ const NotFound = () => (
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
-        <h1 className="text-balance text-center font-bold text-5xl md:text-7xl">
+        <h1 className="text-balance text-center font-semibold text-5xl md:text-7xl">
           Not Found
         </h1>
       </ViewAnimation>

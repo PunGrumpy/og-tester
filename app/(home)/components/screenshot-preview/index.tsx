@@ -4,7 +4,7 @@ import { Output, Theme } from 'appwrite'
 import { ImageOff } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Empty,
   EmptyDescription,
@@ -21,9 +21,11 @@ import { PoweredBy } from './powered-by'
 
 export const ScreenshotPreview = () => {
   const { url } = useOgStore()
-  const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [fullpage, setFullpage] = useState(false)
+  const [loadedScreenshotUrl, setLoadedScreenshotUrl] = useState<string | null>(
+    null
+  )
   const { resolvedTheme: currentTheme } = useTheme()
   const [theme, setTheme] = useState<Theme>(
     currentTheme === 'dark' ? Theme.Dark : Theme.Light
@@ -43,21 +45,21 @@ export const ScreenshotPreview = () => {
   }, [url, fullpage, theme])
 
   const handleLoad = useCallback(() => {
-    setIsLoading(false)
+    if (screenshotUrl) {
+      setLoadedScreenshotUrl(screenshotUrl)
+    }
     setHasError(false)
-  }, [])
+  }, [screenshotUrl])
 
   const handleError = useCallback(() => {
-    setIsLoading(false)
     setHasError(true)
   }, [])
 
-  useEffect(() => {
-    if (screenshotUrl) {
-      setIsLoading(true)
-      setHasError(false)
-    }
-  }, [screenshotUrl])
+  const isError =
+    hasError && screenshotUrl && loadedScreenshotUrl === screenshotUrl
+  const isLoading = Boolean(
+    screenshotUrl && loadedScreenshotUrl !== screenshotUrl && !isError
+  )
 
   if (!url) {
     return (
@@ -132,7 +134,7 @@ export const ScreenshotPreview = () => {
           </div>
         )}
 
-        {hasError && (
+        {isError && (
           <div className="flex size-full min-h-[300px] items-center justify-center">
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
               <ImageOff className="size-8" />
@@ -141,7 +143,7 @@ export const ScreenshotPreview = () => {
           </div>
         )}
 
-        {!hasError && screenshotUrl && (
+        {!isError && screenshotUrl && (
           <Image
             alt={`Screenshot of ${url}`}
             className="h-auto w-full object-contain"

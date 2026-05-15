@@ -14,6 +14,7 @@ export const GET = withUnkey(
     }
 
     const response = await fetch(url, {
+      cache: 'no-store',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; OGTester/1.0)'
       }

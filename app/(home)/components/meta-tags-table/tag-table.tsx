@@ -84,10 +84,10 @@ const getGeneralTags = (data: OgData | null): MetaTagRow[] => {
       key: 'theme color',
       value: (
         <div className="space-y-1">
-          {colors.map((color, i) => {
+          {colors.map(color => {
             const colorValue = color.split(' ')[0]
             return (
-              <div className="flex items-center gap-2" key={i.toString()}>
+              <div className="flex items-center gap-2" key={color}>
                 <span
                   className="size-4 shrink-0 rounded border"
                   style={{ backgroundColor: colorValue }}
@@ -227,7 +227,7 @@ export const TagTable = ({
           </tr>
         </thead>
         <tbody className="divide-y rounded-lg">
-          {tags.map(({ key, value, isImage, imageUrl }, index) => {
+          {tags.map(({ key, value, isImage, imageUrl }) => {
             let content: React.ReactNode
 
             if (isLoading) {
@@ -302,7 +302,7 @@ export const TagTable = ({
             }
 
             return (
-              <tr className="divide-x" key={`${key}-${index.toString()}`}>
+              <tr className="divide-x" key={`${category}-${key}`}>
                 <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
                   {key}
                 </td>
