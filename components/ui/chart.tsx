@@ -185,9 +185,7 @@ function ChartTooltipContent({
 
           items.push(
             <div
-              key={`${item.dataKey || item.name || "item"}-${String(
-                item.value ?? item.color ?? ""
-              )}`}
+              key={String(item.dataKey ?? index)}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center"
@@ -278,7 +276,7 @@ function ChartLegendContent({
         className
       )}
     >
-      {payload.reduce<React.ReactNode[]>((items, item) => {
+      {payload.reduce<React.ReactNode[]>((items, item, index) => {
         if (item.type === "none") {
           return items
         }
@@ -286,12 +284,12 @@ function ChartLegendContent({
         const key = `${nameKey || item.dataKey || "value"}`
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
-        items.push(
-          <div
-            key={String(item.value ?? item.dataKey ?? key)}
-            className={cn(
-              "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3"
-            )}
+          items.push(
+            <div
+              key={String(item.dataKey ?? index)}
+              className={cn(
+                "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3"
+              )}
           >
             {itemConfig?.icon && !hideIcon ? (
               <itemConfig.icon />
