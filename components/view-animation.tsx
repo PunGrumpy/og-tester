@@ -1,6 +1,6 @@
 'use client'
 
-import { domAnimation, LazyMotion, m, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { memo, type ReactNode, useMemo } from 'react'
 
 interface ViewAnimationProps {
@@ -42,17 +42,15 @@ export const ViewAnimation = memo(function ViewAnimation({
   }
 
   return (
-    <LazyMotion features={domAnimation}>
-      <m.div
-        animate={animate}
-        className={className}
-        initial={initialProps}
-        transition={transition}
-        viewport={VIEWPORT_CONFIG}
-        whileInView={whileInViewProps}
-      >
-        {children}
-      </m.div>
-    </LazyMotion>
+    <m.div
+      animate={animate}
+      className={className}
+      initial={initialProps}
+      transition={transition}
+      viewport={VIEWPORT_CONFIG}
+      whileInView={whileInViewProps}
+    >
+      {children}
+    </m.div>
   )
 })
