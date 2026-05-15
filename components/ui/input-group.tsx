@@ -66,6 +66,7 @@ function InputGroupAddon({
     <div
       data-slot="input-group-addon"
       data-align={align}
+      role="button"
       tabIndex={0}
       className={cn(inputGroupAddonVariants({ align }), className)}
       onClick={(e) => {

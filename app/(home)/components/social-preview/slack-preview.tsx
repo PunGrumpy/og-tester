@@ -14,7 +14,7 @@ export const SlackPreview = ({
   title,
   description
 }: SlackPreviewProps) => (
-  <div className="overflow-hidden rounded border-l-2 border-l-[#36C5F0] bg-card p-3">
+  <div className="overflow-hidden rounded border border-border/50 bg-card p-3 shadow-[inset_3px_0_0_0_#36C5F0]">
     <div className="flex gap-3">
       <div className="flex-1 space-y-1">
         {siteName ? (
