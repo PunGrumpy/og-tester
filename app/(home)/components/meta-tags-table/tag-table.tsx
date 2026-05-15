@@ -302,7 +302,7 @@ export const TagTable = ({
             }
 
             return (
-              <tr className="divide-x" key={`${key}-${String(value)}`}>
+              <tr className="divide-x" key={`${category}-${key}`}>
                 <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
                   {key}
                 </td>
