@@ -14,7 +14,7 @@ export const DiscordPreview = ({
   title,
   description
 }: DiscordPreviewProps) => (
-  <div className="max-w-md overflow-hidden rounded border-l-4 border-l-[#5865F2] bg-[#2f3136] p-4">
+  <div className="max-w-md overflow-hidden rounded border-l-2 border-l-[#5865F2] bg-[#2f3136] p-4">
     <div className="space-y-2">
       {siteName ? (
         <p className="font-medium text-[#00aff4] text-xs">{siteName}</p>

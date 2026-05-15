@@ -137,7 +137,7 @@ export const InputForm = () => {
                   {isExecuting ? (
                     <>
                       <Spinner className="size-4" />
-                      <span className="sm:hidden">Testing...</span>
+                      <span className="sm:hidden">Testing…</span>
                     </>
                   ) : (
                     <>

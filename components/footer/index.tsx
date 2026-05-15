@@ -27,7 +27,7 @@ export const Footer = () => (
           whileInView={{ opacity: 1, translateY: 0 }}
         >
           <p className="whitespace-nowrap text-muted-foreground text-sm">
-            © {new Date().getFullYear()}{' '}
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{' '}
             <Link
               className="transition-colors hover:text-primary hover:underline"
               href="https://pungrumpy.com"

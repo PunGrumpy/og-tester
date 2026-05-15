@@ -14,17 +14,17 @@ export const SlackPreview = ({
   title,
   description
 }: SlackPreviewProps) => (
-  <div className="overflow-hidden rounded border-l-4 border-l-[#36C5F0] bg-card p-3">
+  <div className="overflow-hidden rounded border-l-2 border-l-[#36C5F0] bg-card p-3">
     <div className="flex gap-3">
       <div className="flex-1 space-y-1">
         {siteName ? (
           <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground text-sm">
+            <span className="font-medium text-foreground text-sm">
               {siteName}
             </span>
           </div>
         ) : null}
-        <h3 className="truncate font-bold text-[#1264A3]">{title}</h3>
+        <h3 className="truncate font-semibold text-[#1264A3]">{title}</h3>
         <p className="line-clamp-2 text-muted-foreground text-sm">
           {description || 'No description'}
         </p>

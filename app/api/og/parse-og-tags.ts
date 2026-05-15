@@ -211,9 +211,9 @@ const applyThemeColors = (html: string, result: OgData): void => {
     const color = themeMatch[1]
     const media = themeMatch[2]
 
-    if (media?.includes('dark')) {
+    if (typeof media === 'string' && media.indexOf('dark') !== -1) {
       result.themeColorDark = color
-    } else if (media?.includes('light')) {
+    } else if (typeof media === 'string' && media.indexOf('light') !== -1) {
       result.themeColorLight = color
     } else {
       result.themeColor = color
@@ -227,9 +227,9 @@ const applyThemeColors = (html: string, result: OgData): void => {
     const color = themeMatch[1]
     const media = themeMatch[2]
 
-    if (media?.includes('dark')) {
+    if (typeof media === 'string' && media.indexOf('dark') !== -1) {
       result.themeColorDark = color
-    } else if (media?.includes('light')) {
+    } else if (typeof media === 'string' && media.indexOf('light') !== -1) {
       result.themeColorLight = color
     } else {
       result.themeColor = color
@@ -263,7 +263,7 @@ const applyIcons = (
   result: OgData,
   baseOrigin?: string
 ): void => {
-  type FaviconData = {
+  interface FaviconData {
     rel: string
     href: string
     type?: string

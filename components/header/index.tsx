@@ -37,7 +37,7 @@ export const Header = () => {
         >
           <Link
             aria-label="Home"
-            className="flex items-center space-x-2"
+            className="flex items-center gap-x-2"
             href="/"
           >
             <Icons.logo className="size-8" />
