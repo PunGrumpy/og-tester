@@ -55,9 +55,8 @@ export const ScreenshotPreview = () => {
     setHasError(true)
   }, [])
 
-  const isError = Boolean(
+  const isError =
     hasError && screenshotUrl && loadedScreenshotUrl === screenshotUrl
-  )
   const isLoading = Boolean(
     screenshotUrl && loadedScreenshotUrl !== screenshotUrl && !isError
   )

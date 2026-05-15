@@ -185,7 +185,7 @@ function ChartTooltipContent({
 
           items.push(
             <div
-              key={String(item.dataKey ?? `${item.value}-${item.color}`)}
+              key={String(item.dataKey ?? `${item.value}-${item.color}-${index}`)}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center"
@@ -286,7 +286,7 @@ function ChartLegendContent({
 
           items.push(
             <div
-              key={String(item.dataKey ?? `${item.value}-${item.color}`)}
+              key={String(item.dataKey ?? `${item.value}-${item.color}-${index}`)}
               className={cn(
                 "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3"
               )}
