@@ -4,7 +4,9 @@ import { ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import type { ReactElement } from 'react'
 import { useMemo } from 'react'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useOgStore } from '@/hooks/use-og-store'
 import type { OgData } from '@/lib/schemas/og'
 
 interface TagTableProps {
@@ -15,6 +17,7 @@ interface TagTableProps {
 
 interface MetaTagRow {
   key: string
+  dataKey?: keyof OgData
   value: string | React.ReactNode
   isImage?: boolean
   imageUrl?: string
@@ -22,181 +25,254 @@ interface MetaTagRow {
 
 export type MetaCategory = 'general' | 'openGraph' | 'twitter' | 'icons'
 
+interface FieldDefinition {
+  key: string
+  dataKey: keyof OgData
+  isImage?: boolean
+}
+
+const GENERAL_FIELDS: FieldDefinition[] = [
+  { key: 'title', dataKey: 'title' },
+  { key: 'description', dataKey: 'description' },
+  { key: 'author', dataKey: 'author' },
+  { key: 'viewport', dataKey: 'viewport' },
+  { key: 'canonical url', dataKey: 'canonical' },
+  { key: 'robots', dataKey: 'robots' },
+  { key: 'application name', dataKey: 'applicationName' },
+  { key: 'keywords', dataKey: 'keywords' },
+  { key: 'generator', dataKey: 'generator' },
+  { key: 'theme color', dataKey: 'themeColor' }
+]
+
+const OPEN_GRAPH_FIELDS: FieldDefinition[] = [
+  { key: 'og:title', dataKey: 'og:title' },
+  { key: 'og:description', dataKey: 'og:description' },
+  { key: 'og:image', dataKey: 'og:image', isImage: true },
+  { key: 'og:url', dataKey: 'og:url' },
+  { key: 'og:type', dataKey: 'og:type' },
+  { key: 'og:site_name', dataKey: 'og:site_name' },
+  { key: 'og:locale', dataKey: 'og:locale' },
+  { key: 'og:image:width', dataKey: 'og:image:width' },
+  { key: 'og:image:height', dataKey: 'og:image:height' }
+]
+
+const TWITTER_FIELDS: FieldDefinition[] = [
+  { key: 'twitter:card', dataKey: 'twitter:card' },
+  { key: 'twitter:title', dataKey: 'twitter:title' },
+  { key: 'twitter:description', dataKey: 'twitter:description' },
+  { key: 'twitter:image', dataKey: 'twitter:image', isImage: true },
+  { key: 'twitter:site', dataKey: 'twitter:site' },
+  { key: 'twitter:creator', dataKey: 'twitter:creator' }
+]
+
 const isUrl = (url: string): boolean =>
   url.startsWith('http://') || url.startsWith('https://')
 
-const getGeneralTags = (data: OgData | null): MetaTagRow[] => {
-  const defaultTags = [
-    { key: 'title', value: '—' },
-    { key: 'description', value: '—' },
-    { key: 'author', value: '—' },
-    { key: 'viewport', value: '—' },
-    { key: 'canonical url', value: '—' },
-    { key: 'robots', value: '—' }
-  ]
+const renderThemeColorRow = (data: OgData): MetaTagRow => {
+  const colors: string[] = []
+  if (data.themeColorLight) {
+    colors.push(`${data.themeColorLight} (light)`)
+  }
+  if (data.themeColorDark) {
+    colors.push(`${data.themeColorDark} (dark)`)
+  }
+  if (data.themeColor && !data.themeColorLight && !data.themeColorDark) {
+    colors.push(data.themeColor)
+  }
+
+  return {
+    key: 'theme color',
+    value: (
+      <div className="space-y-1">
+        {colors.map(color => {
+          const colorValue = color.split(' ')[0]
+          return (
+            <div className="flex items-center gap-2" key={color}>
+              <span
+                className="size-4 shrink-0 rounded border"
+                style={{ backgroundColor: colorValue }}
+              />
+              <span>{color}</span>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+}
+
+const buildTags = (
+  fields: FieldDefinition[],
+  data: OgData | null,
+  isEditing: boolean,
+  isGeneral = false
+): MetaTagRow[] => {
+  if (isEditing) {
+    return fields.map(f => ({
+      key: f.key,
+      dataKey: f.dataKey,
+      value: (data?.[f.dataKey] as string) || '',
+      isImage: f.isImage,
+      imageUrl:
+        f.isImage && data?.[f.dataKey] ? (data[f.dataKey] as string) : undefined
+    }))
+  }
+
+  const defaultTags = fields.slice(0, 6).map(f => ({
+    key: f.key,
+    value: '—',
+    isImage: f.isImage
+  }))
 
   if (!data) {
     return defaultTags
   }
 
   const rows: MetaTagRow[] = []
-  if (data.title) {
-    rows.push({ key: 'title', value: data.title })
-  }
-  if (data.description) {
-    rows.push({ key: 'description', value: data.description })
-  }
-  if (data.author) {
-    rows.push({ key: 'author', value: data.author })
-  }
-  if (data.viewport) {
-    rows.push({ key: 'viewport', value: data.viewport })
-  }
-  if (data.canonical) {
-    rows.push({ key: 'canonical url', value: data.canonical })
-  }
-  if (data.robots) {
-    rows.push({ key: 'robots', value: data.robots })
-  }
-  if (data.applicationName) {
-    rows.push({ key: 'application name', value: data.applicationName })
-  }
-  if (data.keywords) {
-    rows.push({ key: 'keywords', value: data.keywords })
-  }
-  if (data.generator) {
-    rows.push({ key: 'generator', value: data.generator })
-  }
 
-  if (data.themeColor || data.themeColorLight || data.themeColorDark) {
-    const colors: string[] = []
-    if (data.themeColorLight) {
-      colors.push(`${data.themeColorLight} (light)`)
-    }
-    if (data.themeColorDark) {
-      colors.push(`${data.themeColorDark} (dark)`)
-    }
-    if (data.themeColor && !data.themeColorLight && !data.themeColorDark) {
-      colors.push(data.themeColor)
+  for (const f of fields) {
+    if (
+      isGeneral &&
+      f.key === 'theme color' &&
+      (data.themeColor || data.themeColorLight || data.themeColorDark)
+    ) {
+      rows.push(renderThemeColorRow(data))
+      continue
     }
 
-    rows.push({
-      key: 'theme color',
-      value: (
-        <div className="space-y-1">
-          {colors.map(color => {
-            const colorValue = color.split(' ')[0]
-            return (
-              <div className="flex items-center gap-2" key={color}>
-                <span
-                  className="size-4 shrink-0 rounded border"
-                  style={{ backgroundColor: colorValue }}
-                />
-                <span>{color}</span>
-              </div>
-            )
-          })}
+    const val = data[f.dataKey]
+    if (val) {
+      rows.push({
+        key: f.key,
+        value: val as string,
+        isImage: f.isImage,
+        imageUrl: f.isImage ? (val as string) : undefined
+      })
+    }
+  }
+
+  return rows.length > 0 ? rows : defaultTags
+}
+
+interface TagRowProps {
+  row: MetaTagRow
+  isLoading?: boolean
+  isEditing: boolean
+  updateTag: (key: keyof OgData, value: string) => void
+}
+
+const TagRow = ({
+  row,
+  isLoading,
+  isEditing,
+  updateTag
+}: TagRowProps): ReactElement => {
+  const { key, dataKey, value, isImage, imageUrl } = row
+  let content: React.ReactNode
+
+  if (isLoading) {
+    content = <Skeleton className="h-4 w-3/4" />
+  } else if (isEditing && dataKey) {
+    content = (
+      <div className="space-y-2">
+        <Input
+          className="h-8 text-sm"
+          onChange={e => updateTag(dataKey, e.target.value)}
+          value={typeof value === 'string' ? value : ''}
+        />
+        {isImage && imageUrl && (
+          <div className="mt-2 flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+            <Image
+              alt="Preview"
+              className="h-full w-full object-cover"
+              height={96}
+              onError={e => {
+                const parent = e.currentTarget.parentElement
+                if (parent) {
+                  parent.innerHTML =
+                    '<span class="text-muted-foreground text-xs">Failed</span>'
+                }
+              }}
+              src={imageUrl}
+              width={96}
+            />
+          </div>
+        )}
+      </div>
+    )
+  } else if (isImage) {
+    if (imageUrl) {
+      let linkLabel = imageUrl
+      if (typeof value === 'string' && value.length > 0) {
+        linkLabel = value
+      }
+
+      content = (
+        <div className="space-y-2">
+          <div className="flex items-start gap-3">
+            <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+              <Image
+                alt={linkLabel}
+                className="h-full w-full object-cover"
+                height={96}
+                onError={e => {
+                  const parent = e.currentTarget.parentElement
+                  if (parent) {
+                    parent.innerHTML =
+                      '<span class="text-muted-foreground text-xs">Failed</span>'
+                  }
+                }}
+                src={imageUrl}
+                width={96}
+              />
+            </div>
+            <a
+              className="inline-flex items-center gap-1 break-all text-primary hover:underline"
+              href={imageUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {linkLabel}
+              <ExternalLink aria-hidden="true" className="size-3 shrink-0" />
+              <span className="sr-only">(opens in new tab)</span>
+            </a>
+          </div>
         </div>
       )
-    })
+    } else {
+      content = value
+    }
+  } else if (typeof value === 'string') {
+    if (isUrl(value)) {
+      content = (
+        <a
+          className="inline-flex items-center gap-1 text-primary hover:underline"
+          href={value}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {value}
+          <ExternalLink aria-hidden="true" className="size-3 shrink-0" />
+          <span className="sr-only">(opens in new tab)</span>
+        </a>
+      )
+    } else {
+      content = value
+    }
+  } else {
+    content = value
   }
 
-  return rows.length > 0 ? rows : defaultTags
-}
-
-const getOpenGraphTags = (data: OgData | null): MetaTagRow[] => {
-  const defaultTags = [
-    { key: 'og:title', value: '—' },
-    { key: 'og:description', value: '—' },
-    { key: 'og:image', value: '—', isImage: true },
-    { key: 'og:url', value: '—' },
-    { key: 'og:type', value: '—' },
-    { key: 'og:site_name', value: '—' }
-  ]
-
-  if (!data) {
-    return defaultTags
-  }
-
-  const rows: MetaTagRow[] = []
-  if (data['og:title']) {
-    rows.push({ key: 'og:title', value: data['og:title'] })
-  }
-  if (data['og:description']) {
-    rows.push({ key: 'og:description', value: data['og:description'] })
-  }
-  if (data['og:image']) {
-    rows.push({
-      key: 'og:image',
-      value: data['og:image'],
-      isImage: true,
-      imageUrl: data['og:image']
-    })
-  }
-  if (data['og:url']) {
-    rows.push({ key: 'og:url', value: data['og:url'] })
-  }
-  if (data['og:type']) {
-    rows.push({ key: 'og:type', value: data['og:type'] })
-  }
-  if (data['og:site_name']) {
-    rows.push({ key: 'og:site_name', value: data['og:site_name'] })
-  }
-  if (data['og:locale']) {
-    rows.push({ key: 'og:locale', value: data['og:locale'] })
-  }
-  if (data['og:image:width']) {
-    rows.push({ key: 'og:image:width', value: data['og:image:width'] })
-  }
-  if (data['og:image:height']) {
-    rows.push({ key: 'og:image:height', value: data['og:image:height'] })
-  }
-
-  return rows.length > 0 ? rows : defaultTags
-}
-
-const getTwitterTags = (data: OgData | null): MetaTagRow[] => {
-  const defaultTags = [
-    { key: 'twitter:card', value: '—' },
-    { key: 'twitter:title', value: '—' },
-    { key: 'twitter:description', value: '—' },
-    { key: 'twitter:image', value: '—', isImage: true },
-    { key: 'twitter:site', value: '—' }
-  ]
-
-  if (!data) {
-    return defaultTags
-  }
-
-  const rows: MetaTagRow[] = []
-  if (data['twitter:card']) {
-    rows.push({ key: 'twitter:card', value: data['twitter:card'] })
-  }
-  if (data['twitter:title']) {
-    rows.push({ key: 'twitter:title', value: data['twitter:title'] })
-  }
-  if (data['twitter:description']) {
-    rows.push({
-      key: 'twitter:description',
-      value: data['twitter:description']
-    })
-  }
-  if (data['twitter:image']) {
-    rows.push({
-      key: 'twitter:image',
-      value: data['twitter:image'],
-      isImage: true,
-      imageUrl: data['twitter:image']
-    })
-  }
-  if (data['twitter:site']) {
-    rows.push({ key: 'twitter:site', value: data['twitter:site'] })
-  }
-  if (data['twitter:creator']) {
-    rows.push({ key: 'twitter:creator', value: data['twitter:creator'] })
-  }
-
-  return rows.length > 0 ? rows : defaultTags
+  return (
+    <tr className="divide-x">
+      <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
+        {key}
+      </td>
+      <td className="break-all px-4 py-3 text-muted-foreground text-sm">
+        {content}
+      </td>
+    </tr>
+  )
 }
 
 export const TagTable = ({
@@ -204,18 +280,20 @@ export const TagTable = ({
   category,
   isLoading
 }: TagTableProps): ReactElement => {
+  const { isEditing, updateTag } = useOgStore()
+
   const tags = useMemo(() => {
     switch (category) {
       case 'general':
-        return getGeneralTags(data)
+        return buildTags(GENERAL_FIELDS, data, isEditing, true)
       case 'openGraph':
-        return getOpenGraphTags(data)
+        return buildTags(OPEN_GRAPH_FIELDS, data, isEditing)
       case 'twitter':
-        return getTwitterTags(data)
+        return buildTags(TWITTER_FIELDS, data, isEditing)
       default:
         return []
     }
-  }, [category, data])
+  }, [category, data, isEditing])
 
   return (
     <div className="m-4 overflow-hidden rounded-lg border border-border">
@@ -227,91 +305,15 @@ export const TagTable = ({
           </tr>
         </thead>
         <tbody className="divide-y rounded-lg">
-          {tags.map(({ key, value, isImage, imageUrl }) => {
-            let content: React.ReactNode
-
-            if (isLoading) {
-              content = <Skeleton className="h-4 w-3/4" />
-            } else if (isImage) {
-              if (imageUrl) {
-                let linkLabel = imageUrl
-                if (typeof value === 'string' && value.length > 0) {
-                  linkLabel = value
-                }
-
-                content = (
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
-                        <Image
-                          alt={linkLabel}
-                          className="h-full w-full object-cover"
-                          height={96}
-                          onError={e => {
-                            const parent = e.currentTarget.parentElement
-                            if (parent) {
-                              parent.innerHTML =
-                                '<span class="text-muted-foreground text-xs">Failed</span>'
-                            }
-                          }}
-                          src={imageUrl}
-                          width={96}
-                        />
-                      </div>
-                      <a
-                        className="inline-flex items-center gap-1 break-all text-primary hover:underline"
-                        href={imageUrl}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        {linkLabel}
-                        <ExternalLink
-                          aria-hidden="true"
-                          className="size-3 shrink-0"
-                        />
-                        <span className="sr-only">(opens in new tab)</span>
-                      </a>
-                    </div>
-                  </div>
-                )
-              } else {
-                content = value
-              }
-            } else if (typeof value === 'string') {
-              if (isUrl(value)) {
-                content = (
-                  <a
-                    className="inline-flex items-center gap-1 text-primary hover:underline"
-                    href={value}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    {value}
-                    <ExternalLink
-                      aria-hidden="true"
-                      className="size-3 shrink-0"
-                    />
-                    <span className="sr-only">(opens in new tab)</span>
-                  </a>
-                )
-              } else {
-                content = value
-              }
-            } else {
-              content = value
-            }
-
-            return (
-              <tr className="divide-x" key={`${category}-${key}`}>
-                <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
-                  {key}
-                </td>
-                <td className="break-all px-4 py-3 text-muted-foreground text-sm">
-                  {content}
-                </td>
-              </tr>
-            )
-          })}
+          {tags.map(row => (
+            <TagRow
+              isEditing={isEditing}
+              isLoading={isLoading}
+              key={`${category}-${row.key}`}
+              row={row}
+              updateTag={updateTag}
+            />
+          ))}
         </tbody>
       </table>
     </div>
