@@ -19,6 +19,6 @@
     }
   },
   "files": {
-    "includes": ["!components/ui"]
+    "includes": ["!apps/web/components/ui/"]
   }
 }
