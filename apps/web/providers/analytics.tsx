@@ -1,16 +1,20 @@
-'use client'
+"use client";
 
-import dynamic from 'next/dynamic'
-import type { ReactNode } from 'react'
-import { env } from '@/lib/env'
+import dynamic from "next/dynamic";
+import type { ReactNode } from "react";
+
+import { env } from "@/lib/env";
 
 const Databuddy = dynamic(
-  () => import('@databuddy/sdk/react').then(mod => mod.Databuddy),
+  async () => {
+    const mod = await import("@databuddy/sdk/react");
+    return mod.Databuddy;
+  },
   { ssr: false }
-)
+);
 
 interface AnalyticsProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => (
@@ -18,7 +22,7 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => (
     {children}
     <Databuddy
       clientId={env.NEXT_PUBLIC_DATABUDDY_CLIENT_ID}
-      disabled={process.env.NODE_ENV !== 'production'}
+      disabled={process.env.NODE_ENV !== "production"}
       enableBatching
       trackAttributes
       trackHashChanges
@@ -29,4 +33,4 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => (
       trackWebVitals
     />
   </>
-)
+);

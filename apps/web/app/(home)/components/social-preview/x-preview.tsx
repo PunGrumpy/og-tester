@@ -1,18 +1,18 @@
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
+import { ImageOff } from "lucide-react";
+import Image from "next/image";
 
 interface XPreviewProps {
-  image?: string
-  displayUrl: string
-  title: string
-  description?: string
+  image?: string;
+  displayUrl: string;
+  title: string;
+  description?: string;
 }
 
 export const XPreview = ({
   image,
   displayUrl,
   title,
-  description
+  description,
 }: XPreviewProps) => (
   <div className="overflow-hidden rounded-xl border bg-card">
     <div className="relative aspect-[1.91/1] w-full bg-muted">
@@ -44,4 +44,4 @@ export const XPreview = ({
       ) : null}
     </div>
   </div>
-)
+);

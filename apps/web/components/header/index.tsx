@@ -1,29 +1,31 @@
-'use client'
+"use client";
 
-import { useMotionValueEvent, useScroll } from 'motion/react'
-import Link from 'next/link'
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
-import { Icons } from '../icons'
-import { Section } from '../section'
-import { Button } from '../ui/button'
-import { ViewAnimation } from '../view-animation'
+import { useMotionValueEvent, useScroll } from "motion/react";
+import Link from "next/link";
+import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+
+import { Icons } from "../icons";
+import { Section } from "../section";
+import { Button } from "../ui/button";
+import { ViewAnimation } from "../view-animation";
 
 export const Header = () => {
-  const { scrollY } = useScroll()
-  const [scrolled, setScrolled] = useState(false)
+  const { scrollY } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
 
-  useMotionValueEvent(scrollY, 'change', latestValue => {
-    setScrolled(latestValue >= 8)
-  })
+  useMotionValueEvent(scrollY, "change", (latestValue) => {
+    setScrolled(latestValue >= 8);
+  });
 
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 max-w-screen overflow-x-hidden bg-background',
-        'data-[scrolled=true]:shadow-2xs dark:data-[scrolled=true]:shadow-xs',
-        'not-dark:data-[scrolled=true]:**:data-header-container:after:bg-border',
-        'transition-shadow duration-300'
+        "sticky top-0 z-50 max-w-screen overflow-x-hidden bg-background",
+        "data-[scrolled=true]:shadow-2xs dark:data-[scrolled=true]:shadow-xs",
+        "not-dark:data-[scrolled=true]:**:data-header-container:after:bg-border",
+        "transition-shadow duration-300"
       )}
       data-scrolled={scrolled}
     >
@@ -63,5 +65,5 @@ export const Header = () => {
         </ViewAnimation>
       </Section>
     </header>
-  )
-}
+  );
+};

@@ -1,44 +1,45 @@
-import { createFetch, createSchema } from '@better-fetch/fetch'
-import { z } from 'zod'
-import { env } from './env'
-import { ogSchema } from './schemas/og'
-import { robotsSchema } from './schemas/robots'
-import { sitemapSchema } from './schemas/sitemap'
+import { createFetch, createSchema } from "@better-fetch/fetch";
+import { z } from "zod";
+
+import { env } from "./env";
+import { ogSchema } from "./schemas/og";
+import { robotsSchema } from "./schemas/robots";
+import { sitemapSchema } from "./schemas/sitemap";
 
 const schema = createSchema({
-  '/api/og': {
-    method: 'get',
+  "/api/og": {
+    method: "get",
+    output: ogSchema,
     query: z.object({
-      url: z.url()
+      url: z.url(),
     }),
-    output: ogSchema
   },
-  '/api/robots': {
-    method: 'get',
+  "/api/robots": {
+    method: "get",
+    output: robotsSchema,
     query: z.object({
-      url: z.url()
+      url: z.url(),
     }),
-    output: robotsSchema
   },
-  '/api/sitemap': {
-    method: 'get',
+  "/api/sitemap": {
+    method: "get",
+    output: sitemapSchema,
     query: z.object({
-      url: z.url()
+      url: z.url(),
     }),
-    output: sitemapSchema
-  }
-})
+  },
+});
 
 const baseURL = env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'http://localhost:3000'
+  : "http://localhost:3000";
 
 export const fetcher = createFetch({
   baseURL,
   retry: {
     attempts: 2,
     delay: 500,
-    type: 'linear'
+    type: "linear",
   },
-  schema
-})
+  schema,
+});

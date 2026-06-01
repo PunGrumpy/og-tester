@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useConsoleLogo } from '@/hooks/use-console-logo'
+import { useConsoleLogo } from "@/hooks/use-console-logo";
 
 export const HooksProvider = () => {
-  useConsoleLogo()
+  useConsoleLogo();
 
-  return null
-}
+  return null;
+};

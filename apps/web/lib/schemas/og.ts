@@ -4,5 +4,5 @@ export {
   type ImageInfo,
   imageInfoSchema,
   type OgData,
-  ogSchema
-} from '@og-tester/core'
+  ogSchema,
+} from "@og-tester/core";

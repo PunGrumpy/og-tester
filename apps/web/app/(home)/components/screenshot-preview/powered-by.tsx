@@ -17,11 +17,11 @@ const Icon = () => (
       fill="#FD366E"
     />
   </svg>
-)
+);
 
 export const PoweredBy = () => (
   <p className="flex items-center justify-center gap-1 text-center text-muted-foreground text-xs">
-    Screenshot powered by{' '}
+    Screenshot powered by{" "}
     <a
       className="flex items-center gap-0.5 underline underline-offset-2 transition-colors hover:text-[#FD366E]"
       href="https://appwrite.io/docs/products/avatars/screenshots"
@@ -32,4 +32,4 @@ export const PoweredBy = () => (
       Appwrite
     </a>
   </p>
-)
+);

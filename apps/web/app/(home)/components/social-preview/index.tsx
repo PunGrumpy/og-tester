@@ -1,63 +1,65 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react'
-import { Icons } from '@/components/icons'
+import { useMemo } from "react";
+
+import { Icons } from "@/components/icons";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
-  EmptyTitle
-} from '@/components/ui/empty'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ViewAnimation } from '@/components/view-animation'
-import { useOgStore } from '@/hooks/use-og-store'
-import type { OgData } from '@/lib/schemas/og'
-import { DiscordPreview } from './discord-preview'
-import { FacebookPreview } from './facebook-preview'
-import { LinkedinPreview } from './linkedin-preview'
-import { SlackPreview } from './slack-preview'
-import { WhatsappPreview } from './whatsapp-preview'
-import { XPreview } from './x-preview'
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ViewAnimation } from "@/components/view-animation";
+import { useOgStore } from "@/hooks/use-og-store";
+import type { OgData } from "@/lib/schemas/og";
+
+import { DiscordPreview } from "./discord-preview";
+import { FacebookPreview } from "./facebook-preview";
+import { LinkedinPreview } from "./linkedin-preview";
+import { SlackPreview } from "./slack-preview";
+import { WhatsappPreview } from "./whatsapp-preview";
+import { XPreview } from "./x-preview";
 
 const PLATFORMS = [
-  { id: 'x', icon: Icons.x, label: 'Twitter/X' },
-  { id: 'slack', icon: Icons.slack, label: 'Slack' },
-  { id: 'facebook', icon: Icons.facebook, label: 'Facebook' },
-  { id: 'linkedin', icon: Icons.linkedin, label: 'LinkedIn' },
-  { id: 'discord', icon: Icons.discord, label: 'Discord' },
-  { id: 'whatsapp', icon: Icons.whatsapp, label: 'WhatsApp' }
-] as const
+  { icon: Icons.x, id: "x", label: "Twitter/X" },
+  { icon: Icons.slack, id: "slack", label: "Slack" },
+  { icon: Icons.facebook, id: "facebook", label: "Facebook" },
+  { icon: Icons.linkedin, id: "linkedin", label: "LinkedIn" },
+  { icon: Icons.discord, id: "discord", label: "Discord" },
+  { icon: Icons.whatsapp, id: "whatsapp", label: "WhatsApp" },
+] as const;
 
-const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//
-const WWW_REGEX = /^www\./
-const SPLIT_HOST_REGEX = /[/?#]/
+const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//u;
+const WWW_REGEX = /^www\./u;
+const SPLIT_HOST_REGEX = /[/?#]/u;
 
 const parseDisplayUrl = (url: string) => {
-  const trimmed = url.trim()
+  const trimmed = url.trim();
 
-  const withoutProtocol = trimmed.replace(PROTOCOL_REGEX, '')
-  const withoutWww = withoutProtocol.replace(WWW_REGEX, '')
-  const hostname = withoutWww.split(SPLIT_HOST_REGEX)[0]
+  const withoutProtocol = trimmed.replace(PROTOCOL_REGEX, "");
+  const withoutWww = withoutProtocol.replace(WWW_REGEX, "");
+  const [hostname] = withoutWww.split(SPLIT_HOST_REGEX);
 
-  return hostname
-}
+  return hostname;
+};
 
 const getPreviewData = (data: OgData | null, url: string) => ({
-  title:
-    data?.['og:title'] || data?.['twitter:title'] || data?.title || 'No title',
   description:
-    data?.['og:description'] ||
-    data?.['twitter:description'] ||
+    data?.["og:description"] ||
+    data?.["twitter:description"] ||
     data?.description,
-  image: data?.['og:image'] || data?.['twitter:image'],
-  siteName: data?.['og:site_name'],
-  displayUrl: parseDisplayUrl(url)
-})
+  displayUrl: parseDisplayUrl(url),
+  image: data?.["og:image"] || data?.["twitter:image"],
+  siteName: data?.["og:site_name"],
+  title:
+    data?.["og:title"] || data?.["twitter:title"] || data?.title || "No title",
+});
 
 export const SocialPreview = () => {
-  const { url, data } = useOgStore()
-  const preview = useMemo(() => getPreviewData(data, url), [data, url])
-  const hasData = Boolean(url && data)
+  const { url, data } = useOgStore();
+  const preview = useMemo(() => getPreviewData(data, url), [data, url]);
+  const hasData = Boolean(url && data);
 
   return (
     <ViewAnimation
@@ -138,5 +140,5 @@ export const SocialPreview = () => {
         )}
       </Tabs>
     </ViewAnimation>
-  )
-}
+  );
+};

@@ -1,65 +1,67 @@
-'use client'
+"use client";
 
-import { Output, Theme } from 'appwrite'
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
-import { useTheme } from 'next-themes'
-import { useCallback, useMemo, useState } from 'react'
+import { Output, Theme } from "appwrite";
+import { ImageOff } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import { useCallback, useMemo, useState } from "react";
+
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
-  EmptyTitle
-} from '@/components/ui/empty'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
-import { ViewAnimation } from '@/components/view-animation'
-import { useOgStore } from '@/hooks/use-og-store'
-import { screenshot } from '@/lib/screenshot'
-import { PoweredBy } from './powered-by'
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { ViewAnimation } from "@/components/view-animation";
+import { useOgStore } from "@/hooks/use-og-store";
+import { screenshot } from "@/lib/screenshot";
+
+import { PoweredBy } from "./powered-by";
 
 export const ScreenshotPreview = () => {
-  const { url } = useOgStore()
-  const [hasError, setHasError] = useState(false)
-  const [fullpage, setFullpage] = useState(false)
+  const { url } = useOgStore();
+  const [hasError, setHasError] = useState(false);
+  const [fullpage, setFullpage] = useState(false);
   const [loadedScreenshotUrl, setLoadedScreenshotUrl] = useState<string | null>(
     null
-  )
-  const { resolvedTheme: currentTheme } = useTheme()
+  );
+  const { resolvedTheme: currentTheme } = useTheme();
   const [theme, setTheme] = useState<Theme>(
-    currentTheme === 'dark' ? Theme.Dark : Theme.Light
-  )
+    currentTheme === "dark" ? Theme.Dark : Theme.Light
+  );
 
   const screenshotUrl = useMemo(() => {
     if (!url) {
-      return null
+      return null;
     }
 
     return screenshot({
-      url,
       fullpage,
+      output: Output.Webp,
       theme,
-      output: Output.Webp
-    })
-  }, [url, fullpage, theme])
+      url,
+    });
+  }, [url, fullpage, theme]);
 
   const handleLoad = useCallback(() => {
     if (screenshotUrl) {
-      setLoadedScreenshotUrl(screenshotUrl)
+      setLoadedScreenshotUrl(screenshotUrl);
     }
-    setHasError(false)
-  }, [screenshotUrl])
+    setHasError(false);
+  }, [screenshotUrl]);
 
   const handleError = useCallback(() => {
-    setHasError(true)
-  }, [])
+    setHasError(true);
+  }, []);
 
   const isError =
-    hasError && screenshotUrl && loadedScreenshotUrl === screenshotUrl
+    hasError && screenshotUrl && loadedScreenshotUrl === screenshotUrl;
   const isLoading = Boolean(
     screenshotUrl && loadedScreenshotUrl !== screenshotUrl && !isError
-  )
+  );
 
   if (!url) {
     return (
@@ -79,7 +81,7 @@ export const ScreenshotPreview = () => {
         </Empty>
         <PoweredBy />
       </ViewAnimation>
-    )
+    );
   }
 
   return (
@@ -97,7 +99,7 @@ export const ScreenshotPreview = () => {
             <Switch
               checked={theme === Theme.Dark}
               id="theme-switch"
-              onCheckedChange={checked =>
+              onCheckedChange={(checked) =>
                 setTheme(checked ? Theme.Dark : Theme.Light)
               }
               size="sm"
@@ -159,5 +161,5 @@ export const ScreenshotPreview = () => {
 
       <PoweredBy />
     </ViewAnimation>
-  )
-}
+  );
+};

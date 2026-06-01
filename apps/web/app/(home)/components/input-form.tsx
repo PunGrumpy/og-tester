@@ -1,89 +1,90 @@
-'use client'
+"use client";
 
-import { track } from '@databuddy/sdk/react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Globe, Send } from 'lucide-react'
-import { useAction } from 'next-safe-action/hooks'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { ogAction } from '@/actions/og-action'
-import { Section } from '@/components/section'
-import { Button } from '@/components/ui/button'
+import { track } from "@databuddy/sdk/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Globe, Send } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { ogAction } from "@/actions/og-action";
+import { Section } from "@/components/section";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Spinner } from '@/components/ui/spinner'
-import { useOgStore } from '@/hooks/use-og-store'
-import { parseError } from '@/lib/error'
-import { cn } from '@/lib/utils'
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { useOgStore } from "@/hooks/use-og-store";
+import { parseError } from "@/lib/error";
+import { cn } from "@/lib/utils";
 
-const HTTPS_PROTOCOL_REGEX = /^https?:\/\//i
-const OTHER_PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:/i
+const HTTPS_PROTOCOL_REGEX = /^https?:\/\//iu;
+const OTHER_PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:/iu;
 
 const normalizeUrl = (value: string): string => {
-  const trimmed = value.trim()
+  const trimmed = value.trim();
   if (!trimmed) {
-    return ''
+    return "";
   }
 
   // Already has protocol
   if (HTTPS_PROTOCOL_REGEX.test(trimmed)) {
-    return trimmed
+    return trimmed;
   }
 
   // Has other protocol (ftp, mailto, etc.) - return as-is for validation to fail
   if (OTHER_PROTOCOL_REGEX.test(trimmed)) {
-    return trimmed
+    return trimmed;
   }
 
   // Auto-prepend https://
-  return `https://${trimmed}`
-}
+  return `https://${trimmed}`;
+};
 
 const schema = z.object({
   url: z
     .string()
-    .min(1, 'Please enter a URL')
+    .min(1, "Please enter a URL")
     .transform(normalizeUrl)
-    .pipe(z.string().url('Please enter a valid URL'))
-})
+    .pipe(z.string().url("Please enter a valid URL")),
+});
 
-type SchemaType = z.infer<typeof schema>
+type SchemaType = z.infer<typeof schema>;
 
 export const InputForm = () => {
-  const { setResult } = useOgStore()
+  const { setResult } = useOgStore();
   const form = useForm<SchemaType>({
+    defaultValues: { url: "" },
     resolver: zodResolver(schema),
-    defaultValues: { url: '' }
-  })
+  });
   const { execute, isExecuting } = useAction(ogAction, {
-    onSuccess: ({ data }) => {
-      if (data) {
-        const normalizedUrl = normalizeUrl(form.getValues('url'))
-        setResult(normalizedUrl, data)
-      }
-    },
     onError: ({ error }) => {
       if (error.serverError) {
-        form.setError('url', {
-          type: 'server',
-          message: parseError(error.serverError)
-        })
+        form.setError("url", {
+          message: parseError(error.serverError),
+          type: "server",
+        });
       }
-    }
-  })
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        const normalizedUrl = normalizeUrl(form.getValues("url"));
+        setResult(normalizedUrl, data);
+      }
+    },
+  });
 
   const onSubmit = (data: SchemaType) => {
-    track('submit_url', {
-      url: data.url.toString()
-    })
-    execute({ url: data.url })
-  }
+    track("submit_url", {
+      url: data.url.toString(),
+    });
+    execute({ url: data.url });
+  };
 
   return (
     <Section className="p-4 sm:p-8">
@@ -106,10 +107,10 @@ export const InputForm = () => {
                       <Globe
                         aria-hidden="true"
                         className={cn(
-                          'pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2',
+                          "pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2",
                           fieldState.error
-                            ? 'text-destructive'
-                            : 'text-muted-foreground'
+                            ? "text-destructive"
+                            : "text-muted-foreground"
                         )}
                       />
                       <Input
@@ -129,7 +130,7 @@ export const InputForm = () => {
                   <FormMessage />
                 </div>
                 <Button
-                  aria-label={isExecuting ? 'Testing URL...' : 'Test URL'}
+                  aria-label={isExecuting ? "Testing URL..." : "Test URL"}
                   className="w-full sm:w-auto"
                   disabled={isExecuting}
                   type="submit"
@@ -152,5 +153,5 @@ export const InputForm = () => {
         </form>
       </Form>
     </Section>
-  )
-}
+  );
+};

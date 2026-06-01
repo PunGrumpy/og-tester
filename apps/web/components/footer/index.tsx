@@ -1,16 +1,18 @@
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import { Section } from '../section'
-import { ViewAnimation } from '../view-animation'
-import { Status } from './status'
-import { ThemeSwitcher } from './theme-switcher'
+import Link from "next/link";
+
+import { cn } from "@/lib/utils";
+
+import { Section } from "../section";
+import { ViewAnimation } from "../view-animation";
+import { Status } from "./status";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export const Footer = () => (
   <footer>
     <Section
       className={cn(
-        'px-4 py-8 md:px-8',
-        'grid items-center gap-4 sm:grid-cols-3'
+        "px-4 py-8 md:px-8",
+        "grid items-center gap-4 sm:grid-cols-3"
       )}
     >
       <ViewAnimation
@@ -27,7 +29,7 @@ export const Footer = () => (
           whileInView={{ opacity: 1, translateY: 0 }}
         >
           <p className="whitespace-nowrap text-muted-foreground text-sm">
-            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{' '}
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
             <Link
               className="transition-colors hover:text-primary hover:underline"
               href="https://pungrumpy.com"
@@ -49,4 +51,4 @@ export const Footer = () => (
       </div>
     </Section>
   </footer>
-)
+);

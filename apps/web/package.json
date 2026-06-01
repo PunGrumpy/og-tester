@@ -10,10 +10,10 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@og-tester/core": "workspace:*",
     "@better-fetch/fetch": "^1.1.21",
     "@databuddy/sdk": "^2.3.22",
     "@hookform/resolvers": "^5.2.2",
+    "@og-tester/core": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@unkey/nextjs": "^2.0.0",
     "appwrite": "^21.5.0",

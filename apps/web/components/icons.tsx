@@ -1,31 +1,8 @@
-import type { HTMLAttributes } from 'react'
+import type { HTMLAttributes } from "react";
 
-type IconProps = HTMLAttributes<SVGElement>
+type IconProps = HTMLAttributes<SVGElement>;
 
 export const Icons = {
-  logo: (props: IconProps) => (
-    <svg
-      fill="none"
-      height="64"
-      viewBox="0 0 64 64"
-      width="64"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <title>OG Tester</title>
-      <g clipPath="url(#clip0_266_28)">
-        <path
-          d="M28.08 -0.42C72.72 -5.4 77.23 61.69 33.28 63.29C-7.86 64.79 -12.3 4.1 28.08 -0.42ZM36.79 5.76C34.54 6.11 30.96 7.81 29.14 9.21C24.75 12.57 13.55 23.7 9.99 28.04C-3.7 44.73 18.28 66.82 35.96 52.58C39.99 49.33 54.71 34.91 56.56 30.9C62.77 17.47 51.56 3.5 36.79 5.76Z"
-          fill="currentColor"
-        />
-      </g>
-      <defs>
-        <clipPath id="clip0_266_28">
-          <rect fill="currentColor" height="64" width="64" />
-        </clipPath>
-      </defs>
-    </svg>
-  ),
   discord: (props: IconProps) => (
     <svg viewBox="0 0 256 199" {...props}>
       <title>Discord</title>
@@ -67,6 +44,29 @@ export const Icons = {
         d="M218.123 218.127h-37.931v-59.403c0-14.165-.253-32.4-19.728-32.4-19.756 0-22.779 15.434-22.779 31.369v60.43h-37.93V95.967h36.413v16.694h.51a39.907 39.907 0 0 1 35.928-19.733c38.445 0 45.533 25.288 45.533 58.186l-.016 67.013ZM56.955 79.27c-12.157.002-22.014-9.852-22.016-22.009-.002-12.157 9.851-22.014 22.008-22.016 12.157-.003 22.014 9.851 22.016 22.008A22.013 22.013 0 0 1 56.955 79.27m18.966 138.858H37.95V95.967h37.97v122.16ZM237.033.018H18.89C8.58-.098.125 8.161-.001 18.471v219.053c.122 10.315 8.576 18.582 18.89 18.474h218.144c10.336.128 18.823-8.139 18.966-18.474V18.454c-.147-10.33-8.635-18.588-18.966-18.453"
         fill="#0A66C2"
       />
+    </svg>
+  ),
+  logo: (props: IconProps) => (
+    <svg
+      fill="none"
+      height="64"
+      viewBox="0 0 64 64"
+      width="64"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <title>OG Tester</title>
+      <g clipPath="url(#clip0_266_28)">
+        <path
+          d="M28.08 -0.42C72.72 -5.4 77.23 61.69 33.28 63.29C-7.86 64.79 -12.3 4.1 28.08 -0.42ZM36.79 5.76C34.54 6.11 30.96 7.81 29.14 9.21C24.75 12.57 13.55 23.7 9.99 28.04C-3.7 44.73 18.28 66.82 35.96 52.58C39.99 49.33 54.71 34.91 56.56 30.9C62.77 17.47 51.56 3.5 36.79 5.76Z"
+          fill="currentColor"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_266_28">
+          <rect fill="currentColor" height="64" width="64" />
+        </clipPath>
+      </defs>
     </svg>
   ),
   slack: (props: IconProps) => (
@@ -111,5 +111,5 @@ export const Icons = {
         fill="currentColor"
       />
     </svg>
-  )
-}
+  ),
+};

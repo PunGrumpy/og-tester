@@ -1,29 +1,30 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import type { ReactElement } from 'react'
+import Image from "next/image";
+import type { ReactElement } from "react";
+
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
-  EmptyTitle
-} from '@/components/ui/empty'
-import { Skeleton } from '@/components/ui/skeleton'
-import type { OgData } from '@/lib/schemas/og'
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { OgData } from "@/lib/schemas/og";
 
 interface IconsPanelProps {
-  data: OgData | null
-  isLoading?: boolean
+  data: OgData | null;
+  isLoading?: boolean;
 }
 
 export const IconsPanel = ({
   data,
-  isLoading
+  isLoading,
 }: IconsPanelProps): ReactElement => {
   if (isLoading) {
     return (
       <div className="flex flex-wrap gap-4">
-        {['favicon', 'touch-icon', 'apple-icon'].map(label => (
+        {["favicon", "touch-icon", "apple-icon"].map((label) => (
           <div className="flex items-center gap-2" key={label}>
             <Skeleton className="size-10 rounded" />
             <div className="space-y-1">
@@ -33,7 +34,7 @@ export const IconsPanel = ({
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   if (!data?.favicons || data.favicons.length === 0) {
@@ -46,17 +47,17 @@ export const IconsPanel = ({
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
-    )
+    );
   }
 
-  const favicons = data.favicons
+  const { favicons } = data;
 
   return (
     <div className="m-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {favicons.map(icon => (
+      {favicons.map((icon) => (
         <div
           className="flex items-center gap-3 rounded-lg border px-3 py-2"
-          key={`${icon.rel}-${icon.href}-${icon.sizes ?? ''}`}
+          key={`${icon.rel}-${icon.href}-${icon.sizes ?? ""}`}
         >
           <div className="flex size-8 items-center justify-center overflow-hidden rounded border bg-muted">
             <Image
@@ -79,5 +80,5 @@ export const IconsPanel = ({
         </div>
       ))}
     </div>
-  )
-}
+  );
+};

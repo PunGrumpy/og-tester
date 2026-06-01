@@ -1,16 +1,18 @@
-import type { Metadata } from 'next'
-import { Section, SectionSeparator } from '@/components/section'
-import { createMetadata } from '@/lib/metadata'
-import { Hero } from './components/hero'
-import { InputForm } from './components/input-form'
-import { MetaTagsTable } from './components/meta-tags-table'
-import { ScreenshotPreview } from './components/screenshot-preview'
-import { SocialPreview } from './components/social-preview'
+import type { Metadata } from "next";
+
+import { Section, SectionSeparator } from "@/components/section";
+import { createMetadata } from "@/lib/metadata";
+
+import { Hero } from "./components/hero";
+import { InputForm } from "./components/input-form";
+import { MetaTagsTable } from "./components/meta-tags-table";
+import { ScreenshotPreview } from "./components/screenshot-preview";
+import { SocialPreview } from "./components/social-preview";
 
 export const metadata: Metadata = createMetadata(
-  'OG Tester',
-  'Test your Open Graph metadata with this tool'
-)
+  "OG Tester",
+  "Test your Open Graph metadata with this tool"
+);
 
 const Home = () => (
   <>
@@ -27,6 +29,6 @@ const Home = () => (
     </Section>
     <SectionSeparator />
   </>
-)
+);
 
-export default Home
+export default Home;

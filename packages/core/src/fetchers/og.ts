@@ -1,19 +1,19 @@
-import { parseOgTags } from '../parsers/og'
-import type { OgData } from '../schemas/og'
+import { parseOgTags } from "../parsers/og";
+import type { OgData } from "../schemas/og";
 
-const USER_AGENT = 'OGTester/1.0 (+https://github.com/PunGrumpy/og-tester)'
+const USER_AGENT = "OGTester/1.0 (+https://github.com/PunGrumpy/og-tester)";
 
-export async function fetchOgTags(url: string): Promise<OgData> {
+export const fetchOgTags = async (url: string): Promise<OgData> => {
   const response = await fetch(url, {
-    headers: { 'User-Agent': USER_AGENT }
-  })
+    headers: { "User-Agent": USER_AGENT },
+  });
 
   if (!response.ok) {
     throw new Error(
       `Failed to fetch ${url}: ${response.status} ${response.statusText}`
-    )
+    );
   }
 
-  const html = await response.text()
-  return parseOgTags(html, url)
-}
+  const html = await response.text();
+  return parseOgTags(html, url);
+};

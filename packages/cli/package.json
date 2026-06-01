@@ -1,21 +1,21 @@
 {
   "name": "og-tester",
   "version": "0.1.0",
-  "type": "module",
   "bin": {
     "og-tester": "./dist/index.mjs"
   },
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "commander": "^12.0.0",
     "@clack/prompts": "^0.9.1",
+    "commander": "^12.0.0",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {

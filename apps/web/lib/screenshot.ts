@@ -1,12 +1,13 @@
-import type { Output, Theme } from 'appwrite'
-import { avatars } from './appwrite'
+import type { Output, Theme } from "appwrite";
+
+import { avatars } from "./appwrite";
 
 interface ScreenshotOptions {
-  url: string
-  fullpage?: boolean
-  theme?: Theme
-  output?: Output
-  sleep?: number
+  url: string;
+  fullpage?: boolean;
+  theme?: Theme;
+  output?: Output;
+  sleep?: number;
 }
 
 export const screenshot = ({
@@ -14,12 +15,12 @@ export const screenshot = ({
   fullpage = false,
   theme,
   output,
-  sleep = 3
+  sleep = 3,
 }: ScreenshotOptions) =>
   avatars.getScreenshot({
-    url,
     fullpage,
-    theme,
     output,
-    sleep
-  })
+    sleep,
+    theme,
+    url,
+  });

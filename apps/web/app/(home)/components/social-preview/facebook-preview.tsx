@@ -1,18 +1,18 @@
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
+import { ImageOff } from "lucide-react";
+import Image from "next/image";
 
 interface FacebookPreviewProps {
-  image?: string
-  displayUrl: string
-  title: string
-  description?: string
+  image?: string;
+  displayUrl: string;
+  title: string;
+  description?: string;
 }
 
 export const FacebookPreview = ({
   image,
   displayUrl,
   title,
-  description
+  description,
 }: FacebookPreviewProps) => (
   <div className="overflow-hidden rounded-lg border bg-[#242526]">
     <div className="relative aspect-[1.91/1] w-full bg-[#3a3b3c]">
@@ -40,4 +40,4 @@ export const FacebookPreview = ({
       ) : null}
     </div>
   </div>
-)
+);

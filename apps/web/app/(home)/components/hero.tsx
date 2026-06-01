@@ -1,13 +1,13 @@
-import { Section } from '@/components/section'
-import { ViewAnimation } from '@/components/view-animation'
-import { cn } from '@/lib/utils'
+import { Section } from "@/components/section";
+import { ViewAnimation } from "@/components/view-animation";
+import { cn } from "@/lib/utils";
 
 export const Hero = () => (
   <Section
     className={cn(
-      'aspect-2/1 select-none p-4 sm:aspect-3/1',
-      'flex items-center justify-center',
-      'pattern-background bg-foreground/2'
+      "aspect-2/1 select-none p-4 sm:aspect-3/1",
+      "flex items-center justify-center",
+      "pattern-background bg-foreground/2"
     )}
   >
     <div className="flex flex-col items-center justify-center gap-6">
@@ -32,4 +32,4 @@ export const Hero = () => (
       </ViewAnimation>
     </div>
   </Section>
-)
+);

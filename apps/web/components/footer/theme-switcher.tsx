@@ -1,28 +1,29 @@
-'use client'
+"use client";
 
-import { Monitor, Moon, Sun } from 'lucide-react'
-import { m, useReducedMotion } from 'motion/react'
-import { useTheme } from 'next-themes'
-import { useSyncExternalStore } from 'react'
-import { cn } from '@/lib/utils'
+import { Monitor, Moon, Sun } from "lucide-react";
+import { m, useReducedMotion } from "motion/react";
+import { useTheme } from "next-themes";
+import { useSyncExternalStore } from "react";
+
+import { cn } from "@/lib/utils";
 
 const THEMES = [
-  { key: 'system', icon: Monitor, label: 'System theme' },
-  { key: 'light', icon: Sun, label: 'Light theme' },
-  { key: 'dark', icon: Moon, label: 'Dark theme' }
-] as const
+  { icon: Monitor, key: "system", label: "System theme" },
+  { icon: Sun, key: "light", label: "Light theme" },
+  { icon: Moon, key: "dark", label: "Dark theme" },
+] as const;
 
 export const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme()
-  const shouldReduceMotion = useReducedMotion()
+  const { theme, setTheme } = useTheme();
+  const shouldReduceMotion = useReducedMotion();
   const isMounted = useSyncExternalStore(
     () => () => true,
     () => true,
     () => false
-  )
+  );
 
   if (!isMounted) {
-    return null
+    return null;
   }
 
   return (
@@ -31,7 +32,7 @@ export const ThemeSwitcher = () => {
       className="relative flex h-8 items-center rounded-full border-none bg-background/30 p-1 ring-1 ring-border"
     >
       {THEMES.map(({ key, icon: Icon, label }) => {
-        const isActive = theme === key
+        const isActive = theme === key;
 
         return (
           <button
@@ -50,20 +51,20 @@ export const ThemeSwitcher = () => {
                 transition={
                   shouldReduceMotion
                     ? { duration: 0 }
-                    : { type: 'spring', duration: 0.5 }
+                    : { duration: 0.5, type: "spring" }
                 }
               />
             ) : null}
             <Icon
               aria-hidden="true"
               className={cn(
-                'relative size-4',
-                isActive ? 'text-foreground' : 'text-muted-foreground'
+                "relative size-4",
+                isActive ? "text-foreground" : "text-muted-foreground"
               )}
             />
           </button>
-        )
+        );
       })}
     </fieldset>
-  )
-}
+  );
+};

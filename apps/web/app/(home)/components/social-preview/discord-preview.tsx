@@ -1,18 +1,18 @@
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
+import { ImageOff } from "lucide-react";
+import Image from "next/image";
 
 interface DiscordPreviewProps {
-  image?: string
-  siteName?: string
-  title: string
-  description?: string
+  image?: string;
+  siteName?: string;
+  title: string;
+  description?: string;
 }
 
 export const DiscordPreview = ({
   image,
   siteName,
   title,
-  description
+  description,
 }: DiscordPreviewProps) => (
   <div className="max-w-md overflow-hidden rounded border border-border/50 bg-[#2f3136] p-4 shadow-[inset_3px_0_0_0_#5865F2]">
     <div className="space-y-2">
@@ -40,4 +40,4 @@ export const DiscordPreview = ({
       </div>
     </div>
   </div>
-)
+);

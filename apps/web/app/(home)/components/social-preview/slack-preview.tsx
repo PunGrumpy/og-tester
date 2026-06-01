@@ -1,18 +1,18 @@
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
+import { ImageOff } from "lucide-react";
+import Image from "next/image";
 
 interface SlackPreviewProps {
-  image?: string
-  siteName?: string
-  title: string
-  description?: string
+  image?: string;
+  siteName?: string;
+  title: string;
+  description?: string;
 }
 
 export const SlackPreview = ({
   image,
   siteName,
   title,
-  description
+  description,
 }: SlackPreviewProps) => (
   <div className="overflow-hidden rounded border border-border/50 bg-card p-3 shadow-[inset_3px_0_0_0_#36C5F0]">
     <div className="flex gap-3">
@@ -26,7 +26,7 @@ export const SlackPreview = ({
         ) : null}
         <h3 className="truncate font-semibold text-[#1264A3]">{title}</h3>
         <p className="line-clamp-2 text-muted-foreground text-sm">
-          {description || 'No description'}
+          {description || "No description"}
         </p>
       </div>
       <div className="relative size-20 shrink-0 overflow-hidden rounded bg-muted">
@@ -49,4 +49,4 @@ export const SlackPreview = ({
       </div>
     </div>
   </div>
-)
+);

@@ -1,15 +1,16 @@
-import { HomeIcon } from 'lucide-react'
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Section } from '@/components/section'
-import { Button } from '@/components/ui/button'
-import { ViewAnimation } from '@/components/view-animation'
-import { createMetadata } from '@/lib/metadata'
+import { HomeIcon } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+
+import { Section } from "@/components/section";
+import { Button } from "@/components/ui/button";
+import { ViewAnimation } from "@/components/view-animation";
+import { createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata(
-  'Page Not Found | OG Tester',
-  'The page you are looking for does not exist.'
-)
+  "Page Not Found | OG Tester",
+  "The page you are looking for does not exist."
+);
 
 const NotFound = () => (
   <Section className="flex h-dvh items-center justify-center">
@@ -48,6 +49,6 @@ const NotFound = () => (
       </ViewAnimation>
     </div>
   </Section>
-)
+);
 
-export default NotFound
+export default NotFound;

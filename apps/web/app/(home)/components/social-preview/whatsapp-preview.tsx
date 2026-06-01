@@ -1,18 +1,18 @@
-import { ImageOff } from 'lucide-react'
-import Image from 'next/image'
+import { ImageOff } from "lucide-react";
+import Image from "next/image";
 
 interface WhatsappPreviewProps {
-  image?: string
-  displayUrl: string
-  title: string
-  description?: string
+  image?: string;
+  displayUrl: string;
+  title: string;
+  description?: string;
 }
 
 export const WhatsappPreview = ({
   image,
   displayUrl,
   title,
-  description
+  description,
 }: WhatsappPreviewProps) => (
   <div className="max-w-sm overflow-hidden rounded-lg bg-[#1f2c34]">
     <div className="flex gap-3 p-2">
@@ -42,4 +42,4 @@ export const WhatsappPreview = ({
       </div>
     </div>
   </div>
-)
+);

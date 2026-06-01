@@ -1,12 +1,13 @@
-import type { XmcpConfig } from 'xmcp'
+import type { XmcpConfig } from "xmcp";
 
 const config: XmcpConfig = {
   http: {
+    // adds extra logging to the console
+    debug: true,
+    endpoint: "mcp",
     port: 3001,
-    endpoint: 'mcp',
-    debug: true // adds extra logging to the console
   },
-  stdio: true
-}
+  stdio: true,
+};
 
-export default config
+export default config;

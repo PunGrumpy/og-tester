@@ -1,11 +1,11 @@
-let logged = false
+let logged = false;
 
 export const useConsoleLogo = () => {
-  if (logged || typeof window === 'undefined') {
-    return
+  if (logged || typeof window === "undefined") {
+    return;
   }
 
-  logged = true
+  logged = true;
   console.log(`
 ██████╗ ██╗   ██╗███╗   ██╗
 ██╔══██╗██║   ██║████╗  ██║
@@ -13,5 +13,5 @@ export const useConsoleLogo = () => {
 ██╔═══╝ ██║   ██║██║╚██╗██║
 ██║     ╚██████╔╝██║ ╚████║
 ╚═╝      ╚═════╝ ╚═╝  ╚═══╝
-Developing and building that shit.`)
-}
+Developing and building that shit.`);
+};
