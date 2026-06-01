@@ -1,0 +1,26 @@
+{
+  "name": "og-tester",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "og-tester": "./dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "@clack/prompts": "^0.9.1",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@og-tester/core": "workspace:*",
+    "@og-tester/typescript-config": "workspace:*",
+    "tsdown": "latest",
+    "typescript": "^5.9.3"
+  }
+}
