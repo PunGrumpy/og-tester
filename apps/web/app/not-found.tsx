@@ -2,6 +2,7 @@ import { HomeIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Eyebrow } from "@/components/eyebrow";
 import { Section } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import { ViewAnimation } from "@/components/view-animation";
@@ -13,20 +14,31 @@ export const metadata: Metadata = createMetadata(
 );
 
 const NotFound = () => (
-  <Section className="flex h-dvh items-center justify-center">
+  <Section
+    corners
+    className="grid-fade flex h-dvh items-center justify-center bg-foreground/[0.015]"
+  >
     <div className="flex flex-col items-center justify-center gap-6">
       <ViewAnimation
-        delay={0.8}
+        delay={0.2}
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
-        <h1 className="text-balance text-center font-semibold text-5xl md:text-7xl">
+        <Eyebrow>Error 404</Eyebrow>
+      </ViewAnimation>
+
+      <ViewAnimation
+        delay={0.5}
+        initial={{ opacity: 0, translateY: -8 }}
+        whileInView={{ opacity: 1, translateY: 0 }}
+      >
+        <h1 className="text-balance text-center font-semibold text-5xl tracking-tighter md:text-7xl">
           Not Found
         </h1>
       </ViewAnimation>
 
       <ViewAnimation
-        delay={1.2}
+        delay={0.8}
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
@@ -36,7 +48,7 @@ const NotFound = () => (
       </ViewAnimation>
 
       <ViewAnimation
-        delay={1.2}
+        delay={1.1}
         initial={{ opacity: 0, translateY: -8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >

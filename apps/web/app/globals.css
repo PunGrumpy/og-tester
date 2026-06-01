@@ -236,6 +236,41 @@
   );
 }
 
+/* Masked dot grid that fades toward the edges — used on the hero. */
+@utility grid-fade {
+  background-image: radial-gradient(
+    var(--pattern-foreground) 1px,
+    transparent 1px
+  );
+  background-size: 16px 16px;
+  background-position: center;
+  --pattern-foreground: color-mix(
+    in oklch,
+    var(--color-foreground) 7%,
+    transparent
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 50%,
+    #000 10%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 50%,
+    #000 10%,
+    transparent 75%
+  );
+}
+
+/* Mono micro-label / eyebrow treatment (Vercel · Evil Rabbit). */
+@utility mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted-foreground);
+}
+
 @utility dash-background {
   background-image: linear-gradient(
     45deg,

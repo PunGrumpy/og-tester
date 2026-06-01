@@ -54,7 +54,6 @@ export const Header = () => {
         >
           <Button asChild size="sm" variant="outline">
             <Link
-              className="font-extralight"
               href="https://www.pungrumpy.com/contact"
               rel="noopener noreferrer"
               target="_blank"

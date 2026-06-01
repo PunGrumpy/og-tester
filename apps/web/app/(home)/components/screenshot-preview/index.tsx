@@ -92,7 +92,9 @@ export const ScreenshotPreview = () => {
       whileInView={{ opacity: 1, translateY: 0 }}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="font-semibold text-lg">Full Page Screenshot</h2>
+        <h2 className="font-mono text-[0.7rem] uppercase leading-none tracking-[0.18em] text-foreground/80">
+          Full Page Screenshot
+        </h2>
 
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">

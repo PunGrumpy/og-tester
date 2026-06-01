@@ -19,12 +19,15 @@ const Home = () => (
     <Hero />
     <SectionSeparator />
     <InputForm />
-    <Section className="grid min-h-[420px] gap-0 lg:grid-cols-[1fr_420px] lg:divide-x">
+    <Section
+      corners
+      className="grid min-h-[420px] gap-0 lg:grid-cols-[1fr_420px] lg:divide-x"
+    >
       <MetaTagsTable />
       <SocialPreview />
     </Section>
     <SectionSeparator />
-    <Section>
+    <Section corners>
       <ScreenshotPreview />
     </Section>
     <SectionSeparator />
