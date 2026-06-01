@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Copy, Edit3 } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -71,6 +72,7 @@ const generateHtml = (data: OgData): string => {
 export const MetaTagsTable = () => {
   const { data, isEditing, setIsEditing } = useOgStore();
   const [isCopied, setIsCopied] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>("general");
 
   const handleCopy = () => {
     if (!data) {
@@ -119,7 +121,7 @@ export const MetaTagsTable = () => {
           >
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]",
+                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-200 ease-out-custom",
                 isCopied
                   ? "opacity-100 blur-0"
                   : "pointer-events-none opacity-0 blur-xs"
@@ -130,7 +132,7 @@ export const MetaTagsTable = () => {
             </div>
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]",
+                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-200 ease-out-custom",
                 isCopied
                   ? "pointer-events-none opacity-0 blur-xs"
                   : "opacity-100 blur-0"
@@ -143,35 +145,94 @@ export const MetaTagsTable = () => {
         </div>
       </div>
 
-      <Tabs className="flex h-full flex-col" defaultValue="general">
+      <Tabs
+        className="flex h-full flex-col"
+        value={activeCategory}
+        onValueChange={setActiveCategory}
+      >
         <div className="border-b">
           <div className="hide-scrollbar flex-1">
             <TabsList className="h-auto w-max justify-start gap-0 rounded-none bg-transparent p-0 sm:w-auto">
               {CATEGORIES.map((cat) => (
                 <TabsTrigger
-                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 data-[state=active]:border-border! data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 data-[state=active]:border-transparent! data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground"
                   key={cat.id}
                   value={cat.id}
                 >
                   {cat.label}
+                  {activeCategory === cat.id && (
+                    <m.div
+                      layoutId="active-meta-tab-line"
+                      className="absolute -bottom-px left-0 right-0 h-[2px] bg-foreground z-10"
+                      transition={{
+                        damping: 30,
+                        stiffness: 380,
+                        type: "spring",
+                      }}
+                    />
+                  )}
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
         </div>
 
-        <TabsContent className="mt-0 outline-none" value="general">
-          <TagTable category="general" data={data} />
-        </TabsContent>
-        <TabsContent className="mt-0 outline-none" value="openGraph">
-          <TagTable category="openGraph" data={data} />
-        </TabsContent>
-        <TabsContent className="mt-0 outline-none" value="twitter">
-          <TagTable category="twitter" data={data} />
-        </TabsContent>
-        <TabsContent className="mt-0 outline-none" value="icons">
-          <IconsPanel data={data} />
-        </TabsContent>
+        <div className="relative flex-1">
+          <AnimatePresence mode="wait">
+            {activeCategory === "general" && (
+              <TabsContent value="general" forceMount asChild>
+                <m.div
+                  key="general"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <TagTable category="general" data={data} />
+                </m.div>
+              </TabsContent>
+            )}
+            {activeCategory === "openGraph" && (
+              <TabsContent value="openGraph" forceMount asChild>
+                <m.div
+                  key="openGraph"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <TagTable category="openGraph" data={data} />
+                </m.div>
+              </TabsContent>
+            )}
+            {activeCategory === "twitter" && (
+              <TabsContent value="twitter" forceMount asChild>
+                <m.div
+                  key="twitter"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <TagTable category="twitter" data={data} />
+                </m.div>
+              </TabsContent>
+            )}
+            {activeCategory === "icons" && (
+              <TabsContent value="icons" forceMount asChild>
+                <m.div
+                  key="icons"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <IconsPanel data={data} />
+                </m.div>
+              </TabsContent>
+            )}
+          </AnimatePresence>
+        </div>
       </Tabs>
     </ViewAnimation>
   );
