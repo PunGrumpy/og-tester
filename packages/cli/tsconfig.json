@@ -1,6 +1,7 @@
 {
   "extends": "@og-tester/typescript-config/base.json",
   "compilerOptions": {
+    "types": ["node"],
     "strictNullChecks": true
   },
   "include": ["src/**/*", "tsdown.config.ts"],

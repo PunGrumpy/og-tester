@@ -21,6 +21,7 @@
   "devDependencies": {
     "@og-tester/core": "workspace:*",
     "@og-tester/typescript-config": "workspace:*",
+    "@types/node": "^25.9.1",
     "tsdown": "latest",
     "typescript": "^5.9.3"
   }
