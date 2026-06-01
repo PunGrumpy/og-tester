@@ -1,11 +1,11 @@
 import * as Effect from "effect/Effect";
 
 import { parseSitemap } from "../parsers/sitemap";
-import type { SitemapData } from "../schemas/sitemap";
+import type { SitemapData, SitemapUrl } from "../schemas/sitemap";
 
 export const fetchSitemapEffect = (
   url: string
-): Effect.Effect<SitemapData, Error> =>
+): Effect.Effect<{ content: string; urls: SitemapUrl[] }, Error> =>
   Effect.gen(function* runFetchSitemap() {
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
@@ -23,7 +23,9 @@ export const fetchSitemapEffect = (
     });
 
     if (!response.ok) {
-      return { error: `Failed to fetch sitemap.xml: ${response.status}` };
+      return yield* Effect.fail(
+        new Error(`Failed to fetch sitemap.xml: ${response.status}`)
+      );
     }
 
     const content = yield* Effect.tryPromise({

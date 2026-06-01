@@ -4,7 +4,7 @@ import type { RobotsData } from "../schemas/robots";
 
 export const fetchRobotsTxtEffect = (
   url: string
-): Effect.Effect<RobotsData, Error> =>
+): Effect.Effect<{ content: string }, Error> =>
   Effect.gen(function* runFetchRobots() {
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
@@ -22,7 +22,9 @@ export const fetchRobotsTxtEffect = (
     });
 
     if (!response.ok) {
-      return { error: `Failed to fetch robots.txt: ${response.status}` };
+      return yield* Effect.fail(
+        new Error(`Failed to fetch robots.txt: ${response.status}`)
+      );
     }
 
     const content = yield* Effect.tryPromise({
