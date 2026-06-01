@@ -29,8 +29,8 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => (
       trackInteractions
       trackOutgoingLinks
       trackPerformance
-      trackScrollDepth
       trackWebVitals
+      trackErrors
     />
   </>
 );
