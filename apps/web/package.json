@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@og-tester/core": "workspace:*",

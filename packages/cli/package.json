@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch"
+    "dev": "tsdown --watch",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "commander": "^12.0.0",

@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "xmcp dev",
     "build": "xmcp build",
-    "start": "node dist/stdio.js"
+    "start": "node dist/stdio.js",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@og-tester/core": "workspace:*",
