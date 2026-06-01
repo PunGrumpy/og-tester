@@ -3,6 +3,7 @@
 import { track } from "@databuddy/sdk/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Globe, Send } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -131,21 +132,32 @@ export const InputForm = () => {
                 </div>
                 <Button
                   aria-label={isExecuting ? "Testing URL..." : "Test URL"}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto relative min-w-[44px]"
                   disabled={isExecuting}
                   type="submit"
                 >
-                  {isExecuting ? (
-                    <>
-                      <Spinner className="size-4" />
-                      <span className="sm:hidden">Testing…</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="size-4" />
-                      <span className="sm:hidden">Test URL</span>
-                    </>
-                  )}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <m.span
+                      key={isExecuting ? "loading" : "idle"}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.1, ease: "easeOut" }}
+                      className="inline-flex items-center gap-2 justify-center"
+                    >
+                      {isExecuting ? (
+                        <>
+                          <Spinner className="size-4" />
+                          <span className="sm:hidden">Testing…</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="size-4" />
+                          <span className="sm:hidden">Test URL</span>
+                        </>
+                      )}
+                    </m.span>
+                  </AnimatePresence>
                 </Button>
               </FormItem>
             )}
