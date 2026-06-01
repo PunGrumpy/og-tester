@@ -105,13 +105,13 @@ const buildScoreHeader = (score: number): string => {
 
   let faceLines: string[] = [];
   if (score === 100) {
-    faceLines = ["╭/\\─────/\\╮", "│ (=^.^=) │", "│    ◡    │", "╰─────────╯"];
+    faceLines = ["╭/\\─────/\\╮", "│ ( ^.^ ) │", "│ =  ◡  = │", "╰─────────╯"];
   } else if (score >= 75) {
-    faceLines = ["╭/\\─────/\\╮", "│ (=◕.◕=) │", "│    ◡    │", "╰─────────╯"];
+    faceLines = ["╭/\\─────/\\╮", "│ ( ◕.◕ ) │", "│ =  ◡  = │", "╰─────────╯"];
   } else if (score >= 50) {
-    faceLines = ["╭/\\─────/\\╮", "│ (=•.•=) │", "│    ─    │", "╰─────────╯"];
+    faceLines = ["╭/\\─────/\\╮", "│ ( •.• ) │", "│ =  ─  = │", "╰─────────╯"];
   } else {
-    faceLines = ["╭/\\─────/\\╮", "│ (=✕.✕=) │", "│    ︵    │", "╰─────────╯"];
+    faceLines = ["╭/\\─────/\\╮", "│ ( ✕.✕ ) │", "│ =  ︵  = │", "╰─────────╯"];
   }
   const coloredFace = faceLines.map((line) => colorizeScore(line, score));
 
