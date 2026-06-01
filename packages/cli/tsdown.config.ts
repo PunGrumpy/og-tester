@@ -4,7 +4,7 @@ export default defineConfig({
   banner: { js: "#!/usr/bin/env node" },
   clean: true,
   deps: {
-    onlyBundle: ["zod"],
+    onlyBundle: ["zod", "effect"],
   },
   entry: ["src/index.ts"],
   format: ["esm"],
