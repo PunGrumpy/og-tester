@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@og-tester/*": ["../../packages/*"]
+      "@og-tester/*": ["../../packages/*"],
+      "@xmcp/*": ["./.xmcp/*"]
     },
     "strictNullChecks": true
   },

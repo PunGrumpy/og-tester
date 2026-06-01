@@ -1,13 +1,21 @@
 import type { XmcpConfig } from "xmcp";
 
 const config: XmcpConfig = {
+  experimental: {
+    adapter: "nextjs",
+  },
   http: {
     // adds extra logging to the console
     debug: true,
     endpoint: "mcp",
     port: 3001,
   },
-  stdio: true,
+  paths: {
+    prompts: false,
+    resources: false,
+    tools: "tools",
+  },
+  stdio: false,
   template: {
     description:
       "Test and preview your Open Graph and Twitter Card metadata. See how your links will appear when shared on social media platforms.",

@@ -4,8 +4,8 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "xmcp dev & next dev",
+    "build": "xmcp build && next build",
     "start": "next start",
     "typecheck": "tsgo --noEmit"
   },
@@ -14,6 +14,7 @@
     "@databuddy/sdk": "^2.3.22",
     "@hookform/resolvers": "^5.2.2",
     "@og-tester/core": "workspace:*",
+    "xmcp": "latest",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@unkey/nextjs": "^2.0.0",
     "appwrite": "^21.5.0",

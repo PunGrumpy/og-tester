@@ -1,8 +1,0 @@
-{
-  "extends": "@og-tester/typescript-config/base.json",
-  "compilerOptions": {
-    "strictNullChecks": true
-  },
-  "include": ["src/**/*", "xmcp.config.ts"],
-  "exclude": ["node_modules"]
-}
