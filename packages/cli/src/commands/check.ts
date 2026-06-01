@@ -105,7 +105,7 @@ const buildScoreHeader = (score: number): string => {
 
   let faceLines: string[] = [];
   if (score === 100) {
-    faceLines = ["╭/\\─────/\\╮", "│ ( ^.^ ) │", "│ ≽  ◡  ≼ │", "╰─────────╯"];
+    faceLines = ["╭/\\─────/\\╮", "│ ( ^.^ ) │", "│ ≽  ⩊  ≼ │", "╰─────────╯"];
   } else if (score >= 75) {
     faceLines = ["╭/\\─────/\\╮", "│ ( ◕.◕ ) │", "│ ≽  ◡  ≼ │", "╰─────────╯"];
   } else if (score >= 50) {
