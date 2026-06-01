@@ -5,17 +5,13 @@ const config: XmcpConfig = {
     adapter: "nextjs",
   },
   http: {
-    // adds extra logging to the console
-    debug: true,
-    endpoint: "mcp",
-    port: 3001,
+    debug: process.env.NODE_ENV !== "production",
   },
   paths: {
     prompts: false,
     resources: false,
     tools: "tools",
   },
-  stdio: false,
   template: {
     description:
       "Test and preview your Open Graph and Twitter Card metadata. See how your links will appear when shared on social media platforms.",
