@@ -51,6 +51,10 @@
 
   --color-success: oklch(0.55 0.22 264.53);
   --color-warning: oklch(0.81 0.17 75.35);
+
+  --ease-out-custom: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-custom: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer-custom: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
