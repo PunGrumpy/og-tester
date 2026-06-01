@@ -5,7 +5,12 @@ export const schema = {
   url: z.string().url().describe("The URL to fetch and analyze OG/meta tags for"),
 };
 
-export default async function handler(args: { url: string }) {
+export default async function handler(args: { url: string }): Promise<{
+  content: Array<{
+    type: "text";
+    text: string;
+  }>;
+}> {
   const data = await fetchOgTags(args.url);
 
   return {
