@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { MotionProvider } from "@/components/motion-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { fonts } from "@/lib/fonts";
 import { createMetadata } from "@/lib/metadata";
 import { AnalyticsProvider } from "@/providers/analytics";
@@ -31,11 +32,13 @@ export default function RootLayout({
               disableTransitionOnChange
               enableSystem
             >
-              <main className="relative divide-y">
-                <Header />
-                {children}
-                <Footer />
-              </main>
+              <TooltipProvider delayDuration={0}>
+                <main className="relative divide-y">
+                  <Header />
+                  {children}
+                  <Footer />
+                </main>
+              </TooltipProvider>
             </ThemeProvider>
           </MotionProvider>
 
