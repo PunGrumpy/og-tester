@@ -14,9 +14,9 @@
     "format": "ultracite fix"
   },
   "devDependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20260527.2",
-    "oxfmt": "^0.52.0",
-    "oxlint": "^1.67.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260601.1",
+    "oxfmt": "^0.53.0",
+    "oxlint": "^1.68.0",
     "turbo": "^2.6.0",
     "ultracite": "^7.8.1"
   },

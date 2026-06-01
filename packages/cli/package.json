@@ -14,8 +14,8 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@clack/prompts": "^0.9.1",
-    "commander": "^12.0.0",
+    "@clack/prompts": "^1.5.0",
+    "commander": "^14.0.3",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
@@ -23,6 +23,6 @@
     "@og-tester/typescript-config": "workspace:*",
     "@types/node": "^25.9.1",
     "tsdown": "latest",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }
