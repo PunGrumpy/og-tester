@@ -1,24 +1,28 @@
-import { z } from "zod";
 import { fetchOgTags } from "@og-tester/core";
+import { z } from "zod";
 
 export const schema = {
-  url: z.string().url().describe("The URL to fetch and analyze OG/meta tags for"),
+  url: z.url().describe("The URL to fetch and analyze OG/meta tags for"),
 };
 
-export default async function handler(args: { url: string }): Promise<{
-  content: Array<{
+const handler = async (args: {
+  url: string;
+}): Promise<{
+  content: {
     type: "text";
     text: string;
-  }>;
-}> {
+  }[];
+}> => {
   const data = await fetchOgTags(args.url);
 
   return {
     content: [
       {
-        type: "text" as const,
         text: JSON.stringify(data, null, 2),
+        type: "text" as const,
       },
     ],
   };
-}
+};
+
+export default handler;
