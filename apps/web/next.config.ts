@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // oxlint-disable-next-line require-await
+  redirects: async () => [
+    {
+      destination: "/api/mcp",
+      permanent: true,
+      source: "/mcp",
+    },
+  ],
 };
 
 export default nextConfig;
