@@ -1,9 +1,9 @@
 // Parsers
 
 // Fetchers (fetch + parse combined)
-export { fetchOgTags } from "./fetchers/og";
-export { fetchRobotsTxt } from "./fetchers/robots";
-export { fetchSitemap } from "./fetchers/sitemap";
+export { fetchOgTags, fetchOgTagsEffect } from "./fetchers/og";
+export { fetchRobotsTxt, fetchRobotsTxtEffect } from "./fetchers/robots";
+export { fetchSitemap, fetchSitemapEffect } from "./fetchers/sitemap";
 export { parseOgTags } from "./parsers/og";
 export { parseSitemap } from "./parsers/sitemap";
 
