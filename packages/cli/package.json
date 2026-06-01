@@ -1,0 +1,56 @@
+{
+  "name": "og-tester",
+  "version": "0.0.0",
+  "description": "Test and analyze Open Graph, Twitter Card, and meta tags from the command line",
+  "keywords": [
+    "cli",
+    "meta-tags",
+    "og",
+    "open-graph",
+    "seo",
+    "twitter-card"
+  ],
+  "homepage": "https://github.com/PunGrumpy/og-tester#readme",
+  "bugs": {
+    "url": "https://github.com/PunGrumpy/og-tester/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PunGrumpy/og-tester.git",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "og-tester": "dist/index.mjs"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsgo --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.0",
+    "commander": "^14.0.3",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@og-tester/core": "workspace:*",
+    "@og-tester/typescript-config": "workspace:*",
+    "@types/node": "^25.9.1",
+    "tsdown": "latest",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
