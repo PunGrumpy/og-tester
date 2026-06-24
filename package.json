@@ -11,12 +11,14 @@
     "dev": "turbo dev",
     "typecheck": "turbo typecheck",
     "lint": "ultracite check",
-    "format": "ultracite fix"
+    "format": "ultracite fix",
+    "doctor": "react-doctor"
   },
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260601.1",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
+    "react-doctor": "^0.5.8",
     "turbo": "^2.6.0",
     "ultracite": "^7.8.1"
   },
