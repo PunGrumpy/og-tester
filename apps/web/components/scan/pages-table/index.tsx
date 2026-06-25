@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import React, { useState, useMemo } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -262,13 +263,26 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                         {getCategoryScore(page, "image")}%
                       </TableCell>
                     </TableRow>
-                    {isExpanded && (
-                      <TableRow className="hover:bg-transparent border-t-0">
-                        <TableCell className="p-0" colSpan={7}>
-                          <PageDetail result={page} />
-                        </TableCell>
-                      </TableRow>
-                    )}
+                    <TableRow className="hover:bg-transparent border-t-0">
+                      <TableCell className="p-0 border-t-0" colSpan={7}>
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <m.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                duration: 0.2,
+                                ease: [0.23, 1, 0.32, 1],
+                              }}
+                              className="overflow-hidden"
+                            >
+                              <PageDetail result={page} />
+                            </m.div>
+                          )}
+                        </AnimatePresence>
+                      </TableCell>
+                    </TableRow>
                   </React.Fragment>
                 );
               })

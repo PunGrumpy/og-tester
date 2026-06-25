@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -143,43 +144,53 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                   </div>
                 </button>
 
-                {isExpanded && (
-                  <div className="px-4 pb-4 pt-0 border-t border-muted-foreground/5 flex flex-col gap-3 mt-1 animate-in slide-in-from-top-1 duration-200">
-                    <div className="flex flex-col gap-1 mt-2">
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
-                        Recommended Fix:
-                      </span>
-                      <code className="text-xs block bg-muted p-2 rounded-md font-mono text-primary overflow-x-auto whitespace-pre-wrap select-all border border-muted-foreground/5">
-                        {issue.suggestion}
-                      </code>
-                    </div>
+                <AnimatePresence initial={false}>
+                  {isExpanded && (
+                    <m.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                      className="overflow-hidden border-t border-muted-foreground/5"
+                    >
+                      <div className="px-4 pb-4 pt-4 flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+                            Recommended Fix:
+                          </span>
+                          <code className="text-xs block bg-muted p-2 rounded-md font-mono text-primary overflow-x-auto whitespace-pre-wrap select-all border border-muted-foreground/5">
+                            {issue.suggestion}
+                          </code>
+                        </div>
 
-                    {issue.affectedUrls.length > 0 && (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
-                          Affected Pages:
-                        </span>
-                        <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
-                          {issue.affectedUrls.map((url) => {
-                            const path = safeGetPathname(url);
-                            return (
-                              <li key={url} className="py-1 break-all">
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary hover:underline hover:text-primary/80 transition-colors"
-                                >
-                                  {path}
-                                </a>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                        {issue.affectedUrls.length > 0 && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+                              Affected Pages:
+                            </span>
+                            <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
+                              {issue.affectedUrls.map((url) => {
+                                const path = safeGetPathname(url);
+                                return (
+                                  <li key={url} className="py-1 break-all">
+                                    <a
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-primary hover:underline hover:text-primary/80 transition-colors"
+                                    >
+                                      {path}
+                                    </a>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                )}
+                    </m.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
