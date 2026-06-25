@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/table";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 
+import { ScoreBadge } from "../score-badge";
 import { PageDetail } from "./page-detail";
-import { ScoreBadge } from "./score-badge";
 
 interface PagesTableProps {
   pages: PageScoreResult[];
@@ -111,7 +111,6 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
     });
   }, [pages, search, sortBy, sortOrder]);
 
-
   return (
     <div className="flex flex-col gap-4">
       <div className="relative max-w-sm">
@@ -136,37 +135,67 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 className="cursor-pointer select-none font-semibold hover:text-primary transition-colors active:scale-[0.98] duration-200"
                 onClick={() => handleSort("url")}
               >
-                Page Path <SortIndicator field="url" sortBy={sortBy} sortOrder={sortOrder} />
+                Page Path{" "}
+                <SortIndicator
+                  field="url"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200"
                 onClick={() => handleSort("score")}
               >
-                Overall <SortIndicator field="score" sortBy={sortBy} sortOrder={sortOrder} />
+                Overall{" "}
+                <SortIndicator
+                  field="score"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("og")}
               >
-                OG <SortIndicator field="og" sortBy={sortBy} sortOrder={sortOrder} />
+                OG{" "}
+                <SortIndicator
+                  field="og"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("twitter")}
               >
-                Twitter <SortIndicator field="twitter" sortBy={sortBy} sortOrder={sortOrder} />
+                Twitter{" "}
+                <SortIndicator
+                  field="twitter"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("seo")}
               >
-                SEO <SortIndicator field="seo" sortBy={sortBy} sortOrder={sortOrder} />
+                SEO{" "}
+                <SortIndicator
+                  field="seo"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("image")}
               >
-                Image <SortIndicator field="image" sortBy={sortBy} sortOrder={sortOrder} />
+                Image{" "}
+                <SortIndicator
+                  field="image"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
             </TableRow>
           </TableHeader>
