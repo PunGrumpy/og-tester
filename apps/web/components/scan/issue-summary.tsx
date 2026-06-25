@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import { cn } from "@/lib/utils";
 
@@ -23,8 +24,24 @@ interface AggregatedIssue {
   affectedUrls: string[];
 }
 
+const safeGetPathname = (url: string | undefined | null): string => {
+  if (!url) {
+    return "/";
+  }
+  try {
+    if (url.startsWith("/")) {
+      return url;
+    }
+    const absoluteUrl = url.includes("://") ? url : `https://${url}`;
+    return new URL(absoluteUrl).pathname || "/";
+  } catch {
+    return url;
+  }
+};
+
 export const IssueSummary = ({ pages }: IssueSummaryProps) => {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   // Group diagnostics across all pages
   const issueMap = new Map<
@@ -64,6 +81,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
     }))
     .toSorted((a, b) => b.count - a.count);
   const totalPages = pages.length;
+  const displayedIssues = showAll ? sortedIssues : sortedIssues.slice(0, 5);
 
   return (
     <div className="p-6 rounded-2xl border border-border bg-background flex flex-col gap-4">
@@ -82,7 +100,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {sortedIssues.slice(0, 5).map((issue) => {
+          {displayedIssues.map((issue) => {
             const isExpanded = expandedIssue === issue.key;
             const percent = Math.round((issue.count / totalPages) * 100);
 
@@ -95,7 +113,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                 )}
               >
                 <button
-                  className="w-full flex items-center justify-between p-4 cursor-pointer text-left text-sm"
+                  className="w-full flex items-center justify-between p-4 cursor-pointer text-left text-sm active:scale-[0.98] transition-transform duration-100 ease-out"
                   type="button"
                   onClick={() =>
                     setExpandedIssue(isExpanded ? null : issue.key)
@@ -141,12 +159,19 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                         <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
                           Affected Pages:
                         </span>
-                        <ul className="text-xs font-mono flex flex-col gap-1 max-h-24 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
+                        <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
                           {issue.affectedUrls.map((url) => {
-                            const path = url ? new URL(url).pathname : "/";
+                            const path = safeGetPathname(url);
                             return (
-                              <li key={url} className="py-1 truncate">
-                                {path || "/"}
+                              <li key={url} className="py-1 break-all">
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:underline hover:text-primary/80 transition-colors"
+                                >
+                                  {path}
+                                </a>
                               </li>
                             );
                           })}
@@ -158,6 +183,19 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
               </div>
             );
           })}
+
+          {sortedIssues.length > 5 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs text-muted-foreground hover:text-foreground mt-2 active:scale-[0.98] transition-transform duration-100 ease-out"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {showAll
+                ? "Show Less"
+                : `Show All Issues (${sortedIssues.length})`}
+            </Button>
+          )}
         </div>
       )}
     </div>

@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/table";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 
+import { ScoreBadge } from "../score-badge";
 import { PageDetail } from "./page-detail";
-import { ScoreBadge } from "./score-badge";
 
 interface PagesTableProps {
   pages: PageScoreResult[];
@@ -23,6 +23,21 @@ interface PagesTableProps {
 
 type SortField = "url" | "score" | "og" | "twitter" | "seo" | "image";
 type SortOrder = "asc" | "desc";
+
+const safeGetPathname = (url: string | undefined | null): string => {
+  if (!url) {
+    return "/";
+  }
+  try {
+    if (url.startsWith("/")) {
+      return url;
+    }
+    const absoluteUrl = url.includes("://") ? url : `https://${url}`;
+    return new URL(absoluteUrl).pathname || "/";
+  } catch {
+    return url;
+  }
+};
 
 const getCategoryScore = (page: PageScoreResult, id: string): number => {
   const cat = page.categories.find((c) => c.id === id);
@@ -81,7 +96,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
   const filteredAndSortedPages = useMemo(() => {
     // Filter
     const filtered = pages.filter((page) => {
-      const path = page.url ? new URL(page.url).pathname.toLowerCase() : "/";
+      const path = safeGetPathname(page.url).toLowerCase();
       return path.includes(search.toLowerCase());
     });
 
@@ -91,8 +106,8 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
       let valB: string | number = "";
 
       if (sortBy === "url") {
-        valA = a.url ? new URL(a.url).pathname : "";
-        valB = b.url ? new URL(b.url).pathname : "";
+        valA = safeGetPathname(a.url);
+        valB = safeGetPathname(b.url);
       } else if (sortBy === "score") {
         valA = a.score;
         valB = b.score;
@@ -110,7 +125,6 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
       return 0;
     });
   }, [pages, search, sortBy, sortOrder]);
-
 
   return (
     <div className="flex flex-col gap-4">
@@ -133,40 +147,70 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
             <TableRow>
               <TableHead className="w-10" />
               <TableHead
-                className="cursor-pointer select-none font-semibold hover:text-primary transition-colors active:scale-[0.98] duration-200"
+                className="cursor-pointer select-none font-semibold hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200"
                 onClick={() => handleSort("url")}
               >
-                Page Path <SortIndicator field="url" sortBy={sortBy} sortOrder={sortOrder} />
+                Page Path{" "}
+                <SortIndicator
+                  field="url"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200"
                 onClick={() => handleSort("score")}
               >
-                Overall <SortIndicator field="score" sortBy={sortBy} sortOrder={sortOrder} />
+                Overall{" "}
+                <SortIndicator
+                  field="score"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("og")}
               >
-                OG <SortIndicator field="og" sortBy={sortBy} sortOrder={sortOrder} />
+                OG{" "}
+                <SortIndicator
+                  field="og"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("twitter")}
               >
-                Twitter <SortIndicator field="twitter" sortBy={sortBy} sortOrder={sortOrder} />
+                Twitter{" "}
+                <SortIndicator
+                  field="twitter"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("seo")}
               >
-                SEO <SortIndicator field="seo" sortBy={sortBy} sortOrder={sortOrder} />
+                SEO{" "}
+                <SortIndicator
+                  field="seo"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("image")}
               >
-                Image <SortIndicator field="image" sortBy={sortBy} sortOrder={sortOrder} />
+                Image{" "}
+                <SortIndicator
+                  field="image"
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                />
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -184,7 +228,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
               filteredAndSortedPages.map((page) => {
                 const urlKey = page.url || "";
                 const isExpanded = expandedRows.has(urlKey);
-                const path = page.url ? new URL(page.url).pathname : "/";
+                const path = safeGetPathname(page.url);
 
                 return (
                   <React.Fragment key={urlKey}>

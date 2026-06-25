@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import { cn } from "@/lib/utils";
 
-import { getSeverityBg, getSeverityIcon } from "./severity";
+import { getSeverityBg, getSeverityIcon } from "../severity";
 
 interface PageDetailProps {
   result: PageScoreResult;

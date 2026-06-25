@@ -14,7 +14,7 @@ interface ViewAnimationProps {
   children: ReactNode;
 }
 
-const VIEWPORT_CONFIG = { amount: 0.5, once: true };
+const VIEWPORT_CONFIG = { amount: "some" as const, once: true };
 
 export const ViewAnimation = memo(
   ({
@@ -45,6 +45,7 @@ export const ViewAnimation = memo(
 
     return (
       <m.div
+        inherit={false}
         animate={animate}
         className={className}
         initial={initialProps}
