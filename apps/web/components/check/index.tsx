@@ -16,7 +16,7 @@ export const CheckerSection = () => {
       <div id="checker" className="scroll-mt-24">
         <InputForm onScanSite={startScan} isDisabled={isLoading} delay={1.4} />
       </div>
-      <Section className="grid min-h-[420px] gap-0 lg:grid-cols-[1fr_420px] lg:divide-x">
+      <Section className="grid min-h-[420px] gap-0 grid-cols-1 lg:grid-cols-[1fr_420px] divide-y lg:divide-y-0 lg:divide-x">
         <MetaTagsTable delay={1.6} />
         <SocialPreview delay={1.8} />
       </Section>

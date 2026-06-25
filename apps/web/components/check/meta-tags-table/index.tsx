@@ -151,7 +151,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
         onValueChange={setActiveCategory}
       >
         <div className="border-b">
-          <div className="hide-scrollbar flex-1">
+          <div className="hide-scrollbar flex-1 overflow-x-auto">
             <TabsList className="h-auto w-max justify-start gap-0 rounded-none bg-transparent p-0 sm:w-auto">
               {CATEGORIES.map((cat) => (
                 <TabsTrigger
