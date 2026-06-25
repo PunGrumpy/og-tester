@@ -74,13 +74,14 @@ export const InputForm = ({
   isDisabled: boolean;
   delay?: number;
 }) => {
-  const { setResult } = useOgStore();
+  const { setResult, setIsLoading } = useOgStore();
   const form = useForm<SchemaType>({
     defaultValues: { url: "" },
     resolver: zodResolver(schema),
   });
   const { execute, isExecuting } = useAction(ogAction, {
     onError: ({ error }) => {
+      setIsLoading(false);
       if (error.serverError) {
         form.setError("url", {
           message: parseError(error.serverError),
@@ -92,6 +93,8 @@ export const InputForm = ({
       if (data) {
         const normalizedUrl = normalizeUrl(form.getValues("url"));
         setResult(normalizedUrl, data);
+      } else {
+        setIsLoading(false);
       }
     },
   });
@@ -100,6 +103,7 @@ export const InputForm = ({
     track("submit_url", {
       url: data.url.toString(),
     });
+    setIsLoading(true);
     execute({ url: data.url });
     onScanSite(data.url);
   };

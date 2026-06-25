@@ -70,7 +70,7 @@ const generateHtml = (data: OgData): string => {
 };
 
 export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
-  const { data, isEditing, setIsEditing } = useOgStore();
+  const { data, isEditing, setIsEditing, isLoading } = useOgStore();
   const [isCopied, setIsCopied] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("general");
 
@@ -188,7 +188,11 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <TagTable category="general" data={data} />
+                  <TagTable
+                    category="general"
+                    data={data}
+                    isLoading={isLoading}
+                  />
                 </m.div>
               </TabsContent>
             )}
@@ -201,7 +205,11 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <TagTable category="openGraph" data={data} />
+                  <TagTable
+                    category="openGraph"
+                    data={data}
+                    isLoading={isLoading}
+                  />
                 </m.div>
               </TabsContent>
             )}
@@ -214,7 +222,11 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <TagTable category="twitter" data={data} />
+                  <TagTable
+                    category="twitter"
+                    data={data}
+                    isLoading={isLoading}
+                  />
                 </m.div>
               </TabsContent>
             )}
@@ -227,7 +239,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <IconsPanel data={data} />
+                  <IconsPanel data={data} isLoading={isLoading} />
                 </m.div>
               </TabsContent>
             )}
