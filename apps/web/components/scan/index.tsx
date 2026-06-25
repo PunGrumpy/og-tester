@@ -2,21 +2,8 @@
 
 import { AlertCircle, RotateCcw, BarChart3 } from "lucide-react";
 import { m, AnimatePresence } from "motion/react";
-
-import { IssueSummary } from "@/components/scan/issue-summary";
-import { PagesTable } from "@/components/scan/pages-table";
-import { ScanProgress } from "@/components/scan/scan-progress";
 import dynamic from "next/dynamic";
 
-import { ScoreOverview } from "@/components/scan/score-overview";
-
-const ScoreDistribution = dynamic(
-  () =>
-    import("@/components/scan/score-distribution").then(
-      (mod) => mod.ScoreDistribution
-    ),
-  { ssr: false }
-);
 import { Section, SectionSeparator } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +15,19 @@ import {
 } from "@/components/ui/empty";
 import { ViewAnimation } from "@/components/view-animation";
 import { useScannerStore } from "@/hooks/use-scanner-store";
+
+import { IssueSummary } from "./issue-summary";
+import { PagesTable } from "./pages-table";
+import { ScanProgress } from "./scan-progress";
+import { ScoreOverview } from "./score-overview";
+
+const ScoreDistribution = dynamic(
+  async () => {
+    const mod = await import("./score-distribution");
+    return mod.ScoreDistribution;
+  },
+  { ssr: false }
+);
 
 export const ScannerSection = () => {
   const {
