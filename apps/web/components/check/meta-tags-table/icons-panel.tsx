@@ -23,12 +23,15 @@ export const IconsPanel = ({
 }: IconsPanelProps): ReactElement => {
   if (isLoading) {
     return (
-      <div className="flex flex-wrap gap-4">
+      <div className="m-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {["favicon", "touch-icon", "apple-icon"].map((label) => (
-          <div className="flex items-center gap-2" key={label}>
-            <Skeleton className="size-10 rounded" />
-            <div className="flex flex-col gap-1">
-              <Skeleton className="h-3 w-16" />
+          <div
+            className="flex items-center gap-3 rounded-lg border px-3 py-2"
+            key={label}
+          >
+            <Skeleton className="size-8 rounded" />
+            <div className="flex flex-1 flex-col gap-1.5 min-w-0">
+              <Skeleton className="h-3.5 w-16" />
               <Skeleton className="h-3 w-12" />
             </div>
           </div>

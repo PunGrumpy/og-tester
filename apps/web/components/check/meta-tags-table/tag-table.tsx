@@ -265,11 +265,11 @@ const TagRow = ({
   }
 
   return (
-    <tr className="divide-x hover:bg-muted/20 transition-colors duration-150 ease-out">
-      <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
+    <tr className="flex flex-col sm:table-row divide-y sm:divide-y-0 sm:divide-x hover:bg-muted/20 transition-colors duration-150 ease-out">
+      <td className="w-full sm:w-40 whitespace-nowrap px-4 py-2 sm:py-3 align-top font-medium text-primary text-sm bg-muted/10 sm:bg-transparent">
         {key}
       </td>
-      <td className="break-all px-4 py-3 text-muted-foreground text-sm">
+      <td className="w-full break-all px-4 py-3 text-muted-foreground text-sm">
         {content}
       </td>
     </tr>
