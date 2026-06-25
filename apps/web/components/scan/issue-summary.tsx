@@ -27,7 +27,10 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
   // Group diagnostics across all pages
-  const issueMap = new Map<string, AggregatedIssue>();
+  const issueMap = new Map<
+    string,
+    Omit<AggregatedIssue, "affectedUrls"> & { affectedUrls: Set<string> }
+  >();
 
   for (const page of pages) {
     for (const diag of page.diagnostics) {
@@ -36,12 +39,12 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
 
       if (existing) {
         existing.count += 1;
-        if (page.url && !existing.affectedUrls.includes(page.url)) {
-          existing.affectedUrls.push(page.url);
+        if (page.url) {
+          existing.affectedUrls.add(page.url);
         }
       } else {
         issueMap.set(key, {
-          affectedUrls: page.url ? [page.url] : [],
+          affectedUrls: new Set(page.url ? [page.url] : []),
           count: 1,
           key,
           message: diag.message,
@@ -54,9 +57,12 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
     }
   }
 
-  const sortedIssues = [...issueMap.values()].toSorted(
-    (a, b) => b.count - a.count
-  );
+  const sortedIssues: AggregatedIssue[] = [...issueMap.values()]
+    .map((issue) => ({
+      ...issue,
+      affectedUrls: [...issue.affectedUrls],
+    }))
+    .toSorted((a, b) => b.count - a.count);
   const totalPages = pages.length;
 
   return (

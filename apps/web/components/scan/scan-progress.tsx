@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 import type { ScanPhase } from "@/hooks/use-scanner-store";
 
@@ -46,20 +46,20 @@ export const ScanProgress = ({
       </div>
 
       <div className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative">
-        <motion.div
+        <m.div
           animate={{ width: `${percentage}%` }}
           className="h-full bg-primary rounded-full relative overflow-hidden"
           initial={{ width: "0%" }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           {/* Animated scanning shine */}
-          <motion.div
+          <m.div
             className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
             animate={{ x: ["-100%", "200%"] }}
             transition={{ duration: 2, ease: "linear", repeat: Infinity }}
             style={{ width: "50%" }}
           />
-        </motion.div>
+        </m.div>
       </div>
 
       {phase === "checking" && currentUrl && (

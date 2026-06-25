@@ -1,13 +1,22 @@
 "use client";
 
 import { AlertCircle, RotateCcw, BarChart3 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 
 import { IssueSummary } from "@/components/scan/issue-summary";
 import { PagesTable } from "@/components/scan/pages-table";
 import { ScanProgress } from "@/components/scan/scan-progress";
-import { ScoreDistribution } from "@/components/scan/score-distribution";
+import dynamic from "next/dynamic";
+
 import { ScoreOverview } from "@/components/scan/score-overview";
+
+const ScoreDistribution = dynamic(
+  () =>
+    import("@/components/scan/score-distribution").then(
+      (mod) => mod.ScoreDistribution
+    ),
+  { ssr: false }
+);
 import { Section, SectionSeparator } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,10 +49,10 @@ export const ScannerSection = () => {
     <>
       <SectionSeparator />
 
-      <motion.div id="scanner" className="scroll-mt-24">
+      <m.div id="scanner" className="scroll-mt-24">
         <AnimatePresence mode="wait" initial={false}>
           {phase === "idle" && (
-            <motion.div
+            <m.div
               key="idle"
               initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
               animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
@@ -66,11 +75,11 @@ export const ScannerSection = () => {
                   </EmptyHeader>
                 </Empty>
               </Section>
-            </motion.div>
+            </m.div>
           )}
 
           {(phase === "discovery" || phase === "checking") && (
-            <motion.div
+            <m.div
               key="progress"
               initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
               animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
@@ -97,11 +106,11 @@ export const ScannerSection = () => {
                   </div>
                 </div>
               </Section>
-            </motion.div>
+            </m.div>
           )}
 
           {phase === "error" && (
-            <motion.div
+            <m.div
               key="error"
               initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
               animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
@@ -129,11 +138,11 @@ export const ScannerSection = () => {
                   </Button>
                 </div>
               </Section>
-            </motion.div>
+            </m.div>
           )}
 
           {phase === "complete" && (
-            <motion.div
+            <m.div
               key="complete"
               initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
               animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
@@ -198,10 +207,10 @@ export const ScannerSection = () => {
                   </ViewAnimation>
                 </div>
               </Section>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </m.div>
       <SectionSeparator />
     </>
   );

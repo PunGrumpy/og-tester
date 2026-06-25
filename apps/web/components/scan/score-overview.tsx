@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 import type { CategoryAverages } from "@/hooks/use-scanner-store";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ const CircularGauge = ({
             r={radius}
             strokeWidth={strokeWidth}
           />
-          <motion.circle
+          <m.circle
             animate={{ strokeDashoffset }}
             className={cn(
               "fill-none stroke-score-good",
@@ -91,39 +91,39 @@ const CircularGauge = ({
   );
 };
 
+// Stagger wrapper for motion
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 10 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+    y: 0,
+  },
+};
+
 export const ScoreOverview = ({
   averageScore,
   categoryAverages,
 }: ScoreOverviewProps) => {
-  // Stagger wrapper for motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 10 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.4, ease: "easeOut" as const },
-      y: 0,
-    },
-  };
-
   return (
-    <motion.div
+    <m.div
       className="grid gap-6 md:grid-cols-[200px_1fr] items-center p-6 rounded-lg border bg-background"
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
-      <motion.div
+      <m.div
         className="flex justify-center md:border-r md:pr-6"
         variants={itemVariants}
       >
@@ -133,9 +133,9 @@ export const ScoreOverview = ({
           size={150}
           strokeWidth={10}
         />
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         className="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center"
         variants={itemVariants}
       >
@@ -163,7 +163,7 @@ export const ScoreOverview = ({
           size={100}
           strokeWidth={6}
         />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 };

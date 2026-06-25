@@ -1,5 +1,6 @@
 "use client";
 
+// react-doctor-disable-next-line react-doctor/prefer-dynamic-import
 import {
   ResponsiveContainer,
   BarChart,
@@ -90,8 +91,8 @@ export const ScoreDistribution = ({ summary }: ScoreDistributionProps) => {
                 itemStyle={{ fontSize: "11px" }}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                {data.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
                 ))}
               </Bar>
             </BarChart>

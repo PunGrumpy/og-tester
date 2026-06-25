@@ -33,6 +33,25 @@ const getCategoryScore = (page: PageScoreResult, id: string): number => {
   return cat.maxScore > 0 ? Math.round((cat.score / cat.maxScore) * 100) : 0;
 };
 
+const SortIndicator = ({
+  field,
+  sortBy,
+  sortOrder,
+}: {
+  field: SortField;
+  sortBy: SortField;
+  sortOrder: SortOrder;
+}) => {
+  if (sortBy !== field) {
+    return null;
+  }
+  return sortOrder === "asc" ? (
+    <ChevronUp className="inline-block size-3 ml-1 shrink-0" />
+  ) : (
+    <ChevronDown className="inline-block size-3 ml-1 shrink-0" />
+  );
+};
+
 export const PagesTable = ({ pages }: PagesTableProps) => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortField>("score");
@@ -92,16 +111,6 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
     });
   }, [pages, search, sortBy, sortOrder]);
 
-  const renderSortIndicator = (field: SortField) => {
-    if (sortBy !== field) {
-      return null;
-    }
-    return sortOrder === "asc" ? (
-      <ChevronUp className="inline-block size-3 ml-1 shrink-0" />
-    ) : (
-      <ChevronDown className="inline-block size-3 ml-1 shrink-0" />
-    );
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -127,37 +136,37 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 className="cursor-pointer select-none font-semibold hover:text-primary transition-colors active:scale-[0.98] duration-200"
                 onClick={() => handleSort("url")}
               >
-                Page Path {renderSortIndicator("url")}
+                Page Path <SortIndicator field="url" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200"
                 onClick={() => handleSort("score")}
               >
-                Overall {renderSortIndicator("score")}
+                Overall <SortIndicator field="score" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("og")}
               >
-                OG {renderSortIndicator("og")}
+                OG <SortIndicator field="og" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("twitter")}
               >
-                Twitter {renderSortIndicator("twitter")}
+                Twitter <SortIndicator field="twitter" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("seo")}
               >
-                SEO {renderSortIndicator("seo")}
+                SEO <SortIndicator field="seo" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("image")}
               >
-                Image {renderSortIndicator("image")}
+                Image <SortIndicator field="image" sortBy={sortBy} sortOrder={sortOrder} />
               </TableHead>
             </TableRow>
           </TableHeader>
