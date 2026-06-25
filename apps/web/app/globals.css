@@ -239,6 +239,14 @@
   [role="button"] {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    transition:
+      transform 160ms var(--ease-out-custom),
+      opacity 160ms var(--ease-out-custom);
+  }
+
+  button:active:not(:disabled),
+  [role="button"]:active:not(:disabled) {
+    transform: scale(0.97);
   }
 }
 

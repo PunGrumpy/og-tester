@@ -265,7 +265,7 @@ const TagRow = ({
   }
 
   return (
-    <tr className="divide-x">
+    <tr className="divide-x hover:bg-muted/20 transition-colors duration-150 ease-out">
       <td className="w-40 whitespace-nowrap px-4 py-3 align-top font-medium text-primary text-sm">
         {key}
       </td>
