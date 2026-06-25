@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 
 import { Icons } from "../icons";
 import { Section } from "../section";
-import { Button } from "../ui/button";
 import { ViewAnimation } from "../view-animation";
+import { Navigation } from "./navigation";
 
 export const Header = () => {
   const { scrollY } = useScroll();
@@ -50,23 +50,7 @@ export const Header = () => {
           </Link>
         </ViewAnimation>
 
-        <ViewAnimation
-          className="hidden w-32 justify-end md:flex"
-          delay={0.4}
-          initial={{ opacity: 0, translateY: -8 }}
-          whileInView={{ opacity: 1, translateY: 0 }}
-        >
-          <Button asChild size="sm" variant="outline">
-            <Link
-              className="font-extralight"
-              href="https://www.pungrumpy.com/contact"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Get in touch
-            </Link>
-          </Button>
-        </ViewAnimation>
+        <Navigation />
       </Section>
     </header>
   );
