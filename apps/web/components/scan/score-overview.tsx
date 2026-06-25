@@ -115,55 +115,53 @@ const itemVariants = {
 export const ScoreOverview = ({
   averageScore,
   categoryAverages,
-}: ScoreOverviewProps) => {
-  return (
+}: ScoreOverviewProps) => (
+  <m.div
+    className="grid gap-6 md:grid-cols-[200px_1fr] items-center p-6 rounded-lg border bg-background"
+    variants={containerVariants}
+    initial="hidden"
+    animate="show"
+  >
     <m.div
-      className="grid gap-6 md:grid-cols-[200px_1fr] items-center p-6 rounded-lg border bg-background"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
+      className="flex justify-center md:border-r md:pr-6"
+      variants={itemVariants}
     >
-      <m.div
-        className="flex justify-center md:border-r md:pr-6"
-        variants={itemVariants}
-      >
-        <CircularGauge
-          label="Overall Score"
-          score={averageScore}
-          size={150}
-          strokeWidth={10}
-        />
-      </m.div>
-
-      <m.div
-        className="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center"
-        variants={itemVariants}
-      >
-        <CircularGauge
-          label="Open Graph"
-          score={categoryAverages.og || 0}
-          size={100}
-          strokeWidth={6}
-        />
-        <CircularGauge
-          label="Twitter Card"
-          score={categoryAverages.twitter || 0}
-          size={100}
-          strokeWidth={6}
-        />
-        <CircularGauge
-          label="Core SEO"
-          score={categoryAverages.seo || 0}
-          size={100}
-          strokeWidth={6}
-        />
-        <CircularGauge
-          label="Image Validation"
-          score={categoryAverages.image || 0}
-          size={100}
-          strokeWidth={6}
-        />
-      </m.div>
+      <CircularGauge
+        label="Overall Score"
+        score={averageScore}
+        size={150}
+        strokeWidth={10}
+      />
     </m.div>
-  );
-};
+
+    <m.div
+      className="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center"
+      variants={itemVariants}
+    >
+      <CircularGauge
+        label="Open Graph"
+        score={categoryAverages.og || 0}
+        size={100}
+        strokeWidth={6}
+      />
+      <CircularGauge
+        label="Twitter Card"
+        score={categoryAverages.twitter || 0}
+        size={100}
+        strokeWidth={6}
+      />
+      <CircularGauge
+        label="Core SEO"
+        score={categoryAverages.seo || 0}
+        size={100}
+        strokeWidth={6}
+      />
+      <CircularGauge
+        label="Image Validation"
+        score={categoryAverages.image || 0}
+        size={100}
+        strokeWidth={6}
+      />
+    </m.div>
+  </m.div>
+);
