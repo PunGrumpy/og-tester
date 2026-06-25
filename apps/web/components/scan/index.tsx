@@ -61,13 +61,12 @@ export const ScannerSection = () => {
                   exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
                 >
-                  <div className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
-                    <ViewAnimation
-                      delay={0.2}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      className="w-full flex flex-col items-center justify-center"
-                    >
+                  <ViewAnimation
+                    delay={0.2}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                  >
+                    <div className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
                       <Empty>
                         <EmptyMedia>
                           <BarChart3 className="size-12 text-muted-foreground/30" />
@@ -82,8 +81,8 @@ export const ScannerSection = () => {
                           </EmptyDescription>
                         </EmptyHeader>
                       </Empty>
-                    </ViewAnimation>
-                  </div>
+                    </div>
+                  </ViewAnimation>
                 </m.div>
               )}
 
