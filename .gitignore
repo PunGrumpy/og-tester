@@ -52,3 +52,6 @@ dist
 
 # Xmcp
 .xmcp
+
+# OG Tester
+og-report.json
