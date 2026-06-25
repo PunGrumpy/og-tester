@@ -1,6 +1,7 @@
 "use client";
 
-import { m, useReducedMotion } from "motion/react";
+import type { Transition } from "motion/react";
+import { m } from "motion/react";
 import { memo, useMemo } from "react";
 import type { ReactNode } from "react";
 
@@ -25,8 +26,6 @@ export const ViewAnimation = memo(
     className,
     children,
   }: ViewAnimationProps) => {
-    const shouldReduceMotion = useReducedMotion();
-
     const initialProps = useMemo(
       () => ({ filter: "blur(4px)", ...initial }),
       [initial]
@@ -37,11 +36,15 @@ export const ViewAnimation = memo(
       [whileInView]
     );
 
-    const transition = useMemo(() => ({ delay, duration: 0.8 }), [delay]);
-
-    if (shouldReduceMotion) {
-      return children;
-    }
+    const transition = useMemo(
+      () =>
+        ({
+          delay,
+          duration: 0.35,
+          ease: [0.23, 1, 0.32, 1],
+        }) as Transition,
+      [delay]
+    );
 
     return (
       <m.div

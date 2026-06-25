@@ -1,7 +1,7 @@
 "use client";
 
 import { Monitor, Moon, Sun } from "lucide-react";
-import { m, useReducedMotion } from "motion/react";
+import { m } from "motion/react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
@@ -15,7 +15,6 @@ const THEMES = [
 
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
-  const shouldReduceMotion = useReducedMotion();
   const isMounted = useSyncExternalStore(
     () => () => true,
     () => true,
@@ -48,11 +47,7 @@ export const ThemeSwitcher = () => {
                 className="absolute inset-0 rounded-full bg-muted/50 ring-1 ring-border"
                 id="theme-switcher-indicator"
                 layoutId="active-theme"
-                transition={
-                  shouldReduceMotion
-                    ? { duration: 0 }
-                    : { duration: 0.5, type: "spring" }
-                }
+                transition={{ duration: 0.5, type: "spring" }}
               />
             ) : null}
             <Icon
