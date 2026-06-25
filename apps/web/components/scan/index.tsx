@@ -52,7 +52,7 @@ export const ScannerSection = () => {
       <m.div id="scanner" className="scroll-mt-24">
         <div className="relative mx-auto max-w-7xl">
           <div className="md:border-x">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="wait">
               {phase === "idle" && (
                 <m.div
                   key="idle"
