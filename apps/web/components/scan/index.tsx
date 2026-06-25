@@ -56,18 +56,22 @@ export const ScannerSection = () => {
               {phase === "idle" && (
                 <m.div
                   key="idle"
-                  initial={{ filter: "blur(4px)", opacity: 0, y: 10 }}
+                  initial={{ filter: "blur(2px)", opacity: 0, y: 10 }}
                   whileInView={{
                     filter: "blur(0px)",
                     opacity: 1,
-                    transition: { delay: 0.2, duration: 0.8, ease: "easeOut" },
+                    transition: {
+                      delay: 0.1,
+                      duration: 0.35,
+                      ease: [0.23, 1, 0.32, 1],
+                    },
                     y: 0,
                   }}
                   viewport={{ amount: 0.5, once: true }}
                   exit={{
-                    filter: "blur(4px)",
+                    filter: "blur(2px)",
                     opacity: 0,
-                    transition: { duration: 0.3, ease: "easeIn" },
+                    transition: { duration: 0.2, ease: [0.77, 0, 0.175, 1] },
                     y: -12,
                   }}
                 >
@@ -93,10 +97,10 @@ export const ScannerSection = () => {
               {(phase === "discovery" || phase === "checking") && (
                 <m.div
                   key="progress"
-                  initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
+                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
                   animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <div className="p-8 flex flex-col items-center justify-center min-h-[300px]">
                     <div className="flex w-full max-w-xl flex-col gap-6">
@@ -110,7 +114,7 @@ export const ScannerSection = () => {
                       <div className="flex justify-center">
                         <Button
                           variant="destructive"
-                          className="px-6 active:scale-[0.96] transition-transform duration-150 ease-out"
+                          className="px-6"
                           onClick={cancelScan}
                         >
                           Cancel Scan
@@ -124,10 +128,10 @@ export const ScannerSection = () => {
               {phase === "error" && (
                 <m.div
                   key="error"
-                  initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
+                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
                   animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <div className="p-8 flex items-center justify-center min-h-[300px]">
                     <div className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-destructive/10 bg-destructive/5 p-6 text-center shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
@@ -142,10 +146,7 @@ export const ScannerSection = () => {
                           {errorMsg}
                         </p>
                       </div>
-                      <Button
-                        className="px-5 active:scale-[0.96] transition-transform duration-150 ease-out"
-                        onClick={resetScan}
-                      >
+                      <Button className="px-5" onClick={resetScan}>
                         Try Another URL
                       </Button>
                     </div>
@@ -156,10 +157,10 @@ export const ScannerSection = () => {
               {phase === "complete" && (
                 <m.div
                   key="complete"
-                  initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
+                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
                   animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] lg:divide-x divide-y lg:divide-y-0">
                     <div className="col-span-full flex flex-col sm:flex-row items-center justify-between gap-4 border-b px-6 py-4 bg-foreground/2">
@@ -171,12 +172,7 @@ export const ScannerSection = () => {
                           Complete overview for your site optimization audit
                         </p>
                       </div>
-                      <Button
-                        className="active:scale-[0.96] transition-transform duration-150 ease-out"
-                        variant="outline"
-                        onClick={resetScan}
-                        size="sm"
-                      >
+                      <Button variant="outline" onClick={resetScan} size="sm">
                         <RotateCcw data-icon="inline-start" />
                         New Scan
                       </Button>

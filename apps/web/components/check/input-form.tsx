@@ -157,7 +157,7 @@ export const InputForm = ({
                     aria-label={
                       isExecuting ? "Analyzing URL..." : "Analyze URL"
                     }
-                    className="w-full sm:w-auto relative min-w-[44px] active:scale-[0.96] transition-transform duration-150 ease-out"
+                    className="w-full sm:w-auto relative min-w-[44px]"
                     disabled={isDisabled || isExecuting}
                     type="submit"
                   >
@@ -165,16 +165,15 @@ export const InputForm = ({
                       <m.span
                         key={isExecuting ? "loading" : "idle"}
                         initial={{
-                          filter: "blur(4px)",
+                          filter: "blur(2px)",
                           opacity: 0,
-                          scale: 0.25,
+                          scale: 0.95,
                         }}
                         animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
-                        exit={{ filter: "blur(4px)", opacity: 0, scale: 0.25 }}
+                        exit={{ filter: "blur(2px)", opacity: 0, scale: 0.95 }}
                         transition={{
-                          bounce: 0,
-                          duration: 0.3,
-                          type: "spring",
+                          duration: 0.16,
+                          ease: [0.23, 1, 0.32, 1],
                         }}
                         className="inline-flex items-center gap-2 justify-center"
                       >
