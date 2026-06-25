@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ interface AggregatedIssue {
 
 export const IssueSummary = ({ pages }: IssueSummaryProps) => {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   // Group diagnostics across all pages
   const issueMap = new Map<
@@ -64,6 +66,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
     }))
     .toSorted((a, b) => b.count - a.count);
   const totalPages = pages.length;
+  const displayedIssues = showAll ? sortedIssues : sortedIssues.slice(0, 5);
 
   return (
     <div className="p-6 rounded-2xl border border-border bg-background flex flex-col gap-4">
@@ -82,7 +85,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {sortedIssues.slice(0, 5).map((issue) => {
+          {displayedIssues.map((issue) => {
             const isExpanded = expandedIssue === issue.key;
             const percent = Math.round((issue.count / totalPages) * 100);
 
@@ -141,7 +144,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                         <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
                           Affected Pages:
                         </span>
-                        <ul className="text-xs font-mono flex flex-col gap-1 max-h-24 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
+                        <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
                           {issue.affectedUrls.map((url) => {
                             const path = url ? new URL(url).pathname : "/";
                             return (
@@ -158,6 +161,19 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
               </div>
             );
           })}
+
+          {sortedIssues.length > 5 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs text-muted-foreground hover:text-foreground mt-2 active:scale-[0.98] transition-transform duration-100 ease-out"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {showAll
+                ? "Show Less"
+                : `Show All Issues (${sortedIssues.length})`}
+            </Button>
+          )}
         </div>
       )}
     </div>
