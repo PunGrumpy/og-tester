@@ -45,6 +45,7 @@ export const ViewAnimation = memo(
 
     return (
       <m.div
+        inherit={false}
         animate={animate}
         className={className}
         initial={initialProps}

@@ -56,33 +56,37 @@ export const ScannerSection = () => {
               {phase === "idle" && (
                 <m.div
                   key="idle"
-                  initial={{ filter: "blur(4px)", opacity: 0, y: 12 }}
-                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  initial={{ filter: "blur(4px)", opacity: 0, y: 10 }}
+                  whileInView={{
+                    filter: "blur(0px)",
+                    opacity: 1,
+                    transition: { delay: 0.2, duration: 0.8, ease: "easeOut" },
+                    y: 0,
+                  }}
+                  viewport={{ amount: 0.5, once: true }}
+                  exit={{
+                    filter: "blur(4px)",
+                    opacity: 0,
+                    transition: { duration: 0.3, ease: "easeIn" },
+                    y: -12,
+                  }}
                 >
-                  <ViewAnimation
-                    delay={0.2}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                  >
-                    <div className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
-                      <Empty>
-                        <EmptyMedia>
-                          <BarChart3 className="size-12 text-muted-foreground/30" />
-                        </EmptyMedia>
-                        <EmptyHeader>
-                          <EmptyTitle className="text-sm">
-                            Site-Wide Scanner is Ready
-                          </EmptyTitle>
-                          <EmptyDescription>
-                            Enter a URL in the form above to check single-page
-                            tags and audit site-wide metadata in real-time.
-                          </EmptyDescription>
-                        </EmptyHeader>
-                      </Empty>
-                    </div>
-                  </ViewAnimation>
+                  <div className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
+                    <Empty>
+                      <EmptyMedia>
+                        <BarChart3 className="size-12 text-muted-foreground/30" />
+                      </EmptyMedia>
+                      <EmptyHeader>
+                        <EmptyTitle className="text-sm">
+                          Site-Wide Scanner is Ready
+                        </EmptyTitle>
+                        <EmptyDescription>
+                          Enter a URL in the form above to check single-page
+                          tags and audit site-wide metadata in real-time.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  </div>
                 </m.div>
               )}
 
