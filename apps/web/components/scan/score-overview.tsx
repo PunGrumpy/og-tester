@@ -123,7 +123,7 @@ export const ScoreOverview = ({
     animate="show"
   >
     <m.div
-      className="flex justify-center md:border-r md:pr-6"
+      className="flex justify-center border-b pb-6 md:border-b-0 md:pb-0 md:border-r md:pr-6"
       variants={itemVariants}
     >
       <CircularGauge

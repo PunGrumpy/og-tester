@@ -63,7 +63,7 @@ export const PageDetail = ({ result }: PageDetailProps) => (
             >
               {getSeverityIcon(diag.severity)}
               <div className="min-w-0 grow flex flex-col gap-2">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
                   <div>
                     <span className="font-mono text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                       {diag.tag}
@@ -72,7 +72,7 @@ export const PageDetail = ({ result }: PageDetailProps) => (
                       {diag.message}
                     </span>
                   </div>
-                  <span className="font-mono text-xs text-destructive shrink-0 font-semibold bg-destructive/5 px-2 py-0.5 rounded border border-destructive/10">
+                  <span className="font-mono text-xs text-destructive shrink-0 font-semibold bg-destructive/5 px-2 py-0.5 rounded border border-destructive/10 self-start">
                     -{diag.points} pts
                   </span>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 
@@ -114,7 +114,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                 )}
               >
                 <button
-                  className="w-full flex items-center justify-between p-4 cursor-pointer text-left text-sm active:scale-[0.98] transition-transform duration-100 ease-out"
+                  className="w-full flex flex-col gap-2 sm:flex-row sm:items-center justify-between p-4 cursor-pointer text-left text-sm active:scale-[0.98] transition-transform duration-100 ease-out"
                   type="button"
                   onClick={() =>
                     setExpandedIssue(isExpanded ? null : issue.key)
@@ -123,7 +123,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                   <div className="flex items-start gap-3 min-w-0 pr-4">
                     {getSeverityIcon(issue.severity)}
                     <div className="min-w-0">
-                      <span className="font-mono text-xs font-semibold uppercase text-muted-foreground tracking-wider block">
+                      <span className="font-mono text-[10px] font-semibold uppercase text-muted-foreground tracking-wider block">
                         {issue.tag}
                       </span>
                       <span className="font-semibold text-foreground truncate block">
@@ -132,14 +132,26 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0 pl-7 sm:pl-0">
                     <span className="text-xs font-medium font-mono bg-background/50 px-2 py-0.5 rounded border border-muted-foreground/5 tabular-nums">
                       {issue.count} pages ({percent}%)
                     </span>
                     {isExpanded ? (
-                      <ChevronUp className="size-4" />
+                      <m.div
+                        animate={{ rotate: 180 }}
+                        initial={{ rotate: 0 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <ChevronDown className="size-4 text-muted-foreground" />
+                      </m.div>
                     ) : (
-                      <ChevronDown className="size-4" />
+                      <m.div
+                        animate={{ rotate: 0 }}
+                        initial={{ rotate: 180 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <ChevronDown className="size-4 text-muted-foreground" />
+                      </m.div>
                     )}
                   </div>
                 </button>
