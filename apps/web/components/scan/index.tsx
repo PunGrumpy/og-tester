@@ -59,22 +59,28 @@ export const ScannerSection = () => {
               exit={{ filter: "blur(4px)", opacity: 0, y: -12 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <Section className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
-                <Empty>
-                  <EmptyMedia>
-                    <BarChart3 className="size-12 text-muted-foreground/30" />
-                  </EmptyMedia>
-                  <EmptyHeader>
-                    <EmptyTitle className="text-sm">
-                      Site-Wide Scanner is Ready
-                    </EmptyTitle>
-                    <EmptyDescription>
-                      Enter a URL in the form above to check single-page tags
-                      and audit site-wide metadata in real-time.
-                    </EmptyDescription>
-                  </EmptyHeader>
-                </Empty>
-              </Section>
+              <ViewAnimation
+                delay={0.2}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+              >
+                <Section className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
+                  <Empty>
+                    <EmptyMedia>
+                      <BarChart3 className="size-12 text-muted-foreground/30" />
+                    </EmptyMedia>
+                    <EmptyHeader>
+                      <EmptyTitle className="text-sm">
+                        Site-Wide Scanner is Ready
+                      </EmptyTitle>
+                      <EmptyDescription>
+                        Enter a URL in the form above to check single-page tags
+                        and audit site-wide metadata in real-time.
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
+                </Section>
+              </ViewAnimation>
             </m.div>
           )}
 
