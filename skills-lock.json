@@ -13,6 +13,12 @@
       "skillPath": "skills/effect-ts/SKILL.md",
       "computedHash": "301521e167410dd42d834dd0e7cedbe9cfffa519f630a12241dbea7b1d932324"
     },
+    "emil-design-eng": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "computedHash": "8bdf9e4e6de7a4969147bf4828a4ad2c5aacd9fba4b690b250a85e0467ca387d"
+    },
     "make-interfaces-feel-better": {
       "source": "jakubkrehel/make-interfaces-feel-better",
       "sourceType": "github",
@@ -24,6 +30,12 @@
       "sourceType": "github",
       "skillPath": "skills/react-doctor/SKILL.md",
       "computedHash": "fa180e84006740f0ad139f3d11bc9b1ba43de91b376e73d4e40b5e09e37fa9ed"
+    },
+    "review-animations": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/review-animations/SKILL.md",
+      "computedHash": "ca04aaa0a815f05e0910ded8fedbfbdfe0acdec8f52dfbb88277890070d134d4"
     },
     "shadcn": {
       "source": "shadcn/ui",
