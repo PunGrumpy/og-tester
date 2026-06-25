@@ -28,9 +28,17 @@ export const ScanProgress = ({
     <div className="w-full flex flex-col gap-4">
       <div className="flex justify-between items-center text-sm">
         <div className="flex items-center gap-2">
-          <span className="relative flex size-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full size-2 bg-primary"></span>
+          <span className="relative flex size-2.5">
+            <m.span
+              animate={{ opacity: [0.75, 0], scale: [1, 2.2] }}
+              transition={{
+                duration: 1.2,
+                ease: [0.23, 1, 0.32, 1],
+                repeat: Infinity,
+              }}
+              className="absolute inline-flex h-full w-full rounded-full bg-primary"
+            />
+            <span className="relative inline-flex rounded-full size-2.5 bg-primary" />
           </span>
           <span className="font-medium text-foreground capitalize">
             {phase === "discovery"
@@ -50,13 +58,13 @@ export const ScanProgress = ({
           animate={{ width: `${percentage}%` }}
           className="h-full bg-primary rounded-full relative overflow-hidden"
           initial={{ width: "0%" }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
         >
           {/* Animated scanning shine */}
           <m.div
             className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
             animate={{ x: ["-100%", "200%"] }}
-            transition={{ duration: 2, ease: "linear", repeat: Infinity }}
+            transition={{ duration: 1.4, ease: "linear", repeat: Infinity }}
             style={{ width: "50%" }}
           />
         </m.div>
