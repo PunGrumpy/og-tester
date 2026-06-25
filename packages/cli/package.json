@@ -1,6 +1,6 @@
 {
   "name": "og-tester",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Test and analyze Open Graph, Twitter Card, and meta tags from the command line",
   "keywords": [
     "cli",
