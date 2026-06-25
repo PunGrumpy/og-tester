@@ -6,7 +6,7 @@ type SectionProps = HTMLAttributes<HTMLDivElement>;
 
 export const Section = ({ children, className, ...props }: SectionProps) => (
   <section {...props}>
-    <div className="relative mx-auto max-w-6xl">
+    <div className="relative mx-auto max-w-7xl">
       <div className={cn("md:border-x", className)}>{children}</div>
     </div>
   </section>
@@ -20,7 +20,7 @@ export const SectionSeparator = ({
   ...props
 }: SectionSeparator) => (
   <section {...props}>
-    <div className="relative mx-auto max-w-6xl">
+    <div className="relative mx-auto max-w-7xl">
       <div className={cn("dash-background h-8 md:border-x", className)}>
         {children}
       </div>

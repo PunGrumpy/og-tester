@@ -69,7 +69,7 @@ const generateHtml = (data: OgData): string => {
   return lines.join("\n");
 };
 
-export const MetaTagsTable = () => {
+export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
   const { data, isEditing, setIsEditing } = useOgStore();
   const [isCopied, setIsCopied] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("general");
@@ -91,7 +91,7 @@ export const MetaTagsTable = () => {
   return (
     <ViewAnimation
       className="flex h-full flex-col"
-      delay={0.8}
+      delay={delay}
       initial={{ opacity: 0, translateY: -8 }}
       whileInView={{ opacity: 1, translateY: 0 }}
     >

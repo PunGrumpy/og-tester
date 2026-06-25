@@ -36,6 +36,7 @@ export const Header = () => {
         <ViewAnimation
           initial={{ opacity: 0, translateY: -8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
+          className="flex items-center gap-x-6"
         >
           <Link
             aria-label="Home"
@@ -43,6 +44,9 @@ export const Header = () => {
             href="/"
           >
             <Icons.logo className="size-8" />
+            <span className="font-semibold text-lg tracking-tight hidden xs:inline-block">
+              OG Tester
+            </span>
           </Link>
         </ViewAnimation>
 

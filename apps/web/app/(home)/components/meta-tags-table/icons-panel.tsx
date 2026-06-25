@@ -27,7 +27,7 @@ export const IconsPanel = ({
         {["favicon", "touch-icon", "apple-icon"].map((label) => (
           <div className="flex items-center gap-2" key={label}>
             <Skeleton className="size-10 rounded" />
-            <div className="space-y-1">
+            <div className="flex flex-col gap-1">
               <Skeleton className="h-3 w-16" />
               <Skeleton className="h-3 w-12" />
             </div>

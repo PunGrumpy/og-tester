@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { Section, SectionSeparator } from "@/components/section";
+import { SectionSeparator } from "@/components/section";
 import { createMetadata } from "@/lib/metadata";
 
+import { CheckerSection } from "./components/checker-section";
 import { Hero } from "./components/hero";
-import { InputForm } from "./components/input-form";
-import { MetaTagsTable } from "./components/meta-tags-table";
-import { ScreenshotPreview } from "./components/screenshot-preview";
-import { SocialPreview } from "./components/social-preview";
+import { ScannerSection } from "./components/scanner-section";
 
 export const metadata: Metadata = createMetadata(
   "OG Tester",
@@ -18,16 +17,16 @@ const Home = () => (
   <>
     <Hero />
     <SectionSeparator />
-    <InputForm />
-    <Section className="grid min-h-[420px] gap-0 lg:grid-cols-[1fr_420px] lg:divide-x">
-      <MetaTagsTable />
-      <SocialPreview />
-    </Section>
-    <SectionSeparator />
-    <Section>
-      <ScreenshotPreview />
-    </Section>
-    <SectionSeparator />
+    <Suspense
+      fallback={
+        <div className="h-96 flex items-center justify-center text-muted-foreground animate-pulse text-sm">
+          Loading tool suite...
+        </div>
+      }
+    >
+      <CheckerSection />
+      <ScannerSection />
+    </Suspense>
   </>
 );
 

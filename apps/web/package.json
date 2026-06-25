@@ -17,7 +17,6 @@
     "@og-tester/core": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.11",
     "@unkey/nextjs": "^2.0.0",
-    "appwrite": "^21.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
