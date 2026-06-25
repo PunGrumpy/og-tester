@@ -24,6 +24,21 @@ interface AggregatedIssue {
   affectedUrls: string[];
 }
 
+const safeGetPathname = (url: string | undefined | null): string => {
+  if (!url) {
+    return "/";
+  }
+  try {
+    if (url.startsWith("/")) {
+      return url;
+    }
+    const absoluteUrl = url.includes("://") ? url : `https://${url}`;
+    return new URL(absoluteUrl).pathname || "/";
+  } catch {
+    return url;
+  }
+};
+
 export const IssueSummary = ({ pages }: IssueSummaryProps) => {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -146,10 +161,17 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                         </span>
                         <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
                           {issue.affectedUrls.map((url) => {
-                            const path = url ? new URL(url).pathname : "/";
+                            const path = safeGetPathname(url);
                             return (
                               <li key={url} className="py-1 truncate">
-                                {path || "/"}
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:underline hover:text-primary/80 transition-colors"
+                                >
+                                  {path}
+                                </a>
                               </li>
                             );
                           })}
