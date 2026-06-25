@@ -84,7 +84,7 @@ const renderThemeColorRow = (data: OgData): MetaTagRow => {
   return {
     key: "theme color",
     value: (
-      <div className="space-y-1">
+      <div className="flex flex-col gap-1">
         {colors.map((color) => {
           const [colorValue] = color.split(" ");
           return (
@@ -177,14 +177,14 @@ const TagRow = ({
     content = <Skeleton className="h-4 w-3/4" />;
   } else if (isEditing && dataKey) {
     content = (
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Input
           className="h-8 text-sm"
           onChange={(e) => updateTag(dataKey, e.target.value)}
           value={typeof value === "string" ? value : ""}
         />
         {isImage && imageUrl && (
-          <div className="mt-2 flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+          <div className="mt-2 relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
             <Image
               alt="Preview"
               className="h-full w-full object-cover"
@@ -199,6 +199,7 @@ const TagRow = ({
               src={imageUrl}
               width={96}
             />
+            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none rounded" />
           </div>
         )}
       </div>
@@ -209,9 +210,9 @@ const TagRow = ({
         typeof value === "string" && value.length > 0 ? value : imageUrl;
 
       content = (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <div className="flex items-start gap-3">
-            <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+            <div className="relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
               <Image
                 alt={linkLabel}
                 className="h-full w-full object-cover"
@@ -226,6 +227,7 @@ const TagRow = ({
                 src={imageUrl}
                 width={96}
               />
+              <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none rounded" />
             </div>
             <a
               className="inline-flex items-center gap-1 break-all text-primary hover:underline"

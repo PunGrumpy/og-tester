@@ -44,3 +44,26 @@ export const parseSitemap = (xml: string): SitemapUrl[] => {
 
   return urls;
 };
+
+const SITEMAP_REGEX = /<sitemap>([\s\S]*?)<\/sitemap>/giu;
+
+export const isSitemapIndex = (xml: string): boolean =>
+  /<sitemapindex/iu.test(xml);
+
+export const parseSitemapIndex = (xml: string): string[] => {
+  const urls: string[] = [];
+
+  for (const match of xml.matchAll(SITEMAP_REGEX)) {
+    const [, sitemapBlock] = match;
+    if (sitemapBlock === undefined) {
+      continue;
+    }
+
+    const locMatch = sitemapBlock.match(LOC_REGEX);
+    if (locMatch) {
+      urls.push(locMatch[1].trim());
+    }
+  }
+
+  return urls;
+};

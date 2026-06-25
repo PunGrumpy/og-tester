@@ -16,7 +16,7 @@ export const SlackPreview = ({
 }: SlackPreviewProps) => (
   <div className="overflow-hidden rounded border border-border/50 bg-card p-3 shadow-[inset_3px_0_0_0_#36C5F0]">
     <div className="flex gap-3">
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 flex flex-col gap-1">
         {siteName ? (
           <div className="flex items-center gap-2">
             <span className="font-medium text-foreground text-sm">
@@ -31,13 +31,16 @@ export const SlackPreview = ({
       </div>
       <div className="relative size-20 shrink-0 overflow-hidden rounded bg-muted">
         {image ? (
-          <Image
-            alt={title}
-            className="object-cover"
-            fill
-            sizes="80px"
-            src={image}
-          />
+          <>
+            <Image
+              alt={title}
+              className="object-cover"
+              fill
+              sizes="80px"
+              src={image}
+            />
+            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+          </>
         ) : (
           <div className="flex size-full items-center justify-center">
             <ImageOff

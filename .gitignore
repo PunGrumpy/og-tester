@@ -52,3 +52,9 @@ dist
 
 # Xmcp
 .xmcp
+
+# OG Tester
+og-report.json
+
+# Agents configuration
+.agents/skills.json

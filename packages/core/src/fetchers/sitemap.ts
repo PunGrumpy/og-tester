@@ -1,7 +1,48 @@
 import * as Effect from "effect/Effect";
 
-import { parseSitemap } from "../parsers/sitemap";
+import {
+  parseSitemap,
+  isSitemapIndex,
+  parseSitemapIndex,
+} from "../parsers/sitemap";
 import type { SitemapData, SitemapUrl } from "../schemas/sitemap";
+
+const fetchSitemapUrlsRecursive = (
+  url: string
+): Effect.Effect<SitemapUrl[], Error> =>
+  Effect.gen(function* fetchSitemapUrlsRecursiveGen() {
+    const response = yield* Effect.tryPromise({
+      catch: (e) =>
+        new Error(
+          `Failed to fetch sitemap at ${url}: ${e instanceof Error ? e.message : String(e)}`
+        ),
+      try: () => fetch(url),
+    });
+
+    if (!response.ok) {
+      return yield* Effect.fail(
+        new Error(`Failed to fetch sitemap at ${url}: ${response.status}`)
+      );
+    }
+
+    const content = yield* Effect.tryPromise({
+      catch: (e) =>
+        new Error(
+          `Failed to read sitemap body at ${url}: ${e instanceof Error ? e.message : String(e)}`
+        ),
+      try: () => response.text(),
+    });
+
+    if (isSitemapIndex(content)) {
+      const childSitemaps = parseSitemapIndex(content);
+      const childResults = yield* Effect.all(
+        childSitemaps.map((childUrl) => fetchSitemapUrlsRecursive(childUrl)),
+        { concurrency: 5 }
+      );
+      return childResults.flat();
+    }
+    return parseSitemap(content);
+  });
 
 export const fetchSitemapEffect = (
   url: string
@@ -12,7 +53,9 @@ export const fetchSitemapEffect = (
         new Error(`Invalid URL: ${e instanceof Error ? e.message : String(e)}`),
       try: () => new URL(url),
     });
-    const sitemapUrl = `${parsedUrl.origin}/sitemap.xml`;
+    const sitemapUrl = parsedUrl.pathname.endsWith(".xml")
+      ? parsedUrl.href
+      : `${parsedUrl.origin}/sitemap.xml`;
 
     const response = yield* Effect.tryPromise({
       catch: (e) =>
@@ -36,6 +79,14 @@ export const fetchSitemapEffect = (
       try: () => response.text(),
     });
 
+    if (isSitemapIndex(content)) {
+      const childSitemaps = parseSitemapIndex(content);
+      const childResults = yield* Effect.all(
+        childSitemaps.map((childUrl) => fetchSitemapUrlsRecursive(childUrl)),
+        { concurrency: 5 }
+      );
+      return { content, urls: childResults.flat() };
+    }
     const urls = parseSitemap(content);
     return { content, urls };
   });

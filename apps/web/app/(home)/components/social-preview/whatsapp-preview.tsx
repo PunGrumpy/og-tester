@@ -18,20 +18,23 @@ export const WhatsappPreview = ({
     <div className="flex gap-3 p-2">
       <div className="relative size-16 shrink-0 overflow-hidden rounded bg-[#2a3942]">
         {image ? (
-          <Image
-            alt={title}
-            className="object-cover"
-            fill
-            sizes="64px"
-            src={image}
-          />
+          <>
+            <Image
+              alt={title}
+              className="object-cover"
+              fill
+              sizes="64px"
+              src={image}
+            />
+            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+          </>
         ) : (
           <div className="flex size-full items-center justify-center">
             <ImageOff aria-hidden="true" className="size-5 text-[#8696a0]/50" />
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1 space-y-0.5">
+      <div className="min-w-0 flex-1 flex flex-col gap-0.5">
         <p className="text-[#8696a0] text-xs">{displayUrl}</p>
         <h3 className="line-clamp-2 font-medium text-[#e9edef] text-sm">
           {title}

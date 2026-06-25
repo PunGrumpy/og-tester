@@ -57,7 +57,7 @@ const getPreviewData = (data: OgData | null, url: string) => ({
     data?.["og:title"] || data?.["twitter:title"] || data?.title || "No title",
 });
 
-export const SocialPreview = () => {
+export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
   const { url, data } = useOgStore();
   const [activePlatform, setActivePlatform] = useState<string>("x");
   const preview = useMemo(() => getPreviewData(data, url), [data, url]);
@@ -66,7 +66,7 @@ export const SocialPreview = () => {
   return (
     <ViewAnimation
       className="flex flex-col gap-4 p-4"
-      delay={0.8}
+      delay={delay}
       initial={{ opacity: 0, translateY: -8 }}
       whileInView={{ opacity: 1, translateY: 0 }}
     >

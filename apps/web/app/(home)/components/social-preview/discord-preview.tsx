@@ -15,7 +15,7 @@ export const DiscordPreview = ({
   description,
 }: DiscordPreviewProps) => (
   <div className="max-w-md overflow-hidden rounded border border-border/50 bg-[#2f3136] p-4 shadow-[inset_3px_0_0_0_#5865F2]">
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       {siteName ? (
         <p className="font-medium text-[#00aff4] text-xs">{siteName}</p>
       ) : null}
@@ -25,13 +25,16 @@ export const DiscordPreview = ({
       ) : null}
       <div className="relative mt-4 aspect-video max-w-[300px] overflow-hidden rounded bg-[#202225]">
         {image ? (
-          <Image
-            alt={title}
-            className="object-cover"
-            fill
-            sizes="300px"
-            src={image}
-          />
+          <>
+            <Image
+              alt={title}
+              className="object-cover"
+              fill
+              sizes="300px"
+              src={image}
+            />
+            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+          </>
         ) : (
           <div className="flex size-full items-center justify-center">
             <ImageOff aria-hidden="true" className="size-8 text-[#dcddde]/30" />

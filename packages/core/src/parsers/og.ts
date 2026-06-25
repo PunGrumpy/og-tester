@@ -2,6 +2,11 @@ import type { OgData } from "../schemas/og";
 
 const TITLE_TAG_REGEX = /<title[^>]*>([^<]+)<\/title>/iu;
 
+const HTML_LANG_REGEX = /<html[^>]*lang=["']?([^"'\s>]+)["']?/iu;
+const CHARSET_META_REGEX = /<meta[^>]*charset=["']?([^"'\s>]+)["']?/iu;
+const CHARSET_HTTP_EQUIV_REGEX =
+  /<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^"'>]*charset=["']?([^"'\s>;]+)/iu;
+
 const META_DESC_NAME_FIRST_REGEX =
   /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/iu;
 
@@ -259,6 +264,21 @@ const applyCanonical = (
   }
 };
 
+const applyLang = (html: string, result: OgData): void => {
+  const langMatch = html.match(HTML_LANG_REGEX);
+  if (langMatch) {
+    result.lang = decodeHtmlEntities(langMatch[1]);
+  }
+};
+
+const applyCharset = (html: string, result: OgData): void => {
+  const charsetMatch =
+    html.match(CHARSET_META_REGEX) || html.match(CHARSET_HTTP_EQUIV_REGEX);
+  if (charsetMatch) {
+    result.charset = decodeHtmlEntities(charsetMatch[1]);
+  }
+};
+
 const applyRawHead = (html: string, result: OgData): void => {
   const headMatch = html.match(HEAD_CONTENT_REGEX);
   if (headMatch) {
@@ -370,6 +390,8 @@ export const parseOgTags = (html: string, pageUrl?: string): OgData => {
   applyTwitterCard(html, result, baseOrigin);
   applyThemeColors(html, result);
   applyCanonical(html, result, baseOrigin);
+  applyLang(html, result);
+  applyCharset(html, result);
   applyRawHead(html, result);
   applyIcons(html, result, baseOrigin);
 

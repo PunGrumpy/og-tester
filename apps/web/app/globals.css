@@ -49,8 +49,13 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 
-  --color-success: oklch(0.55 0.22 264.53);
-  --color-warning: oklch(0.81 0.17 75.35);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-score-excellent: var(--score-excellent);
+  --color-score-good: var(--score-good);
+  --color-score-fair: var(--score-fair);
+  --color-score-poor: var(--score-poor);
 
   --ease-out-custom: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out-custom: cubic-bezier(0.77, 0, 0.175, 1);
@@ -91,6 +96,13 @@
   --sidebar-border: oklch(0.94 0 0);
   --sidebar-ring: oklch(0 0 0);
   --radius: 0.5rem;
+  --success: oklch(0.62 0.19 145);
+  --warning: oklch(0.75 0.18 85);
+  --info: oklch(0.62 0.17 250);
+  --score-excellent: oklch(0.62 0.19 145);
+  --score-good: var(--primary);
+  --score-fair: oklch(0.75 0.18 85);
+  --score-poor: oklch(0.63 0.19 23.03);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -148,6 +160,13 @@
   --sidebar-border: oklch(0.32 0 0);
   --sidebar-ring: oklch(0.72 0 0);
   --radius: 0.5rem;
+  --success: oklch(0.72 0.19 150);
+  --warning: oklch(0.81 0.17 85);
+  --info: oklch(0.72 0.17 250);
+  --score-excellent: oklch(0.72 0.19 150);
+  --score-good: var(--primary);
+  --score-fair: oklch(0.81 0.17 85);
+  --score-poor: oklch(0.69 0.2 23.91);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -183,6 +202,7 @@
   }
   html {
     text-rendering: optimizelegibility;
+    scroll-behavior: smooth;
   }
   body {
     @apply min-h-dvh;
