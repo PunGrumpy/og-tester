@@ -22,7 +22,7 @@ const formatFields = (
   return lines.length > 0 ? `${lines.join("\n")}\n` : `  ${emptyMsg}\n`;
 };
 
-const formatReport = (data: OgData): string => {
+export const formatReport = (data: OgData): string => {
   const sections = [
     `${color.bold(color.cyan("General Tags:"))}\n${formatFields(
       data,
@@ -100,7 +100,10 @@ const colorizeScore = (text: string, score: number): string => {
   return color.red(text);
 };
 
-const buildScoreHeader = (score: number): string => {
+export const buildScoreHeader = (
+  score: number,
+  branding = "OG Tester — Check Tags"
+): string => {
   const label = getLabel(score);
 
   let faceLines: string[] = [];
@@ -123,7 +126,7 @@ const buildScoreHeader = (score: number): string => {
     color.dim("░".repeat(emptyCount));
 
   const scoreLine = `${colorizeScore(`${score}`, score)} ${color.dim("/ 100")} ${colorizeScore(label, score)}`;
-  const brandingLine = color.dim("OG Tester — Check Tags");
+  const brandingLine = color.dim(branding);
 
   const rightLines = [scoreLine, scoreBar, brandingLine, ""];
 
@@ -136,15 +139,19 @@ const buildScoreHeader = (score: number): string => {
     .join("\n");
 };
 
-const drawScoreBlock = (score: number): string => {
-  const content = buildScoreHeader(score);
+export const drawScoreBlock = (
+  score: number,
+  branding = "OG Tester — Check Tags",
+  title = "Score"
+): string => {
+  const content = buildScoreHeader(score, branding);
   const body = content
     .split("\n")
     .map((line) => `${color.dim("│")}  ${line}`)
     .join("\n");
 
   return [
-    `${color.cyan("◇")}  ${color.bold("Score")}`,
+    `${color.cyan("◇")}  ${color.bold(title)}`,
     color.dim("│"),
     body,
     color.dim("│"),
