@@ -235,8 +235,8 @@
     }
   }
 
-  button,
-  [role="button"] {
+  button:not([role="tab"]),
+  [role="button"]:not([role="tab"]) {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     transition:
@@ -244,8 +244,8 @@
       opacity 160ms var(--ease-out-custom);
   }
 
-  button:active:not(:disabled),
-  [role="button"]:active:not(:disabled) {
+  button:active:not(:disabled):not([role="tab"]),
+  [role="button"]:active:not(:disabled):not([role="tab"]) {
     transform: scale(0.97);
   }
 }
