@@ -113,7 +113,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
             </Label>
           </div>
           <Button
-            className="relative h-8 w-28 overflow-hidden"
+            className="relative h-8 w-28 overflow-hidden active:scale-[0.96] transition-transform duration-150 ease-out"
             disabled={!data || Object.keys(data).length === 0}
             onClick={handleCopy}
             size="sm"

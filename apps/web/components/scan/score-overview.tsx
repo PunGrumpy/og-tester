@@ -84,7 +84,7 @@ const CircularGauge = ({
           </span>
         </div>
       </div>
-      <span className="text-sm font-medium text-foreground text-center max-w-[140px]">
+      <span className="text-sm font-medium text-foreground text-center max-w-[140px] text-balance">
         {label}
       </span>
     </div>

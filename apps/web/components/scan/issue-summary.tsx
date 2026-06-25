@@ -95,7 +95,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                 )}
               >
                 <button
-                  className="w-full flex items-center justify-between p-4 cursor-pointer text-left text-sm"
+                  className="w-full flex items-center justify-between p-4 cursor-pointer text-left text-sm active:scale-[0.98] transition-transform duration-100 ease-out"
                   type="button"
                   onClick={() =>
                     setExpandedIssue(isExpanded ? null : issue.key)

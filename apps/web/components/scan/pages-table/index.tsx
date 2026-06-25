@@ -132,7 +132,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
             <TableRow>
               <TableHead className="w-10" />
               <TableHead
-                className="cursor-pointer select-none font-semibold hover:text-primary transition-colors active:scale-[0.98] duration-200"
+                className="cursor-pointer select-none font-semibold hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200"
                 onClick={() => handleSort("url")}
               >
                 Page Path{" "}
@@ -143,7 +143,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200"
                 onClick={() => handleSort("score")}
               >
                 Overall{" "}
@@ -154,7 +154,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("og")}
               >
                 OG{" "}
@@ -165,7 +165,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("twitter")}
               >
                 Twitter{" "}
@@ -176,7 +176,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("seo")}
               >
                 SEO{" "}
@@ -187,7 +187,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                 />
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-colors active:scale-[0.98] duration-200 hidden sm:table-cell"
+                className="cursor-pointer select-none font-semibold text-center hover:text-primary transition-[color,transform] active:scale-[0.98] duration-200 hidden sm:table-cell"
                 onClick={() => handleSort("image")}
               >
                 Image{" "}

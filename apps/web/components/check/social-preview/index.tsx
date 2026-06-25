@@ -208,8 +208,10 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
         ) : (
           <Empty className="mt-4 flex-1 border">
             <EmptyHeader>
-              <EmptyTitle>No preview available</EmptyTitle>
-              <EmptyDescription>
+              <EmptyTitle className="text-balance">
+                No preview available
+              </EmptyTitle>
+              <EmptyDescription className="text-pretty">
                 Enter a URL above to see how your link will appear on social
                 media.
               </EmptyDescription>
