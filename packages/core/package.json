@@ -1,6 +1,7 @@
 {
   "name": "@og-tester/core",
   "version": "0.0.0",
+  "private": true,
   "files": [
     "src"
   ],
