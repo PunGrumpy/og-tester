@@ -155,7 +155,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
             <TabsList className="h-auto w-max justify-start gap-0 rounded-none bg-transparent p-0 sm:w-auto">
               {CATEGORIES.map((cat) => (
                 <TabsTrigger
-                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 text-muted-foreground hover:text-foreground transition-colors duration-150 ease-out-custom data-[state=active]:border-transparent! data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground"
+                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 text-muted-foreground hover:text-foreground transition-colors active:scale-100 duration-150 ease-out-custom data-[state=active]:border-transparent! data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground"
                   key={cat.id}
                   value={cat.id}
                 >
