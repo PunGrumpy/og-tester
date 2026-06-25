@@ -163,7 +163,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                           {issue.affectedUrls.map((url) => {
                             const path = safeGetPathname(url);
                             return (
-                              <li key={url} className="py-1 truncate">
+                              <li key={url} className="py-1 break-all">
                                 <a
                                   href={url}
                                   target="_blank"
