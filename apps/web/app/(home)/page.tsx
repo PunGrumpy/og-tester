@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { CheckerSection } from "@/components/check";
+import { Hero } from "@/components/hero";
 import { ScannerSection } from "@/components/scan";
 import { SectionSeparator } from "@/components/section";
 import { createMetadata } from "@/lib/metadata";
-
-import { Hero } from "./components/hero";
 
 export const metadata: Metadata = createMetadata(
   "OG Tester",
