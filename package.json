@@ -12,6 +12,9 @@
     "typecheck": "turbo typecheck",
     "lint": "ultracite check",
     "format": "ultracite fix",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:release": "turbo run build --filter=og-tester && changeset publish",
     "doctor": "react-doctor"
   },
   "devDependencies": {
