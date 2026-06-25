@@ -77,7 +77,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
               aria-label={label}
               key={id}
               value={id}
-              className="relative text-muted-foreground hover:text-foreground transition-colors active:scale-100 duration-150 ease-out-custom data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-transparent data-[state=active]:text-foreground"
+              className="relative text-muted-foreground hover:text-foreground transition active:scale-[0.97] duration-150 ease-out-custom data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-transparent data-[state=active]:text-foreground"
             >
               {activePlatform === id && (
                 <m.div
