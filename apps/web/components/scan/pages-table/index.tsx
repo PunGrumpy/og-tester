@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
-import { DURATION, transition } from "@/lib/motion";
+import { collapse } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 import { ReportSection } from "../report-section";
@@ -318,13 +318,7 @@ export const PagesTable = ({ pages }: PagesTableProps) => {
                       <TableCell className="p-0 border-t-0" colSpan={7}>
                         <AnimatePresence initial={false}>
                           {isExpanded && (
-                            <m.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={transition(DURATION.base)}
-                              className="overflow-hidden"
-                            >
+                            <m.div {...collapse} className="overflow-hidden">
                               <PageDetail result={page} />
                             </m.div>
                           )}

@@ -46,10 +46,15 @@ export const transition = (
   delay = 0
 ): Transition => ({ delay, duration, ease: EASE });
 
-/** Shared expand/collapse for disclosure rows. */
+/**
+ * Expand/collapse for disclosure rows — spread onto the <m.div> inside an
+ * <AnimatePresence>. Animating height between 0 and "auto" is the one case
+ * where a layout property is the right answer: motion measures the target and
+ * runs a FLIP, whereas scaling an auto-sized reveal squashes its children.
+ */
 export const collapse = {
-  animate: { height: "auto" as const, opacity: 1 },
+  animate: { height: "auto", opacity: 1 },
   exit: { height: 0, opacity: 0 },
   initial: { height: 0, opacity: 0 },
   transition: transition(DURATION.base),
-};
+} as const;

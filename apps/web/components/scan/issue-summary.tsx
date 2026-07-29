@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
-import { DURATION, transition } from "@/lib/motion";
+import { DURATION, collapse, transition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 import { ReportSection } from "./report-section";
@@ -170,10 +170,7 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
                   <AnimatePresence initial={false}>
                     {isExpanded && (
                       <m.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={transition(DURATION.base)}
+                        {...collapse}
                         className="overflow-hidden border-border border-t"
                       >
                         <div className="flex flex-col gap-3 py-3 pr-3 pl-4">
