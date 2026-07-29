@@ -55,7 +55,7 @@ export const ScanProgress = ({
                   ...transition(PULSE_DURATION),
                   repeat: Number.POSITIVE_INFINITY,
                 }}
-                className="absolute inline-flex h-full w-full rounded-full bg-primary"
+                className="absolute inline-flex size-full rounded-full bg-primary"
               />
             )}
             <span className="relative inline-flex rounded-full size-2.5 bg-primary" />

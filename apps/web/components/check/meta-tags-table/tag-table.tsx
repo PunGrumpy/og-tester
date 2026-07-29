@@ -188,7 +188,7 @@ const TagRow = ({
           <div className="mt-2 relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
             <Image
               alt="Preview"
-              className="h-full w-full object-cover"
+              className="size-full object-cover"
               height={96}
               onError={(e) => {
                 const parent = e.currentTarget.parentElement;
@@ -216,7 +216,7 @@ const TagRow = ({
             <div className="relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
               <Image
                 alt={linkLabel}
-                className="h-full w-full object-cover"
+                className="size-full object-cover"
                 height={96}
                 onError={(e) => {
                   const parent = e.currentTarget.parentElement;
