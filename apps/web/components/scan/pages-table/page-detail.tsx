@@ -50,9 +50,11 @@ export const PageDetail = ({ result }: PageDetailProps) => (
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {result.diagnostics.map((diag, index) => (
+          {result.diagnostics.map((diag) => (
             <div
-              key={`${diag.tag}-${index}`}
+              // Tag alone is not unique — a page can fail the same tag twice —
+              // but tag + message is, and unlike the index it survives sorting.
+              key={`${diag.tag}-${diag.message}`}
               className={cn(
                 "flex gap-3 rounded-lg border p-4",
                 getSeverityBg(diag.severity)
