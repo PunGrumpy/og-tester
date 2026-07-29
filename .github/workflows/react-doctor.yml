@@ -12,7 +12,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   # Scans `main` on every push to track the health-score trend and catch regressions that slipped past PR review.
   push:
-    branches: ["main"]
+    branches: ['main']
 
 permissions:
   contents: read
@@ -29,7 +29,9 @@ jobs:
   react-doctor:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: millionco/react-doctor@v2
         # Advisory by default: React Doctor reports findings on every PR — a
