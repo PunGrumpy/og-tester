@@ -173,11 +173,17 @@ const CategoryBar = ({
         className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted"
       >
         {/* Bars fill in sequence so the eye is led down the list rather than
-            four tracks moving as one block. */}
+            four tracks moving as one block.
+
+            The fill is full width and slides in from the left rather than
+            growing its own width: animating `width` re-runs layout every
+            frame, while a transform stays on the compositor. Translating
+            also keeps the rounded right cap undistorted, which scaleX would
+            squash. Same approach as Radix Progress. */}
         <m.div
-          animate={{ width: `${score}%` }}
-          className="h-full rounded-full"
-          initial={{ width: 0 }}
+          animate={{ x: `${score - 100}%` }}
+          className="size-full rounded-full"
+          initial={{ x: "-100%" }}
           style={{ backgroundColor: getTier(score).fill }}
           transition={transition(DURATION.data, delay)}
         />

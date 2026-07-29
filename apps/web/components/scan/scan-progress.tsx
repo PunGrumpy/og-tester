@@ -99,8 +99,11 @@ export const ScanProgress = ({
         </m.div>
       </div>
 
+      {/* `transition-none` below because `duration-240` is there for the enter
+          keyframes: on its own it sets transition-duration with no
+          transition-property, which CSS defaults to `all`. */}
       {phase === "checking" && currentUrl && (
-        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240">
+        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240 transition-none">
           <code
             className="truncate max-w-[75%] bg-muted/60 border px-1.5 py-0.5 rounded font-mono text-xs text-foreground"
             title={currentUrl}
