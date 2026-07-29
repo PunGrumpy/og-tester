@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ViewAnimation } from "@/components/view-animation";
 import { useOgStore } from "@/hooks/use-og-store";
+import { DURATION, transition } from "@/lib/motion";
 import type { OgData } from "@/lib/schemas/og";
 import { cn } from "@/lib/utils";
 
@@ -106,7 +107,10 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
       <div className="flex items-center justify-end border-b px-4 py-3">
         <div className="flex shrink-0 items-center gap-4">
           <div className="flex items-center gap-2">
+            {/* `label[for]` cannot name a <button>, so the switch needs its
+                own accessible name. */}
             <Switch
+              aria-label="Edit meta tags"
               checked={isEditing}
               disabled={!data || Object.keys(data).length === 0}
               id="edit-mode"
@@ -129,7 +133,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
           >
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-200 ease-out-custom",
+                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-240 ease-out-custom",
                 isCopied
                   ? "opacity-100 blur-0"
                   : "pointer-events-none opacity-0 blur-xs"
@@ -140,7 +144,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
             </div>
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-200 ease-out-custom",
+                "absolute inset-0 flex items-center justify-center transition-[opacity,filter,transform] duration-240 ease-out-custom",
                 isCopied
                   ? "pointer-events-none opacity-0 blur-xs"
                   : "opacity-100 blur-0"
@@ -163,7 +167,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
             <TabsList className="h-auto w-max justify-start gap-0 rounded-none bg-transparent p-0 sm:w-auto">
               {CATEGORIES.map((cat) => (
                 <TabsTrigger
-                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 text-muted-foreground hover:text-foreground transition active:scale-[0.97] duration-150 ease-out-custom data-[state=active]:border-transparent! data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground"
+                  className="relative flex whitespace-nowrap rounded-none border-transparent border-y-0 px-8! py-3 first:border-l-0 last:border-r-0 text-muted-foreground hover:text-foreground transition active:scale-[0.96] duration-140 ease-out-custom data-[state=active]:border-transparent! data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground"
                   key={cat.id}
                   value={cat.id}
                 >
@@ -172,11 +176,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                     <m.div
                       layoutId="active-meta-tab-line"
                       className="absolute -bottom-px left-0 right-0 h-[2px] bg-foreground z-10"
-                      transition={{
-                        damping: 30,
-                        stiffness: 380,
-                        type: "spring",
-                      }}
+                      transition={transition(DURATION.base)}
                     />
                   )}
                 </TabsTrigger>
@@ -194,7 +194,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   initial={{ opacity: 0, x: dir * 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: dir * -16 }}
-                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  transition={transition(DURATION.base)}
                 >
                   <TagTable
                     category="general"
@@ -211,7 +211,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   initial={{ opacity: 0, x: dir * 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: dir * -16 }}
-                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  transition={transition(DURATION.base)}
                 >
                   <TagTable
                     category="openGraph"
@@ -228,7 +228,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   initial={{ opacity: 0, x: dir * 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: dir * -16 }}
-                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  transition={transition(DURATION.base)}
                 >
                   <TagTable
                     category="twitter"
@@ -245,7 +245,7 @@ export const MetaTagsTable = ({ delay = 0.8 }: { delay?: number }) => {
                   initial={{ opacity: 0, x: dir * 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: dir * -16 }}
-                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  transition={transition(DURATION.base)}
                 >
                   <IconsPanel data={data} isLoading={isLoading} />
                 </m.div>

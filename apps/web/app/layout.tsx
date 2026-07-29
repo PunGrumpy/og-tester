@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { MotionProvider } from "@/components/motion-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { fonts } from "@/lib/fonts";
 import { createMetadata } from "@/lib/metadata";
@@ -38,12 +39,22 @@ export default function RootLayout({
               enableSystem
             >
               <TooltipProvider delayDuration={0}>
-                <main className="relative divide-y">
+                <a
+                  className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-lg focus:bg-background focus:px-4 focus:py-2 focus:font-medium focus:text-sm focus:shadow-md focus:outline-2 focus:outline-ring focus:outline-offset-2"
+                  href="#content"
+                >
+                  Skip to content
+                </a>
+                <div className="relative divide-y">
                   <Header />
-                  {children}
+                  <main className="scroll-mt-24 divide-y" id="content">
+                    {children}
+                  </main>
                   <Footer />
-                </main>
+                </div>
               </TooltipProvider>
+
+              <Toaster />
             </ThemeProvider>
           </MotionProvider>
 

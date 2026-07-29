@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { STAGGER } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 import { Section } from "../section";
@@ -15,19 +16,11 @@ export const Footer = () => (
         "grid items-center gap-4 sm:grid-cols-3"
       )}
     >
-      <ViewAnimation
-        delay={0.4}
-        initial={{ opacity: 0, translateY: -8 }}
-        whileInView={{ opacity: 1, translateY: 0 }}
-      >
+      <ViewAnimation delay={0}>
         <Status />
       </ViewAnimation>
       <div className="flex items-center sm:justify-center">
-        <ViewAnimation
-          delay={0.8}
-          initial={{ opacity: 0, translateY: -8 }}
-          whileInView={{ opacity: 1, translateY: 0 }}
-        >
+        <ViewAnimation delay={STAGGER}>
           <p className="whitespace-nowrap text-muted-foreground text-sm">
             © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
             <Link
@@ -41,11 +34,7 @@ export const Footer = () => (
         </ViewAnimation>
       </div>
       <div className="flex items-center sm:justify-end">
-        <ViewAnimation
-          delay={1.2}
-          initial={{ opacity: 0, translateY: -8 }}
-          whileInView={{ opacity: 1, translateY: 0 }}
-        >
+        <ViewAnimation delay={STAGGER * 2}>
           <ThemeSwitcher />
         </ViewAnimation>
       </div>

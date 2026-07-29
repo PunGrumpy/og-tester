@@ -18,11 +18,8 @@ export const PageDetail = ({ result }: PageDetailProps) => (
         const percentage =
           cat.maxScore > 0 ? Math.round((cat.score / cat.maxScore) * 100) : 0;
         return (
-          <div
-            key={cat.id}
-            className="p-3 rounded-xl border bg-background shadow-[0_2px_8px_rgba(0,0,0,0.01)]"
-          >
-            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">
+          <div key={cat.id} className="rounded-lg border bg-background p-3">
+            <span className="block font-semibold text-muted-foreground text-xs uppercase tracking-wider">
               {cat.name}
             </span>
             <div className="flex items-baseline justify-between mt-1">
@@ -42,46 +39,48 @@ export const PageDetail = ({ result }: PageDetailProps) => (
     </div>
 
     <div className="flex flex-col gap-3">
-      <h4 className="text-xs font-bold text-foreground uppercase tracking-wider pl-1">
+      <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider">
         Recommendations
       </h4>
 
       {result.diagnostics.length === 0 ? (
-        <div className="flex items-center gap-2 p-4 rounded-xl border border-success/10 bg-success/5 text-sm text-success">
+        <div className="flex items-center gap-2 rounded-lg border border-success/20 bg-success/5 p-4 text-sm text-success">
           <Check className="size-4 shrink-0" />
-          <span>Excellent! No issues found on this page.</span>
+          <span>No issues found on this page.</span>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {result.diagnostics.map((diag, index) => (
+          {result.diagnostics.map((diag) => (
             <div
-              key={`${diag.tag}-${index}`}
+              // Tag alone is not unique — a page can fail the same tag twice —
+              // but tag + message is, and unlike the index it survives sorting.
+              key={`${diag.tag}-${diag.message}`}
               className={cn(
-                "p-4 rounded-xl border flex gap-3",
+                "flex gap-3 rounded-lg border p-4",
                 getSeverityBg(diag.severity)
               )}
             >
               {getSeverityIcon(diag.severity)}
-              <div className="min-w-0 grow flex flex-col gap-2">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
-                  <div>
-                    <span className="font-mono text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+              <div className="flex min-w-0 grow flex-col gap-2">
+                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start sm:gap-4">
+                  <div className="min-w-0">
+                    <span className="block font-mono font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                       {diag.tag}
                     </span>
-                    <span className="font-medium text-foreground text-sm leading-tight block mt-0.5">
+                    <span className="mt-0.5 block text-pretty font-medium text-foreground text-sm leading-snug">
                       {diag.message}
                     </span>
                   </div>
-                  <span className="font-mono text-xs text-destructive shrink-0 font-semibold bg-destructive/5 px-2 py-0.5 rounded border border-destructive/10 self-start">
-                    -{diag.points} pts
+                  <span className="shrink-0 self-start rounded border border-destructive/20 bg-destructive/5 px-2 py-0.5 font-mono font-semibold text-destructive text-xs tabular-nums">
+                    −{diag.points} pts
                   </span>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider block">
-                    Recommended Tag:
+                  <span className="block font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+                    Recommended tag
                   </span>
-                  <code className="text-xs block bg-background p-2 rounded-md font-mono text-primary overflow-x-auto select-all border border-muted-foreground/5 whitespace-pre-wrap">
+                  <code className="text-xs block bg-background p-2 rounded-md font-mono text-foreground overflow-x-auto select-all border border-border whitespace-pre-wrap">
                     {diag.suggestion}
                   </code>
                 </div>

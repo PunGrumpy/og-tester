@@ -25,7 +25,7 @@ export const Header = () => {
         "sticky top-0 z-50 max-w-screen overflow-x-hidden bg-background",
         "data-[scrolled=true]:shadow-2xs dark:data-[scrolled=true]:shadow-xs",
         "not-dark:data-[scrolled=true]:**:data-header-container:after:bg-border",
-        "transition-shadow duration-300"
+        "transition-shadow duration-380"
       )}
       data-scrolled={scrolled}
     >

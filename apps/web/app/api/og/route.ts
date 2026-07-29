@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 
 import { env } from "@/lib/env";
 import { parseError } from "@/lib/error";
+import { BlockedUrlError, safeFetch } from "@/lib/safe-fetch";
 
 export const GET = withUnkey(
   async (request: NextRequestWithUnkeyContext) => {
@@ -15,12 +16,22 @@ export const GET = withUnkey(
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
-    const response = await fetch(url, {
-      cache: "no-store",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; OGTester/1.0)",
-      },
-    });
+    let response: Response;
+    try {
+      response = await safeFetch(url, {
+        cache: "no-store",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; OGTester/1.0)",
+        },
+      });
+    } catch (error) {
+      // A refused target is the caller's input being rejected, not a server
+      // fault, so it answers 400 rather than surfacing as an unhandled 500.
+      if (error instanceof BlockedUrlError) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+      throw error;
+    }
 
     if (!response.ok) {
       const message = parseError(response.statusText);
