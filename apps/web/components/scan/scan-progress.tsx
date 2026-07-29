@@ -1,10 +1,16 @@
 "use client";
 
-import { m } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 
 import type { ScanPhase } from "@/hooks/use-scanner-store";
+import { DURATION, transition } from "@/lib/motion";
 
 import { ScoreBadge } from "./score-badge";
+
+// Ambient loops sit outside the interaction scale — they signal "still working"
+// rather than responding to input, so they run slower than anything in DURATION.
+const PULSE_DURATION = 1.2;
+const SHINE_DURATION = 1.4;
 
 interface ScanProgressProps {
   phase: ScanPhase;
@@ -21,63 +27,89 @@ export const ScanProgress = ({
   currentUrl,
   currentScore,
 }: ScanProgressProps) => {
+  const shouldReduceMotion = useReducedMotion();
   const percentage =
     totalUrls > 0 ? Math.round((completedUrls / totalUrls) * 100) : 0;
 
+  const phaseLabel =
+    phase === "discovery" ? "Discovering pages…" : "Scanning pages…";
+  const countLabel =
+    phase === "discovery"
+      ? ""
+      : `${completedUrls} / ${totalUrls} (${percentage}%)`;
+
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex justify-between items-center text-sm">
+      {/* <output> carries an implicit role="status", so the scan reports
+          progress to screen readers without an explicit live region. */}
+      <output
+        aria-atomic="true"
+        className="flex justify-between items-center text-sm"
+      >
         <div className="flex items-center gap-2">
-          <span className="relative flex size-2.5">
-            <m.span
-              animate={{ opacity: [0.75, 0], scale: [1, 2.2] }}
-              transition={{
-                duration: 1.2,
-                ease: [0.23, 1, 0.32, 1],
-                repeat: Infinity,
-              }}
-              className="absolute inline-flex h-full w-full rounded-full bg-primary"
-            />
+          <span aria-hidden="true" className="relative flex size-2.5">
+            {shouldReduceMotion ? null : (
+              <m.span
+                animate={{ opacity: [0.75, 0], scale: [1, 2.2] }}
+                transition={{
+                  ...transition(PULSE_DURATION),
+                  repeat: Number.POSITIVE_INFINITY,
+                }}
+                className="absolute inline-flex h-full w-full rounded-full bg-primary"
+              />
+            )}
             <span className="relative inline-flex rounded-full size-2.5 bg-primary" />
           </span>
-          <span className="font-medium text-foreground capitalize">
-            {phase === "discovery"
-              ? "Discovering pages..."
-              : `Scanning pages...`}
-          </span>
+          <span className="font-medium text-foreground">{phaseLabel}</span>
         </div>
         <span className="font-mono text-muted-foreground tabular-nums">
-          {phase === "discovery"
-            ? ""
-            : `${completedUrls} / ${totalUrls} (${percentage}%)`}
+          {countLabel}
         </span>
-      </div>
+      </output>
 
-      <div className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative">
+      {/* A native <progress> cannot host the animated fill, so the ARIA
+          progressbar pattern is used instead (same shape as Radix Progress). */}
+      <div
+        aria-label="Scan progress"
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={phase === "discovery" ? undefined : percentage}
+        className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative"
+        role="progressbar"
+      >
         <m.div
           animate={{ width: `${percentage}%` }}
           className="h-full bg-primary rounded-full relative overflow-hidden"
           initial={{ width: "0%" }}
-          transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+          transition={transition(DURATION.slow)}
         >
           {/* Animated scanning shine */}
-          <m.div
-            className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
-            animate={{ x: ["-100%", "200%"] }}
-            transition={{ duration: 1.4, ease: "linear", repeat: Infinity }}
-            style={{ width: "50%" }}
-          />
+          {shouldReduceMotion ? null : (
+            <m.div
+              className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{
+                duration: SHINE_DURATION,
+                ease: "linear",
+                repeat: Number.POSITIVE_INFINITY,
+              }}
+              style={{ width: "50%" }}
+            />
+          )}
         </m.div>
       </div>
 
       {phase === "checking" && currentUrl && (
-        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-200">
-          <code className="truncate max-w-[75%] bg-muted/60 border px-1.5 py-0.5 rounded font-mono text-[10px] text-foreground/80">
+        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240">
+          <code
+            className="truncate max-w-[75%] bg-muted/60 border px-1.5 py-0.5 rounded font-mono text-xs text-foreground"
+            title={currentUrl}
+          >
             {currentUrl}
           </code>
           {currentScore !== undefined && (
             <div className="flex items-center gap-1.5 ml-2 shrink-0">
-              <span className="text-muted-foreground/60 text-[10px] uppercase font-bold tracking-wider">
+              <span className="text-muted-foreground text-xs uppercase font-bold tracking-wider">
                 Score:
               </span>
               <ScoreBadge score={currentScore} />

@@ -6,9 +6,11 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
+import { DURATION, transition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-import { getSeverityBg, getSeverityIcon } from "./severity";
+import { ReportSection } from "./report-section";
+import { getSeverityIcon, getSeverityRail } from "./severity";
 
 interface IssueSummaryProps {
   pages: PageScoreResult[];
@@ -85,142 +87,152 @@ export const IssueSummary = ({ pages }: IssueSummaryProps) => {
   const displayedIssues = showAll ? sortedIssues : sortedIssues.slice(0, 5);
 
   return (
-    <div className="p-6 rounded-2xl border border-border bg-background flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-semibold text-foreground">
-          Top Site-wide Issues
-        </h3>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Most common tag optimization opportunities sorted by frequency
-        </p>
-      </div>
-
+    <ReportSection
+      description="Most common tag opportunities, most frequent first"
+      title="Top site-wide issues"
+    >
       {sortedIssues.length === 0 ? (
-        <div className="py-8 text-center text-sm text-muted-foreground">
-          🎉 No issues detected! Your site-wide metadata looks perfect.
-        </div>
+        <p className="rounded-lg border border-dashed px-4 py-6 text-center text-muted-foreground text-sm">
+          Nothing to fix — no issues found across the scanned pages.
+        </p>
       ) : (
         <div className="flex flex-col gap-2">
-          {displayedIssues.map((issue) => {
-            const isExpanded = expandedIssue === issue.key;
-            const percent = Math.round((issue.count / totalPages) * 100);
+          {/* Expanding to the full list would otherwise run the right column
+              thousands of pixels past the table beside it, so the list scrolls
+              within a fixed frame once it is longer than the collapsed five.
+              Not a flex column: inside a capped height, flex children shrink
+              and clip their own text. */}
+          <div
+            className={cn(
+              "divide-y rounded-lg border",
+              // Viewport-aware so the expanded list still fits inside the
+              // sticky summary column alongside the distribution block.
+              showAll && "max-h-[min(32rem,calc(100dvh-26rem))] overflow-y-auto"
+            )}
+          >
+            {displayedIssues.map((issue) => {
+              const isExpanded = expandedIssue === issue.key;
+              const percent = Math.round((issue.count / totalPages) * 100);
 
-            return (
-              <div
-                key={issue.key}
-                className={cn(
-                  "rounded-lg border transition-colors duration-200 overflow-hidden",
-                  getSeverityBg(issue.severity)
-                )}
-              >
-                <button
-                  className="w-full flex flex-col gap-2 sm:flex-row sm:items-center justify-between p-4 cursor-pointer text-left text-sm active:scale-[0.98] transition-transform duration-100 ease-out"
-                  type="button"
-                  onClick={() =>
-                    setExpandedIssue(isExpanded ? null : issue.key)
-                  }
+              return (
+                <div
+                  key={issue.key}
+                  className={cn(
+                    "relative overflow-hidden transition-colors duration-240",
+                    "before:absolute before:inset-y-0 before:left-0 before:w-0.5",
+                    getSeverityRail(issue.severity)
+                  )}
                 >
-                  <div className="flex items-start gap-3 min-w-0 pr-4">
-                    {getSeverityIcon(issue.severity)}
-                    <div className="min-w-0">
-                      <span className="font-mono text-[10px] font-semibold uppercase text-muted-foreground tracking-wider block">
+                  <button
+                    aria-expanded={isExpanded}
+                    className="flex w-full cursor-pointer flex-col gap-1 py-3 pr-3 pl-4 text-left text-sm transition-colors duration-140 hover:bg-muted/40"
+                    type="button"
+                    onClick={() =>
+                      setExpandedIssue(isExpanded ? null : issue.key)
+                    }
+                  >
+                    {/* The tag is the identifier, so it gets the full line rather
+                      than sharing it with the count and truncating. */}
+                    <div className="flex w-full items-center gap-2">
+                      {getSeverityIcon(issue.severity)}
+                      <span className="truncate font-medium font-mono text-foreground text-xs">
                         {issue.tag}
                       </span>
-                      <span className="font-semibold text-foreground truncate block">
-                        {issue.message}
+                      <span className="ml-auto shrink-0 whitespace-nowrap font-mono text-muted-foreground text-xs tabular-nums">
+                        {issue.count}
+                        <span className="text-muted-foreground/70">
+                          /{totalPages}
+                        </span>
                       </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto mt-2 sm:mt-0 pl-7 sm:pl-0">
-                    <span className="text-xs font-medium font-mono bg-background/50 px-2 py-0.5 rounded border border-muted-foreground/5 tabular-nums">
-                      {issue.count} pages ({percent}%)
-                    </span>
-                    {isExpanded ? (
                       <m.div
-                        animate={{ rotate: 180 }}
-                        initial={{ rotate: 0 }}
-                        transition={{ duration: 0.15 }}
+                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                        className="shrink-0"
+                        initial={false}
+                        transition={transition(DURATION.fast)}
                       >
-                        <ChevronDown className="size-4 text-muted-foreground" />
+                        <ChevronDown className="size-3.5 text-muted-foreground" />
                       </m.div>
-                    ) : (
+                    </div>
+                    {/* No `block` here: line-clamp needs display:-webkit-box. */}
+                    <span
+                      className="line-clamp-2 pl-6 text-pretty text-muted-foreground text-xs leading-relaxed"
+                      title={issue.message}
+                    >
+                      {issue.message}
+                    </span>
+                    <span className="sr-only">
+                      {issue.count === 1
+                        ? `1 page affected (${percent}%)`
+                        : `${issue.count} pages affected (${percent}%)`}
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
                       <m.div
-                        animate={{ rotate: 0 }}
-                        initial={{ rotate: 180 }}
-                        transition={{ duration: 0.15 }}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={transition(DURATION.base)}
+                        className="overflow-hidden border-border border-t"
                       >
-                        <ChevronDown className="size-4 text-muted-foreground" />
+                        <div className="flex flex-col gap-3 py-3 pr-3 pl-4">
+                          <div className="flex flex-col gap-1">
+                            <span className="block font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+                              Recommended fix
+                            </span>
+                            <code className="text-xs block bg-muted p-2 rounded-md font-mono text-foreground overflow-x-auto whitespace-pre-wrap select-all border border-border">
+                              {issue.suggestion}
+                            </code>
+                          </div>
+
+                          {issue.affectedUrls.length > 0 && (
+                            <div className="flex flex-col gap-1">
+                              <span className="block font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+                                Affected pages
+                              </span>
+                              <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-border">
+                                {issue.affectedUrls.map((url) => {
+                                  const path = safeGetPathname(url);
+                                  return (
+                                    <li key={url} className="py-1 break-all">
+                                      <a
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary hover:underline hover:text-primary/80 transition-colors"
+                                      >
+                                        {path}
+                                      </a>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       </m.div>
                     )}
-                  </div>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <m.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                      className="overflow-hidden border-t border-muted-foreground/5"
-                    >
-                      <div className="px-4 pb-4 pt-4 flex flex-col gap-3">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
-                            Recommended Fix:
-                          </span>
-                          <code className="text-xs block bg-muted p-2 rounded-md font-mono text-primary overflow-x-auto whitespace-pre-wrap select-all border border-muted-foreground/5">
-                            {issue.suggestion}
-                          </code>
-                        </div>
-
-                        {issue.affectedUrls.length > 0 && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
-                              Affected Pages:
-                            </span>
-                            <ul className="text-xs font-mono flex flex-col gap-1 max-h-60 overflow-y-auto pr-2 divide-y divide-muted-foreground/5">
-                              {issue.affectedUrls.map((url) => {
-                                const path = safeGetPathname(url);
-                                return (
-                                  <li key={url} className="py-1 break-all">
-                                    <a
-                                      href={url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-primary hover:underline hover:text-primary/80 transition-colors"
-                                    >
-                                      {path}
-                                    </a>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </m.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
 
           {sortedIssues.length > 5 && (
             <Button
               variant="ghost"
               size="sm"
-              className="w-full text-xs text-muted-foreground hover:text-foreground mt-2 active:scale-[0.98] transition-transform duration-100 ease-out"
+              className="w-full text-muted-foreground text-xs transition-transform duration-140 ease-out-custom hover:text-foreground active:scale-[0.96]"
               onClick={() => setShowAll(!showAll)}
             >
               {showAll
-                ? "Show Less"
-                : `Show All Issues (${sortedIssues.length})`}
+                ? "Show fewer"
+                : `Show all ${sortedIssues.length} issues`}
             </Button>
           )}
         </div>
       )}
-    </div>
+    </ReportSection>
   );
 };

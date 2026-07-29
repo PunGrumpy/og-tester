@@ -56,6 +56,10 @@
   --color-score-good: var(--score-good);
   --color-score-fair: var(--score-fair);
   --color-score-poor: var(--score-poor);
+  --color-score-excellent-fill: var(--score-excellent-fill);
+  --color-score-good-fill: var(--score-good-fill);
+  --color-score-fair-fill: var(--score-fair-fill);
+  --color-score-poor-fill: var(--score-poor-fill);
 
   /* The one curve for the whole app; mirrored as EASE in lib/motion.ts for the
      JS-driven animations. easeOutCubic — see lib/motion.ts for why the previous
@@ -115,6 +119,14 @@
   --score-good: oklch(0.52 0.12 118);
   --score-fair: oklch(0.53 0.107 85);
   --score-poor: oklch(0.545 0.19 23.03);
+  /* The `--score-*` values above are held dark enough to pass 4.5:1 as text on
+     their own tints. Arcs and bars carry no text and always sit beside the
+     number they encode, so they use a brighter fill instead — at text
+     lightness the same ramp reads as muddy olive. */
+  --score-excellent-fill: oklch(0.65 0.17 145);
+  --score-good-fill: oklch(0.72 0.14 118);
+  --score-fair-fill: oklch(0.78 0.14 85);
+  --score-poor-fill: oklch(0.62 0.21 23.03);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -179,6 +191,11 @@
   --score-good: oklch(0.8 0.17 118);
   --score-fair: oklch(0.81 0.17 85);
   --score-poor: oklch(0.69 0.2 23.91);
+  /* Already bright enough against the dark background, so fills match. */
+  --score-excellent-fill: var(--score-excellent);
+  --score-good-fill: var(--score-good);
+  --score-fair-fill: var(--score-fair);
+  --score-poor-fill: var(--score-poor);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;

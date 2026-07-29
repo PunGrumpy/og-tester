@@ -2,7 +2,6 @@
 
 import { AlertCircle, RotateCcw, BarChart3 } from "lucide-react";
 import { m, AnimatePresence } from "motion/react";
-import dynamic from "next/dynamic";
 
 import { SectionSeparator } from "@/components/section";
 import { Button } from "@/components/ui/button";
@@ -15,19 +14,21 @@ import {
 } from "@/components/ui/empty";
 import { ViewAnimation } from "@/components/view-animation";
 import { useScannerStore } from "@/hooks/use-scanner-store";
+import { DURATION, STAGGER, transition, TRAVEL } from "@/lib/motion";
 
 import { IssueSummary } from "./issue-summary";
 import { PagesTable } from "./pages-table";
 import { ScanProgress } from "./scan-progress";
+import { ScoreDistribution } from "./score-distribution";
 import { ScoreOverview } from "./score-overview";
 
-const ScoreDistribution = dynamic(
-  async () => {
-    const mod = await import("./score-distribution");
-    return mod.ScoreDistribution;
-  },
-  { ssr: false }
-);
+// Each phase swaps out the whole panel, so they share one enter/exit.
+const PHASE_MOTION = {
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -TRAVEL },
+  initial: { opacity: 0, y: TRAVEL },
+  transition: transition(DURATION.slow),
+};
 
 export const ScannerSection = () => {
   const {
@@ -54,27 +55,7 @@ export const ScannerSection = () => {
           <div className="md:border-x">
             <AnimatePresence mode="wait">
               {phase === "idle" && (
-                <m.div
-                  key="idle"
-                  initial={{ filter: "blur(2px)", opacity: 0, y: 10 }}
-                  whileInView={{
-                    filter: "blur(0px)",
-                    opacity: 1,
-                    transition: {
-                      delay: 0.1,
-                      duration: 0.35,
-                      ease: [0.23, 1, 0.32, 1],
-                    },
-                    y: 0,
-                  }}
-                  viewport={{ amount: 0.5, once: true }}
-                  exit={{
-                    filter: "blur(2px)",
-                    opacity: 0,
-                    transition: { duration: 0.2, ease: [0.77, 0, 0.175, 1] },
-                    y: -12,
-                  }}
-                >
+                <m.div key="idle" {...PHASE_MOTION}>
                   <div className="flex flex-col items-center justify-center min-h-[300px] bg-muted/2">
                     <Empty>
                       <EmptyMedia>
@@ -82,11 +63,11 @@ export const ScannerSection = () => {
                       </EmptyMedia>
                       <EmptyHeader>
                         <EmptyTitle className="text-sm">
-                          Site-Wide Scanner is Ready
+                          Site-wide scanner is ready
                         </EmptyTitle>
                         <EmptyDescription>
                           Enter a URL in the form above to check single-page
-                          tags and audit site-wide metadata in real-time.
+                          tags and audit site-wide metadata in real time.
                         </EmptyDescription>
                       </EmptyHeader>
                     </Empty>
@@ -95,13 +76,7 @@ export const ScannerSection = () => {
               )}
 
               {(phase === "discovery" || phase === "checking") && (
-                <m.div
-                  key="progress"
-                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
-                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                >
+                <m.div key="progress" {...PHASE_MOTION}>
                   <div className="p-8 flex flex-col items-center justify-center min-h-[300px]">
                     <div className="flex w-full max-w-xl flex-col gap-6">
                       <ScanProgress
@@ -117,7 +92,7 @@ export const ScannerSection = () => {
                           className="px-6"
                           onClick={cancelScan}
                         >
-                          Cancel Scan
+                          Cancel scan
                         </Button>
                       </div>
                     </div>
@@ -126,28 +101,22 @@ export const ScannerSection = () => {
               )}
 
               {phase === "error" && (
-                <m.div
-                  key="error"
-                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
-                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                >
+                <m.div key="error" {...PHASE_MOTION}>
                   <div className="p-8 flex items-center justify-center min-h-[300px]">
-                    <div className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-destructive/10 bg-destructive/5 p-6 text-center shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+                    <div className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-6 text-center shadow-sm">
                       <div className="flex justify-center text-destructive">
                         <AlertCircle className="size-10" />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <h3 className="font-semibold text-foreground text-balance">
-                          Scan Failed
+                        <h3 className="text-balance font-semibold text-foreground">
+                          Scan failed
                         </h3>
-                        <p className="text-sm text-muted-foreground text-pretty">
+                        <p className="text-pretty text-muted-foreground text-sm">
                           {errorMsg}
                         </p>
                       </div>
                       <Button className="px-5" onClick={resetScan}>
-                        Try Another URL
+                        Try another URL
                       </Button>
                     </div>
                   </div>
@@ -155,64 +124,52 @@ export const ScannerSection = () => {
               )}
 
               {phase === "complete" && (
-                <m.div
-                  key="complete"
-                  initial={{ filter: "blur(2px)", opacity: 0, y: 12 }}
-                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  exit={{ filter: "blur(2px)", opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                >
-                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] lg:divide-x divide-y lg:divide-y-0">
-                    <div className="col-span-full flex flex-col sm:flex-row items-center justify-between gap-4 border-b px-6 py-4 bg-foreground/2">
-                      <div>
-                        <h2 className="text-xl font-bold tracking-tight text-foreground text-balance">
-                          Scanner Report
+                <m.div key="complete" {...PHASE_MOTION}>
+                  <div className="grid grid-cols-1 divide-y lg:grid-cols-[1fr_400px] lg:divide-x lg:divide-y-0">
+                    <div className="col-span-full flex flex-col items-start justify-between gap-4 border-b bg-foreground/2 px-6 py-5 sm:flex-row sm:items-center">
+                      <div className="min-w-0">
+                        <h2 className="text-balance font-semibold text-foreground text-lg tracking-tight">
+                          Scanner report
                         </h2>
-                        <p className="text-xs text-muted-foreground mt-0.5 text-pretty">
-                          Complete overview for your site optimization audit
+                        <p className="mt-0.5 text-pretty text-muted-foreground text-xs">
+                          Site-wide metadata audit across every page we could
+                          reach
                         </p>
                       </div>
                       <Button variant="outline" onClick={resetScan} size="sm">
                         <RotateCcw data-icon="inline-start" />
-                        New Scan
+                        New scan
                       </Button>
                     </div>
 
-                    <div className="flex flex-col gap-6 p-6 min-w-0">
-                      <ViewAnimation
-                        delay={0.15}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                      >
+                    {/* Blocks are grouped by space and headings rather than by
+                        nested card borders, so the report is one box deep. */}
+                    <div className="flex min-w-0 flex-col gap-10 p-6">
+                      <ViewAnimation delay={0}>
                         <ScoreOverview
                           averageScore={averageScore}
                           categoryAverages={categoryAverages}
                         />
                       </ViewAnimation>
-                      <ViewAnimation
-                        delay={0.25}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                      >
+                      <ViewAnimation delay={STAGGER * 2}>
                         <PagesTable pages={pages} />
                       </ViewAnimation>
                     </div>
 
-                    <div className="flex flex-col gap-6 p-6 min-w-0">
-                      <ViewAnimation
-                        delay={0.2}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                      >
-                        <ScoreDistribution summary={summary} />
-                      </ViewAnimation>
-                      <ViewAnimation
-                        delay={0.3}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                      >
-                        <IssueSummary pages={pages} />
-                      </ViewAnimation>
+                    {/* The pages table can run to dozens of rows, so the
+                        summary column sticks instead of being stretched to
+                        match it — matching heights would just push the issue
+                        list back to thousands of pixels. The sticky wrapper is
+                        inside the cell so `divide-x` still draws full height. */}
+                    <div className="min-w-0 p-6">
+                      <div className="flex flex-col gap-10 lg:sticky lg:top-24">
+                        <ViewAnimation delay={STAGGER}>
+                          <ScoreDistribution summary={summary} />
+                        </ViewAnimation>
+                        <ViewAnimation delay={STAGGER * 3}>
+                          <IssueSummary pages={pages} />
+                        </ViewAnimation>
+                      </div>
                     </div>
                   </div>
                 </m.div>

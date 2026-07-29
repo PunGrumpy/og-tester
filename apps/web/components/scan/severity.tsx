@@ -29,3 +29,22 @@ export const getSeverityBg = (sev: Diagnostic["severity"]) => {
     }
   }
 };
+
+/**
+ * A tinted rail on one edge instead of a full wash. Stacking five full-bleed
+ * severity tints turns the list into four competing pastel blocks; the rail
+ * keeps the colour coding while the rows stay on the page background.
+ */
+export const getSeverityRail = (sev: Diagnostic["severity"]) => {
+  switch (sev) {
+    case "error": {
+      return "before:bg-destructive";
+    }
+    case "warning": {
+      return "before:bg-warning";
+    }
+    default: {
+      return "before:bg-info";
+    }
+  }
+};
