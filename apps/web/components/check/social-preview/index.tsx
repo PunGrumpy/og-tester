@@ -94,131 +94,141 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
           ))}
         </TabsList>
 
-        {hasData ? (
-          <div className="relative mt-4">
-            <AnimatePresence mode="wait">
-              {activePlatform === "x" && (
-                <TabsContent value="x" forceMount asChild>
-                  <m.div
-                    key="x"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <XPreview
-                      description={preview.description}
-                      displayUrl={preview.displayUrl}
-                      image={preview.image}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-              {activePlatform === "slack" && (
-                <TabsContent value="slack" forceMount asChild>
-                  <m.div
-                    key="slack"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <SlackPreview
-                      description={preview.description}
-                      image={preview.image}
-                      siteName={preview.siteName}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-              {activePlatform === "facebook" && (
-                <TabsContent value="facebook" forceMount asChild>
-                  <m.div
-                    key="facebook"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <FacebookPreview
-                      description={preview.description}
-                      displayUrl={preview.displayUrl}
-                      image={preview.image}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-              {activePlatform === "linkedin" && (
-                <TabsContent value="linkedin" forceMount asChild>
-                  <m.div
-                    key="linkedin"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <LinkedinPreview
-                      displayUrl={preview.displayUrl}
-                      image={preview.image}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-              {activePlatform === "discord" && (
-                <TabsContent value="discord" forceMount asChild>
-                  <m.div
-                    key="discord"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <DiscordPreview
-                      description={preview.description}
-                      image={preview.image}
-                      siteName={preview.siteName}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-              {activePlatform === "whatsapp" && (
-                <TabsContent value="whatsapp" forceMount asChild>
-                  <m.div
-                    key="whatsapp"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={transition(DURATION.fast)}
-                  >
-                    <WhatsappPreview
-                      description={preview.description}
-                      displayUrl={preview.displayUrl}
-                      image={preview.image}
-                      title={preview.title}
-                    />
-                  </m.div>
-                </TabsContent>
-              )}
-            </AnimatePresence>
-          </div>
-        ) : (
-          <Empty className="mt-4 flex-1 border">
-            <EmptyHeader>
-              <EmptyTitle className="text-balance">
-                No preview available
-              </EmptyTitle>
-              <EmptyDescription className="text-pretty">
-                Enter a URL above to see how your link will appear on social
-                media.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
+        {/* The boundary stays mounted across the has-data flip. Previously it
+            was removed by the same condition as its children, so the outgoing
+            preview could never play its exit. */}
+        <div className="relative mt-4">
+          <AnimatePresence mode="wait">
+            {hasData && activePlatform === "x" && (
+              <TabsContent value="x" forceMount asChild>
+                <m.div
+                  key="x"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <XPreview
+                    description={preview.description}
+                    displayUrl={preview.displayUrl}
+                    image={preview.image}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {hasData && activePlatform === "slack" && (
+              <TabsContent value="slack" forceMount asChild>
+                <m.div
+                  key="slack"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <SlackPreview
+                    description={preview.description}
+                    image={preview.image}
+                    siteName={preview.siteName}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {hasData && activePlatform === "facebook" && (
+              <TabsContent value="facebook" forceMount asChild>
+                <m.div
+                  key="facebook"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <FacebookPreview
+                    description={preview.description}
+                    displayUrl={preview.displayUrl}
+                    image={preview.image}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {hasData && activePlatform === "linkedin" && (
+              <TabsContent value="linkedin" forceMount asChild>
+                <m.div
+                  key="linkedin"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <LinkedinPreview
+                    displayUrl={preview.displayUrl}
+                    image={preview.image}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {hasData && activePlatform === "discord" && (
+              <TabsContent value="discord" forceMount asChild>
+                <m.div
+                  key="discord"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <DiscordPreview
+                    description={preview.description}
+                    image={preview.image}
+                    siteName={preview.siteName}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {hasData && activePlatform === "whatsapp" && (
+              <TabsContent value="whatsapp" forceMount asChild>
+                <m.div
+                  key="whatsapp"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={transition(DURATION.fast)}
+                >
+                  <WhatsappPreview
+                    description={preview.description}
+                    displayUrl={preview.displayUrl}
+                    image={preview.image}
+                    title={preview.title}
+                  />
+                </m.div>
+              </TabsContent>
+            )}
+            {!hasData && (
+              <m.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={transition(DURATION.fast)}
+              >
+                <Empty className="flex-1 border">
+                  <EmptyHeader>
+                    <EmptyTitle className="text-balance">
+                      No preview available
+                    </EmptyTitle>
+                    <EmptyDescription className="text-pretty">
+                      Enter a URL above to see how your link will appear on
+                      social media.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              </m.div>
+            )}
+          </AnimatePresence>
+        </div>
       </Tabs>
     </ViewAnimation>
   );
