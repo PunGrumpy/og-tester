@@ -179,12 +179,13 @@ const TagRow = ({
     content = (
       <div className="flex flex-col gap-2">
         <Input
-          className="h-8 text-sm"
+          aria-label={key}
+          className="h-8 text-base sm:text-sm"
           onChange={(e) => updateTag(dataKey, e.target.value)}
           value={typeof value === "string" ? value : ""}
         />
         {isImage && imageUrl && (
-          <div className="mt-2 relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+          <div className="mt-2 relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
             <Image
               alt="Preview"
               className="h-full w-full object-cover"
@@ -212,7 +213,7 @@ const TagRow = ({
       content = (
         <div className="flex flex-col gap-2">
           <div className="flex items-start gap-3">
-            <div className="relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded border bg-muted">
+            <div className="relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
               <Image
                 alt={linkLabel}
                 className="h-full w-full object-cover"
@@ -265,7 +266,7 @@ const TagRow = ({
   }
 
   return (
-    <tr className="flex flex-col sm:table-row divide-y sm:divide-y-0 sm:divide-x hover:bg-muted/20 transition-colors duration-150 ease-out">
+    <tr className="flex flex-col sm:table-row divide-y sm:divide-y-0 sm:divide-x hover:bg-muted/20 transition-colors duration-140 ease-out-custom">
       <td className="w-full sm:w-40 whitespace-nowrap px-4 py-2 sm:py-3 align-top font-medium text-primary text-sm bg-muted/10 sm:bg-transparent">
         {key}
       </td>

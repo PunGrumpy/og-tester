@@ -88,12 +88,14 @@ export const Status = async () => {
       data.filter((monitor) => monitor.attributes.status === "up").length /
       data.length;
 
+    // `status` is the fraction of monitors reporting up: 0 means everything
+    // is down, so it must carry the most severe label.
     if (status === 0) {
       statusColor = "bg-destructive";
-      statusLabel = "Degraded performance";
+      statusLabel = "Major outage";
     } else if (status < 1) {
       statusColor = "bg-warning";
-      statusLabel = "Partial outage";
+      statusLabel = "Degraded performance";
     } else {
       statusColor = "bg-success";
       statusLabel = "All systems normal";

@@ -19,7 +19,7 @@ const Home = () => (
     <Suspense
       fallback={
         <div className="h-96 flex items-center justify-center text-muted-foreground animate-pulse text-sm">
-          Loading tool suite...
+          Loading tool suite…
         </div>
       }
     >

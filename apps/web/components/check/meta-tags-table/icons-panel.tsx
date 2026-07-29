@@ -62,7 +62,7 @@ export const IconsPanel = ({
           className="flex items-center gap-3 rounded-lg border px-3 py-2"
           key={`${icon.rel}-${icon.href}-${icon.sizes ?? ""}`}
         >
-          <div className="flex size-8 items-center justify-center overflow-hidden rounded border bg-muted">
+          <div className="relative flex size-8 items-center justify-center overflow-hidden rounded bg-muted">
             <Image
               alt={icon.rel}
               className="size-full object-contain"
@@ -70,14 +70,20 @@ export const IconsPanel = ({
               src={icon.href}
               width={32}
             />
+            <div className="pointer-events-none absolute inset-0 rounded border border-black/10 dark:border-white/10" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-muted-foreground text-sm">{icon.rel}</p>
+            <p
+              className="truncate text-muted-foreground text-sm"
+              title={icon.rel}
+            >
+              {icon.rel}
+            </p>
             {icon.sizes ? (
-              <p className="text-muted-foreground/60 text-xs">{icon.sizes}</p>
+              <p className="text-muted-foreground text-xs">{icon.sizes}</p>
             ) : null}
             {icon.type ? (
-              <p className="text-muted-foreground/60 text-xs">{icon.type}</p>
+              <p className="text-muted-foreground text-xs">{icon.type}</p>
             ) : null}
           </div>
         </div>
