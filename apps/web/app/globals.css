@@ -57,12 +57,22 @@
   --color-score-fair: var(--score-fair);
   --color-score-poor: var(--score-poor);
 
-  --ease-out-custom: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out-custom: cubic-bezier(0.77, 0, 0.175, 1);
-  --ease-drawer-custom: cubic-bezier(0.32, 0.72, 0, 1);
+  /* The one curve for the whole app; mirrored as EASE in lib/motion.ts for the
+     JS-driven animations. easeOutCubic — see lib/motion.ts for why the previous
+     drawer curve made every entrance read as a pop. */
+  --ease-out-custom: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 :root {
+  /* Bare `transition-*` utilities (Button, Input, Table…) resolve their timing
+     through `var(--default-transition-*)`, and without this they fall back to
+     Tailwind's 150ms / cubic-bezier(0.4, 0, 0.2, 1) — which is why the press
+     feedback never matched the JS animations. Declared here rather than in
+     `@theme` because these two keys are read as plain custom properties, so a
+     later `:root` declaration is what actually wins the cascade. */
+  --default-transition-duration: 240ms;
+  --default-transition-timing-function: var(--ease-out-custom);
+
   --background: oklch(0.99 0 0);
   --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
@@ -241,14 +251,15 @@
   [role="button"]:not([role="tab"]) {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    /* DURATION.fast in lib/motion.ts. */
     transition:
-      transform 160ms var(--ease-out-custom),
-      opacity 160ms var(--ease-out-custom);
+      transform 140ms var(--ease-out-custom),
+      opacity 140ms var(--ease-out-custom);
   }
 
   button:active:not(:disabled):not([role="tab"]),
   [role="button"]:active:not(:disabled):not([role="tab"]) {
-    transform: scale(0.97);
+    transform: scale(0.96);
   }
 }
 
