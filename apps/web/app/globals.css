@@ -77,7 +77,7 @@
   --muted-foreground: oklch(0.44 0 0);
   --accent: oklch(0.94 0 0);
   --accent-foreground: oklch(0 0 0);
-  --destructive: oklch(0.63 0.19 23.03);
+  --destructive: oklch(0.545 0.19 23.03);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.92 0 0);
   --input: oklch(0.94 0 0);
@@ -96,13 +96,15 @@
   --sidebar-border: oklch(0.94 0 0);
   --sidebar-ring: oklch(0 0 0);
   --radius: 0.5rem;
-  --success: oklch(0.62 0.19 145);
-  --warning: oklch(0.75 0.18 85);
-  --info: oklch(0.62 0.17 250);
-  --score-excellent: oklch(0.62 0.19 145);
-  --score-good: var(--primary);
-  --score-fair: oklch(0.75 0.18 85);
-  --score-poor: oklch(0.63 0.19 23.03);
+  /* Status hues are dark enough to clear 4.5:1 as text on their own /5 and /10
+     tints against --background. Adjust L first, then clamp C to sRGB. */
+  --success: oklch(0.51 0.158 145);
+  --warning: oklch(0.53 0.107 85);
+  --info: oklch(0.525 0.147 250);
+  --score-excellent: oklch(0.51 0.158 145);
+  --score-good: oklch(0.52 0.12 118);
+  --score-fair: oklch(0.53 0.107 85);
+  --score-poor: oklch(0.545 0.19 23.03);
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -164,7 +166,7 @@
   --warning: oklch(0.81 0.17 85);
   --info: oklch(0.72 0.17 250);
   --score-excellent: oklch(0.72 0.19 150);
-  --score-good: var(--primary);
+  --score-good: oklch(0.8 0.17 118);
   --score-fair: oklch(0.81 0.17 85);
   --score-poor: oklch(0.69 0.2 23.91);
   --shadow-x: 0px;
