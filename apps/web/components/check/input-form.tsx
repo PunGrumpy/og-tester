@@ -16,6 +16,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ViewAnimation } from "@/components/view-animation";
 import { useOgStore } from "@/hooks/use-og-store";
 import { parseError } from "@/lib/error";
+import { DURATION, transition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 const HTTPS_PROTOCOL_REGEX = /^https?:\/\//iu;
@@ -48,19 +50,22 @@ const normalizeUrl = (value: string): string => {
   return `https://${trimmed}`;
 };
 
+const isHttpUrl = (value: string): boolean => {
+  try {
+    const parsed = new URL(normalizeUrl(value));
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+// Validate the raw string rather than piping through `transform`, so the
+// refinement always reports against the `url` field.
 const schema = z.object({
   url: z
     .string()
-    .min(1, "Please enter a URL")
-    .transform(normalizeUrl)
-    .refine((val) => {
-      try {
-        const _url = new URL(val);
-        return !!_url;
-      } catch {
-        return false;
-      }
-    }, "Please enter a valid URL"),
+    .min(1, "Enter a URL, for example example.com")
+    .refine(isHttpUrl, "Enter a valid URL, for example example.com"),
 });
 
 type SchemaType = z.infer<typeof schema>;
@@ -82,12 +87,16 @@ export const InputForm = ({
   const { execute, isExecuting } = useAction(ogAction, {
     onError: ({ error }) => {
       setIsLoading(false);
+      // Every failure branch must surface a message; a silent `onError`
+      // leaves the form looking idle after a failed submit.
+      let message =
+        "Unable to analyze that URL. Check the address and try again.";
       if (error.serverError) {
-        form.setError("url", {
-          message: parseError(error.serverError),
-          type: "server",
-        });
+        message = parseError(error.serverError);
+      } else if (error.validationErrors) {
+        message = "Enter a valid URL, for example example.com";
       }
+      form.setError("url", { message, type: "server" });
     },
     onSuccess: ({ data }) => {
       if (data) {
@@ -100,12 +109,11 @@ export const InputForm = ({
   });
 
   const onSubmit = (data: SchemaType) => {
-    track("submit_url", {
-      url: data.url.toString(),
-    });
+    const url = normalizeUrl(data.url);
+    track("submit_url", { url });
     setIsLoading(true);
-    execute({ url: data.url });
-    onScanSite(data.url);
+    execute({ url });
+    onScanSite(url);
   };
 
   return (
@@ -126,20 +134,20 @@ export const InputForm = ({
               render={({ field, fieldState }) => (
                 <FormItem className="flex flex-col gap-2 sm:flex-row sm:gap-2">
                   <div className="flex flex-1 flex-col gap-2">
-                    <FormControl>
-                      <div className="relative">
-                        <label className="sr-only" htmlFor="url-input">
-                          Website URL
-                        </label>
-                        <Globe
-                          aria-hidden="true"
-                          className={cn(
-                            "pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2",
-                            fieldState.error
-                              ? "text-destructive"
-                              : "text-muted-foreground"
-                          )}
-                        />
+                    <FormLabel className="sr-only">Website URL</FormLabel>
+                    <div className="relative">
+                      <Globe
+                        aria-hidden="true"
+                        className={cn(
+                          "pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 z-10",
+                          fieldState.error
+                            ? "text-destructive"
+                            : "text-muted-foreground"
+                        )}
+                      />
+                      {/* FormControl must wrap the input itself so that
+                          aria-invalid / aria-describedby land on the control. */}
+                      <FormControl>
                         <Input
                           autoCapitalize="off"
                           autoComplete="url"
@@ -147,20 +155,17 @@ export const InputForm = ({
                           className="bg-background pl-9"
                           disabled={isDisabled || isExecuting}
                           enterKeyHint="go"
-                          id="url-input"
                           placeholder="example.com"
                           spellCheck={false}
                           type="text"
                           {...field}
                         />
-                      </div>
-                    </FormControl>
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </div>
                   <Button
-                    aria-label={
-                      isExecuting ? "Analyzing URL..." : "Analyze URL"
-                    }
+                    aria-label={isExecuting ? "Analyzing URL…" : "Analyze URL"}
                     className="w-full sm:w-auto relative min-w-[44px]"
                     disabled={isDisabled || isExecuting}
                     type="submit"
@@ -175,10 +180,7 @@ export const InputForm = ({
                         }}
                         animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
                         exit={{ filter: "blur(2px)", opacity: 0, scale: 0.95 }}
-                        transition={{
-                          duration: 0.16,
-                          ease: [0.23, 1, 0.32, 1],
-                        }}
+                        transition={transition(DURATION.fast)}
                         className="inline-flex items-center gap-2 justify-center"
                       >
                         {isExecuting ? (

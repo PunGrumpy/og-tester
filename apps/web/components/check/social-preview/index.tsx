@@ -13,6 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ViewAnimation } from "@/components/view-animation";
 import { useOgStore } from "@/hooks/use-og-store";
+import { DURATION, transition } from "@/lib/motion";
 import type { OgData } from "@/lib/schemas/og";
 
 import { DiscordPreview } from "./discord-preview";
@@ -77,13 +78,13 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
               aria-label={label}
               key={id}
               value={id}
-              className="relative text-muted-foreground hover:text-foreground transition active:scale-[0.97] duration-150 ease-out-custom data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-transparent data-[state=active]:text-foreground"
+              className="relative text-muted-foreground hover:text-foreground transition active:scale-[0.96] duration-140 ease-out-custom data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-transparent data-[state=active]:text-foreground"
             >
               {activePlatform === id && (
                 <m.div
                   layoutId="active-platform-bg"
                   className="absolute inset-0 bg-background dark:bg-muted-foreground/15 rounded-md shadow-2xs border border-border/20 z-0"
-                  transition={{ damping: 30, stiffness: 380, type: "spring" }}
+                  transition={transition(DURATION.base)}
                 />
               )}
               <span className="relative z-10">
@@ -103,7 +104,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <XPreview
                       description={preview.description}
@@ -121,7 +122,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <SlackPreview
                       description={preview.description}
@@ -139,7 +140,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <FacebookPreview
                       description={preview.description}
@@ -157,7 +158,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <LinkedinPreview
                       displayUrl={preview.displayUrl}
@@ -174,7 +175,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <DiscordPreview
                       description={preview.description}
@@ -192,7 +193,7 @@ export const SocialPreview = ({ delay = 0.8 }: { delay?: number }) => {
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+                    transition={transition(DURATION.fast)}
                   >
                     <WhatsappPreview
                       description={preview.description}

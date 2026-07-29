@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { STAGGER } from "@/lib/motion";
+
 import { Button } from "../ui/button";
 import { ViewAnimation } from "../view-animation";
 
@@ -19,23 +21,19 @@ export const Navigation = () => (
     {NAV.map(({ href, label }, index) => {
       const isExternal = href.startsWith("http");
       return (
-        <ViewAnimation
-          key={label}
-          delay={0.4 * index}
-          initial={{ opacity: 0, translateY: -8 }}
-          whileInView={{ opacity: 1, translateY: 0 }}
-        >
-          <Link
-            href={href}
-            prefetch={Boolean(isExternal)}
-            rel={isExternal ? "noopener noreferrer" : undefined}
-            target={isExternal ? "_blank" : undefined}
-            passHref
-          >
-            <Button size="sm" variant="outline">
+        <ViewAnimation key={label} delay={STAGGER * index}>
+          {/* `asChild` renders a single <a>; nesting a <button> inside a link
+              is invalid HTML and creates two tab stops per item. */}
+          <Button asChild size="sm" variant="outline">
+            <Link
+              href={href}
+              prefetch={isExternal ? false : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
+              target={isExternal ? "_blank" : undefined}
+            >
               {label}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </ViewAnimation>
       );
     })}
