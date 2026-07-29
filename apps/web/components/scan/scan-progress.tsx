@@ -77,24 +77,36 @@ export const ScanProgress = ({
         className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative"
         role="progressbar"
       >
+        {/* Full width and slid in from the left rather than grown by width:
+            animating width re-runs layout on every scan event, while a
+            transform stays on the compositor. */}
         <m.div
-          animate={{ width: `${percentage}%` }}
-          className="h-full bg-primary rounded-full relative overflow-hidden"
-          initial={{ width: "0%" }}
+          animate={{ x: `${percentage - 100}%` }}
+          className="size-full bg-primary rounded-full relative overflow-hidden"
+          initial={{ x: "-100%" }}
           transition={transition(DURATION.slow)}
         >
-          {/* Animated scanning shine */}
+          {/* Animated scanning shine. Counter-translated by the same amount as
+              the fill, so it keeps sweeping the part of the bar that is on
+              screen instead of the clipped tail off to the left. */}
           {shouldReduceMotion ? null : (
             <m.div
-              className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
-              animate={{ x: ["-100%", "200%"] }}
-              transition={{
-                duration: SHINE_DURATION,
-                ease: "linear",
-                repeat: Number.POSITIVE_INFINITY,
-              }}
-              style={{ width: "50%" }}
-            />
+              animate={{ x: `${100 - percentage}%` }}
+              className="absolute inset-0"
+              initial={{ x: "100%" }}
+              transition={transition(DURATION.slow)}
+            >
+              <m.div
+                className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{
+                  duration: SHINE_DURATION,
+                  ease: "linear",
+                  repeat: Number.POSITIVE_INFINITY,
+                }}
+                style={{ width: "50%" }}
+              />
+            </m.div>
           )}
         </m.div>
       </div>
