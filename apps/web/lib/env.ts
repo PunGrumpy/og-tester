@@ -4,17 +4,12 @@ import { z } from "zod";
 
 export const env = createEnv({
   client: {
-    NEXT_PUBLIC_APPWRITE_ENDPOINT: z.url(),
-    NEXT_PUBLIC_APPWRITE_PROJECT_ID: z.string(),
     NEXT_PUBLIC_DATABUDDY_CLIENT_ID: z.string(),
   },
   extends: [vercel()],
   runtimeEnv: {
     BETTERSTACK_API_KEY: process.env.BETTERSTACK_API_KEY,
     BETTERSTACK_URL: process.env.BETTERSTACK_URL,
-    NEXT_PUBLIC_APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT,
-    NEXT_PUBLIC_APPWRITE_PROJECT_ID:
-      process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
     NEXT_PUBLIC_DATABUDDY_CLIENT_ID:
       process.env.NEXT_PUBLIC_DATABUDDY_CLIENT_ID,
     UNKEY_API_KEY: process.env.UNKEY_API_KEY,
