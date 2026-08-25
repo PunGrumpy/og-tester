@@ -18,8 +18,6 @@ export const env = createEnv({
   server: {
     UNKEY_API_KEY: z.string(),
     UNKEY_ROOT_KEY: z.string().startsWith("unkey_"),
-    // Optional on purpose: without them the report store falls back to memory,
-    // which is enough to run the app locally and useless in production.
     UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
     UPSTASH_REDIS_REST_URL: z.url().optional(),
   },
