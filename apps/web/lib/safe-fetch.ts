@@ -54,8 +54,8 @@ const BLOCKED_IPV4: [string, number][] = [
   ["240.0.0.0", 4],
 ];
 
-const MAPPED_DOTTED = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/u;
-const MAPPED_HEX = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/u;
+const MAPPED_DOTTED = /^::ffff:(?<dotted>\d+\.\d+\.\d+\.\d+)$/u;
+const MAPPED_HEX = /^::ffff:(?<hi>[0-9a-f]{1,4}):(?<lo>[0-9a-f]{1,4})$/u;
 const UNIQUE_LOCAL = /^f[cd]/u;
 const LINK_LOCAL = /^fe[89ab]/u;
 const IPV6_BRACKETS = /^\[|\]$/gu;
@@ -166,7 +166,9 @@ export const safeFetch = async (
   let target = rawUrl;
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+    // oxlint-disable-next-line eslint/no-await-in-loop -- hops are sequential
     const url = await assertPublicUrl(target);
+    // oxlint-disable-next-line eslint/no-await-in-loop -- hops are sequential
     const response = await fetch(url, { ...init, redirect: "manual" });
 
     if (!REDIRECT_STATUSES.has(response.status)) {

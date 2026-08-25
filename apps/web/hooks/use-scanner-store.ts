@@ -282,6 +282,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       let buffer = "";
 
       while (true) {
+        // oxlint-disable-next-line eslint/no-await-in-loop -- stream reads are sequential
         const { done, value } = await reader.read();
         if (done) {
           break;

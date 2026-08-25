@@ -1,6 +1,7 @@
 const PROTOCOL_REGEX = /^[a-z][a-z0-9+.-]*:\/\//iu;
 const WWW_REGEX = /^www\./iu;
-const HOSTNAME_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9-]+)+$/iu;
+const HOSTNAME_REGEX =
+  /^[a-z0-9](?<label>[a-z0-9-]*[a-z0-9])?(?<rest>\.[a-z0-9-]+)+$/iu;
 
 /**
  * The canonical form of a site, and the only thing that ever appears in a

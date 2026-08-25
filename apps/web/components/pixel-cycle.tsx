@@ -57,7 +57,9 @@ export const PixelCycle = ({
     let written = -1;
 
     const step = (now: number) => {
-      start ??= now;
+      if (start === null) {
+        start = now;
+      }
       const phase = ((now - start) % PERIOD_MS) / PERIOD_MS;
       const shape = Math.round(50 - 50 * Math.cos(phase * 2 * Math.PI));
 

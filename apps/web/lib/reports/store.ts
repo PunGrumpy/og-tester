@@ -71,9 +71,9 @@ interface ReportPage {
 }
 
 interface ReportStore {
-  get(domain: string): Promise<StoredReport | null>;
-  save(entry: StoredReport): Promise<void>;
-  list(offset: number, limit: number): Promise<ReportPage>;
+  get: (domain: string) => Promise<StoredReport | null>;
+  save: (entry: StoredReport) => Promise<void>;
+  list: (offset: number, limit: number) => Promise<ReportPage>;
 }
 
 const createRedisStore = (redis: Redis): ReportStore => ({

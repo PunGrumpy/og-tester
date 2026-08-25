@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "react";
 type IconProps = HTMLAttributes<SVGElement>;
 
 export const Icons = {
-  discord: (props: IconProps) => (
+  Discord: (props: IconProps) => (
     <svg viewBox="0 0 256 199" {...props}>
       <title>Discord</title>
       <path
@@ -12,7 +12,7 @@ export const Icons = {
       />
     </svg>
   ),
-  facebook: (props: IconProps) => (
+  Facebook: (props: IconProps) => (
     <svg viewBox="0 0 666.667 666.667" {...props}>
       <title>Facebook</title>
       <defs>
@@ -37,7 +37,7 @@ export const Icons = {
       </g>
     </svg>
   ),
-  linkedin: (props: IconProps) => (
+  Linkedin: (props: IconProps) => (
     <svg viewBox="0 0 256 256" {...props}>
       <title>LinkedIn</title>
       <path
@@ -46,7 +46,7 @@ export const Icons = {
       />
     </svg>
   ),
-  logo: (props: IconProps) => (
+  Logo: (props: IconProps) => (
     <svg
       fill="none"
       height="64"
@@ -69,7 +69,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  slack: (props: IconProps) => (
+  Slack: (props: IconProps) => (
     <svg viewBox="0 0 2447.6 2452.5" {...props}>
       <title>Slack</title>
       <g clipRule="evenodd" fillRule="evenodd">
@@ -92,7 +92,7 @@ export const Icons = {
       </g>
     </svg>
   ),
-  whatsapp: (props: IconProps) => (
+  Whatsapp: (props: IconProps) => (
     <svg fill="none" viewBox="0 0 360 362" {...props}>
       <title>WhatsApp</title>
       <path
@@ -103,7 +103,7 @@ export const Icons = {
       />
     </svg>
   ),
-  x: (props: IconProps) => (
+  X: (props: IconProps) => (
     <svg fill="none" viewBox="0 0 1200 1227" {...props}>
       <title>X</title>
       <path
