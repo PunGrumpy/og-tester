@@ -45,9 +45,9 @@ export default function RootLayout({
                 >
                   Skip to content
                 </a>
-                <div className="relative divide-y">
+                <div className="flex min-h-dvh flex-col">
                   <Header />
-                  <main className="scroll-mt-24 divide-y" id="content">
+                  <main className="flex-1 scroll-mt-8" id="content">
                     {children}
                   </main>
                   <Footer />
