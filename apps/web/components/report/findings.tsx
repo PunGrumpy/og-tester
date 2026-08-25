@@ -10,7 +10,6 @@ interface Finding {
   tag: string;
   suggestion: string;
   severity: Diagnostic["severity"];
-  /** Pages carrying at least one diagnostic for this tag. */
   affected: number;
 }
 
@@ -34,20 +33,11 @@ const SEVERITY_STANDING: Record<Diagnostic["severity"], Standing> = {
   warning: "partial",
 };
 
-/**
- * One row per tag, counted across the scan. Grouped by tag and not by message,
- * because a message embeds the page's own values — "og:title length (25)" and
- * "og:title length (21)" are the same problem on two pages, and keying on the
- * text split one row into one per page. The suggestion carries the fix, which
- * is the same wherever the tag failed; the per-page wording stays in the pages
- * list, where the page it belongs to is on screen beside it.
- */
 const collect = (pages: PageScoreResult[], categoryId: string): Finding[] => {
   const byTag = new Map<string, Finding>();
 
   for (const page of pages) {
     const category = page.categories.find((c) => c.id === categoryId);
-    // A page counts once per tag however many diagnostics it raised for it.
     const counted = new Set<string>();
 
     for (const diag of category?.diagnostics ?? []) {
@@ -56,7 +46,6 @@ const collect = (pages: PageScoreResult[], categoryId: string): Finding[] => {
         if (!counted.has(diag.tag)) {
           existing.affected += 1;
         }
-        // Keep the most severe reading of the tag across the whole scan.
         if (SEVERITY_ORDER[diag.severity] < SEVERITY_ORDER[existing.severity]) {
           existing.severity = diag.severity;
           existing.suggestion = diag.suggestion;
@@ -82,7 +71,6 @@ const collect = (pages: PageScoreResult[], categoryId: string): Finding[] => {
 
 const PAGE_SPECIFIC_TAIL = /\s*Current(?: is| length)?:[\s\S]*$/u;
 
-/** The part of a suggestion that is true for every page it applies to. */
 const generalise = (suggestion: string): string =>
   suggestion.replace(PAGE_SPECIFIC_TAIL, "").trim();
 
@@ -115,10 +103,10 @@ export const Findings = ({ pages }: { pages: PageScoreResult[] }) => (
                   <li className={ROW_CLASS} key={finding.tag}>
                     <StandingGlyph standing={standing} />
                     <div className="min-w-0">
-                      <p className="font-medium font-mono text-sm">
+                      <p className="font-mono text-sm font-medium">
                         {finding.tag}
                       </p>
-                      <p className="mt-1 text-muted-foreground text-sm">
+                      <p className="text-muted-foreground mt-1 text-sm">
                         <span className="text-foreground">
                           {STANDING_LABEL[standing]}
                         </span>

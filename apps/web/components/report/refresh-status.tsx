@@ -3,15 +3,6 @@
 import { Container } from "@/components/layout";
 import { cn } from "@/lib/utils";
 
-/**
- * The line under a report that is being rescanned.
- *
- * It collapses rather than unmounts. A grid row animated between `0fr` and
- * `1fr` is the one way to transition to a height the content decides, and the
- * inner `min-h-0 overflow-hidden` is what lets the row actually clip. Staying
- * mounted also means the live region exists before the text arrives, which is
- * what makes the announcement land.
- */
 export const RefreshStatus = ({
   active,
   completed,
@@ -34,10 +25,9 @@ export const RefreshStatus = ({
           active ? "opacity-100 delay-150" : "opacity-0"
         )}
       >
-        {/* `output` is a polite live region without needing the attribute. */}
-        <output className="block font-mono text-muted-foreground text-xs">
+        <output className="text-muted-foreground block font-mono text-xs">
           {active ? (
-            <span className="waiting-glimmer">
+            <span className="shimmer">
               {total > 0
                 ? `Rescanning: ${completed} of ${total} pages. `
                 : "Rescanning. "}

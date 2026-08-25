@@ -8,7 +8,6 @@ import { getStanding } from "@/lib/reports/verdict";
 
 import { ReportSection, ROW_CLASS, StandingGlyph } from "./section";
 
-/** Above this many rows the list is long enough to be worth filtering. */
 const FILTER_THRESHOLD = 8;
 
 const safeGetPathname = (url: string | undefined | null): string => {
@@ -26,16 +25,10 @@ const safeGetPathname = (url: string | undefined | null): string => {
   }
 };
 
-/** The distinct tags this page tripped, in the order the scorer found them. */
 const failingTags = (page: PageScoreResult): string[] => [
   ...new Set(page.diagnostics.map((d) => d.tag)),
 ];
 
-/**
- * The tick is reserved for pages with nothing left to fix. Reading it straight
- * off the score band put a ✓ next to "4 tags to fix" on anything scoring 90 or
- * more, which contradicts the sentence beside it.
- */
 const rowStanding = (page: PageScoreResult, issues: number): Standing => {
   if (issues === 0) {
     return "clean";
@@ -43,12 +36,6 @@ const rowStanding = (page: PageScoreResult, issues: number): Standing => {
   return getStanding(page.score) === "weak" ? "weak" : "partial";
 };
 
-/**
- * Every scanned page as one ruled row, worst score first — the order you would
- * work in. What each page tripped is named inline rather than hidden behind a
- * disclosure, because the fix for any of them is already spelled out by tag in
- * the findings above; this list answers "where", not "what".
- */
 export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
   const [query, setQuery] = useState("");
 
@@ -76,7 +63,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
           aria-label="Filter by page path"
           autoCapitalize="none"
           autoCorrect="off"
-          className="h-10 w-full max-w-sm rounded-md border bg-background px-3 text-base outline-none transition-colors placeholder:text-muted-foreground hover:border-foreground/40 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:text-sm"
+          className="border-foreground/45 bg-background placeholder:text-muted-foreground hover:border-foreground/60 focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full max-w-sm rounded-md border px-3 text-base transition-colors outline-none focus-visible:ring-[3px] sm:text-sm"
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Filter by path, for example /blog"
           spellCheck={false}
@@ -87,7 +74,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
 
       <ul className="m-0 list-none divide-y border-y p-0">
         {rows.length === 0 ? (
-          <li className="py-5 text-muted-foreground text-sm">
+          <li className="text-muted-foreground py-5 text-sm">
             {`No page path matches “${query}”. `}
             <button
               className="text-foreground underline underline-offset-4"
@@ -107,28 +94,24 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
                 <StandingGlyph standing={standing} />
                 <div className="min-w-0">
                   <a
-                    className="inline-flex min-h-6 min-w-6 items-center break-all font-mono text-foreground text-sm underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                    className="text-foreground focus-visible:ring-ring/50 inline-flex min-h-6 min-w-6 items-center font-mono text-sm break-all underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
                     href={page.url}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
                     {path}
                   </a>
-                  <p className="mt-1 text-muted-foreground text-sm">
+                  <p className="text-muted-foreground mt-1 text-sm">
                     {tags.length === 0
                       ? "Nothing to fix."
                       : `${tags.length} ${tags.length === 1 ? "tag" : "tags"} to fix · ${tags.join(", ")}`}
                   </p>
                 </div>
                 <span className="flex shrink-0 items-baseline gap-1">
-                  {/* The figure is sans, because Martian Mono ships one
-                        weight and cannot carry the emphasis; the scale beside
-                        it is mono, which is what makes the figure read as the
-                        value rather than half of a fraction. */}
-                  <span className="font-semibold text-foreground text-sm tabular-nums">
+                  <span className="text-foreground text-sm font-semibold tabular-nums">
                     {page.score}
                   </span>
-                  <span className="font-mono text-muted-foreground text-xs tabular-nums">
+                  <span className="text-muted-foreground font-mono text-xs tabular-nums">
                     /100
                   </span>
                 </span>

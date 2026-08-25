@@ -6,7 +6,6 @@ import { useMemo } from "react";
 import { useCopy } from "@/hooks/use-copy";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 
-/** How many issues the prompt carries before it stops being pasteable. */
 const MAX_ISSUES = 12;
 
 interface Aggregated {
@@ -36,17 +35,11 @@ const aggregate = (pages: PageScoreResult[]): Aggregated[] => {
       }
     }
   }
-  // Most pages first, then by what each one costs.
   return [...byKey.values()].toSorted(
     (a, b) => b.count - a.count || b.points - a.points
   );
 };
 
-/**
- * Turns the report into something you can hand to whatever writes your code.
- * Ordered the way the report is ordered — by how many pages each issue reaches
- * — so the paste carries the same priorities the page shows.
- */
 const buildFixPrompt = (
   domain: string,
   score: number,
@@ -91,8 +84,6 @@ export const FixPromptButton = ({
   score,
   pages,
 }: FixPromptButtonProps) => {
-  // Aggregated once: the count decides whether the button is live, and the
-  // same list is what the prompt is built from.
   const issues = useMemo(() => aggregate(pages), [pages]);
   const issueCount = issues.length;
   const { copy, state } = useCopy(2500);
@@ -100,15 +91,13 @@ export const FixPromptButton = ({
   return (
     <>
       <button
-        className="inline-flex min-h-16 w-full items-center justify-center gap-2.5 rounded-md border border-primary bg-primary font-medium text-primary-foreground text-xl transition-opacity hover:opacity-85 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+        className="border-primary bg-primary text-primary-foreground focus-visible:ring-ring/50 inline-flex min-h-16 w-full items-center justify-center gap-2.5 rounded-md border text-xl font-medium transition-opacity hover:opacity-85 focus-visible:ring-[3px] focus-visible:outline-none active:scale-[0.96] disabled:pointer-events-none disabled:opacity-50"
         disabled={issueCount === 0}
         onClick={() =>
           copy(buildFixPrompt(domain, score, pages.length, issues))
         }
         type="button"
       >
-        {/* Icon and label both change, so the result survives with animation
-            switched off — and a failure says so rather than looking idle. */}
         {state === "copied" && <Check aria-hidden="true" className="size-5" />}
         {state === "failed" && <X aria-hidden="true" className="size-5" />}
         {state === "copied" && "Prompt copied"}
@@ -122,7 +111,7 @@ export const FixPromptButton = ({
         {state === "failed" ? "Could not copy the prompt." : ""}
       </span>
       {issueCount === 0 ? (
-        <p className="mt-2 text-center text-muted-foreground text-sm">
+        <p className="text-muted-foreground mt-2 text-center text-sm">
           Nothing to fix — every scanned page passed.
         </p>
       ) : null}
