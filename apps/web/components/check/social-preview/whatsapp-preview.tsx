@@ -36,9 +36,9 @@ export const WhatsappPreview = ({
       </div>
       <div className="min-w-0 flex-1 flex flex-col gap-0.5">
         <p className="text-[#8696a0] text-xs">{displayUrl}</p>
-        <h3 className="line-clamp-2 font-medium text-[#e9edef] text-sm">
+        <p className="line-clamp-2 font-medium text-[#e9edef] text-sm">
           {title}
-        </h3>
+        </p>
         {description ? (
           <p className="line-clamp-2 text-[#8696a0] text-xs">{description}</p>
         ) : null}

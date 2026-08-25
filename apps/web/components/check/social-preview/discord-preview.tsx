@@ -19,7 +19,7 @@ export const DiscordPreview = ({
       {siteName ? (
         <p className="font-medium text-[#00aff4] text-xs">{siteName}</p>
       ) : null}
-      <h3 className="truncate font-semibold text-[#00aff4]">{title}</h3>
+      <p className="truncate font-semibold text-[#00aff4]">{title}</p>
       {description ? (
         <p className="line-clamp-3 text-[#dcddde] text-sm">{description}</p>
       ) : null}

@@ -39,7 +39,7 @@ export const XPreview = ({
 
     <div className="flex flex-col gap-1 p-3">
       <p className="text-muted-foreground text-xs">{displayUrl}</p>
-      <h3 className="truncate font-semibold leading-tight">{title}</h3>
+      <p className="truncate font-semibold leading-tight">{title}</p>
       {description ? (
         <p className="line-clamp-2 text-muted-foreground text-sm">
           {description}

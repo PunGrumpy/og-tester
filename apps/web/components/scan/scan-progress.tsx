@@ -5,8 +5,6 @@ import { m, useReducedMotion } from "motion/react";
 import type { ScanPhase } from "@/hooks/use-scanner-store";
 import { DURATION, transition } from "@/lib/motion";
 
-import { ScoreBadge } from "./score-badge";
-
 // Ambient loops sit outside the interaction scale — they signal "still working"
 // rather than responding to input, so they run slower than anything in DURATION.
 const PULSE_DURATION = 1.2;
@@ -67,15 +65,12 @@ export const ScanProgress = ({
         </span>
       </output>
 
-      {/* A native <progress> cannot host the animated fill, so the ARIA
-          progressbar pattern is used instead (same shape as Radix Progress). */}
+      {/* Decorative. The <output> above is a live region already carrying the
+          phase and the "17 / 50 (34%)" count, so a progressbar role here would
+          announce the same value a second time. */}
       <div
-        aria-label="Scan progress"
-        aria-valuemax={100}
-        aria-valuemin={0}
-        aria-valuenow={phase === "discovery" ? undefined : percentage}
-        className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative"
-        role="progressbar"
+        aria-hidden="true"
+        className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
         {/* Full width and slid in from the left rather than grown by width:
             animating width re-runs layout on every scan event, while a
@@ -117,17 +112,17 @@ export const ScanProgress = ({
       {phase === "checking" && currentUrl && (
         <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240 transition-none">
           <code
-            className="truncate max-w-[75%] bg-muted/60 border px-1.5 py-0.5 rounded font-mono text-xs text-foreground"
+            className="max-w-[75%] truncate font-mono text-muted-foreground text-xs"
             title={currentUrl}
           >
             {currentUrl}
           </code>
           {currentScore !== undefined && (
             <div className="flex items-center gap-1.5 ml-2 shrink-0">
-              <span className="text-muted-foreground text-xs uppercase font-bold tracking-wider">
-                Score:
+              <span className="text-muted-foreground text-xs">Score</span>
+              <span className="font-semibold text-foreground text-sm tabular-nums">
+                {currentScore}
               </span>
-              <ScoreBadge score={currentScore} />
             </div>
           )}
         </div>

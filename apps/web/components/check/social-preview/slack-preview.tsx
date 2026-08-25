@@ -24,7 +24,7 @@ export const SlackPreview = ({
             </span>
           </div>
         ) : null}
-        <h3 className="truncate font-semibold text-[#1264A3]">{title}</h3>
+        <p className="truncate font-semibold text-[#1264A3]">{title}</p>
         <p className="line-clamp-2 text-muted-foreground text-sm">
           {description || "No description"}
         </p>

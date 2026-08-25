@@ -35,9 +35,9 @@ export const FacebookPreview = ({
     </div>
     <div className="flex flex-col gap-1 bg-[#3a3b3c] p-3">
       <p className="text-[#b0b3b8] text-xs uppercase">{displayUrl}</p>
-      <h3 className="truncate font-semibold text-[#e4e6eb] leading-tight">
+      <p className="truncate font-semibold text-[#e4e6eb] leading-tight">
         {title}
-      </h3>
+      </p>
       {description ? (
         <p className="line-clamp-1 text-[#b0b3b8] text-sm">{description}</p>
       ) : null}

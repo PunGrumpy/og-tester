@@ -32,9 +32,9 @@ export const LinkedinPreview = ({
       )}
     </div>
     <div className="flex flex-col gap-1 p-3">
-      <h3 className="truncate font-semibold text-[#ffffff] leading-tight">
+      <p className="truncate font-semibold text-[#ffffff] leading-tight">
         {title}
-      </h3>
+      </p>
       <p className="text-[#ffffff99] text-xs">{displayUrl}</p>
     </div>
   </div>
