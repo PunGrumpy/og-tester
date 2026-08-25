@@ -65,6 +65,11 @@
      JS-driven animations. easeOutCubic — see lib/motion.ts for why the previous
      drawer curve made every entrance read as a pop. */
   --ease-out-custom: cubic-bezier(0.33, 1, 0.68, 1);
+
+  /* The single horizontal frame every block aligns to, via `max-w-page` in
+     components/layout.tsx. One value here rather than a `max-w-*` repeated at
+     each call site, which is how the old layout drifted into two edges. */
+  --container-page: 75rem;
 }
 
 :root {
@@ -278,34 +283,6 @@
   [role="button"]:active:not(:disabled):not([role="tab"]) {
     transform: scale(0.96);
   }
-}
-
-@utility pattern-background {
-  background-image: radial-gradient(
-    var(--pattern-foreground) 1px,
-    transparent 0
-  );
-  background-size: 10px 10px;
-  background-position: center;
-  --pattern-foreground: color-mix(
-    in oklch,
-    var(--color-foreground) 5%,
-    transparent
-  );
-}
-
-@utility dash-background {
-  background-image: linear-gradient(
-    45deg,
-    var(--border) 12.5%,
-    transparent 12.5%,
-    transparent 50%,
-    var(--border) 50%,
-    var(--border) 62.5%,
-    transparent 62.5%,
-    transparent 100%
-  );
-  background-size: 0.25rem 0.25rem;
 }
 
 @utility hide-scrollbar {
