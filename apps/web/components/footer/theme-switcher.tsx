@@ -29,7 +29,7 @@ export const ThemeSwitcher = () => {
   return (
     <fieldset
       aria-label="Theme selection"
-      className="relative flex h-9 items-center rounded-full border-none bg-background/30 p-0.5 ring-1 ring-border"
+      className="bg-background/30 ring-border relative flex h-9 items-center rounded-full border-none p-0.5 ring-1"
     >
       {THEMES.map(({ key, icon: Icon, label }) => {
         const isActive = theme === key;
@@ -38,14 +38,14 @@ export const ThemeSwitcher = () => {
           <button
             aria-label={label}
             aria-pressed={isActive}
-            className="relative flex size-8 items-center justify-center rounded-full focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="focus-visible:ring-ring/50 relative flex size-8 items-center justify-center rounded-full focus-visible:ring-[3px] focus-visible:outline-none"
             key={key}
             onClick={() => setTheme(key)}
             type="button"
           >
             {isActive ? (
               <m.div
-                className="absolute inset-0 rounded-full bg-muted/50 ring-1 ring-border"
+                className="bg-muted/50 ring-border absolute inset-0 rounded-full ring-1"
                 id="theme-switcher-indicator"
                 layoutId="active-theme"
                 transition={transition(DURATION.base)}

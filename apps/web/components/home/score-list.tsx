@@ -11,7 +11,7 @@ import type { RecentEntry } from "@/lib/reports/store";
  * instead of whatever sits underneath it.
  */
 const Favicon = ({ domain }: { domain: string }) => (
-  <span className="grid size-7 shrink-0 place-items-center overflow-hidden rounded-full border bg-muted/40">
+  <span className="bg-muted/40 grid size-7 shrink-0 place-items-center overflow-hidden rounded-full border">
     {/* The route already returns a favicon-sized icon, so the optimiser would
         be a second round trip for nothing. */}
     {/* oxlint-disable-next-line next/no-img-element */}
@@ -64,7 +64,7 @@ export const ScoreList = ({
         aside={
           href && hrefLabel ? (
             <Link
-              className="inline-flex min-h-6 items-center text-inherit underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+              className="hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-6 items-center text-inherit underline-offset-4 transition-colors hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
               href={href}
             >
               {hrefLabel}
@@ -86,18 +86,18 @@ export const ScoreList = ({
             <Link
               // An inset outline rather than the usual ring: the row runs edge
               // to edge, so a ring drawn outside it would be clipped.
-              className="flex items-center gap-3.5 px-2.5 py-3.5 text-inherit transition-colors hover:bg-muted dark:hover:bg-muted/50 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring"
+              className="hover:bg-muted dark:hover:bg-muted/50 focus-visible:outline-ring flex items-center gap-3.5 px-2.5 py-3.5 text-inherit transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2"
               href={`/scan/${entry.domain}`}
             >
               <Favicon domain={entry.domain} />
-              <span className="min-w-0 truncate font-medium text-[15px]">
+              <span className="min-w-0 truncate text-[15px] font-medium">
                 {entry.domain}
               </span>
               {/* A fixed minimum keeps a two- and a three-digit score in one
                   column rather than letting the shorter one drift left. */}
-              <span className="ml-auto min-w-[72px] shrink-0 whitespace-nowrap text-right font-bold font-mono text-base tabular-nums">
+              <span className="ml-auto min-w-[72px] shrink-0 text-right font-mono text-base font-bold whitespace-nowrap tabular-nums">
                 {entry.score}
-                <span className="font-normal text-muted-foreground">
+                <span className="text-muted-foreground font-normal">
                   {" /100"}
                 </span>
               </span>

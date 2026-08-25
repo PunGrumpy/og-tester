@@ -37,12 +37,12 @@ export const ScanProgress = ({
       : `${completedUrls} / ${totalUrls} (${percentage}%)`;
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       {/* <output> carries an implicit role="status", so the scan reports
           progress to screen readers without an explicit live region. */}
       <output
         aria-atomic="true"
-        className="flex justify-between items-center text-sm"
+        className="flex items-center justify-between text-sm"
       >
         <div className="flex items-center gap-2">
           <span aria-hidden="true" className="relative flex size-2.5">
@@ -53,14 +53,14 @@ export const ScanProgress = ({
                   ...transition(PULSE_DURATION),
                   repeat: Number.POSITIVE_INFINITY,
                 }}
-                className="absolute inline-flex size-full rounded-full bg-primary"
+                className="bg-primary absolute inline-flex size-full rounded-full"
               />
             )}
-            <span className="relative inline-flex rounded-full size-2.5 bg-primary" />
+            <span className="bg-primary relative inline-flex size-2.5 rounded-full" />
           </span>
-          <span className="font-medium text-foreground">{phaseLabel}</span>
+          <span className="text-foreground font-medium">{phaseLabel}</span>
         </div>
-        <span className="font-mono text-muted-foreground tabular-nums">
+        <span className="text-muted-foreground font-mono tabular-nums">
           {countLabel}
         </span>
       </output>
@@ -70,14 +70,14 @@ export const ScanProgress = ({
           announce the same value a second time. */}
       <div
         aria-hidden="true"
-        className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted"
+        className="bg-muted relative h-1.5 w-full overflow-hidden rounded-full"
       >
         {/* Full width and slid in from the left rather than grown by width:
             animating width re-runs layout on every scan event, while a
             transform stays on the compositor. */}
         <m.div
           animate={{ x: `${percentage - 100}%` }}
-          className="size-full bg-primary rounded-full relative overflow-hidden"
+          className="bg-primary relative size-full overflow-hidden rounded-full"
           initial={{ x: "-100%" }}
           transition={transition(DURATION.slow)}
         >
@@ -110,17 +110,17 @@ export const ScanProgress = ({
           keyframes: on its own it sets transition-duration with no
           transition-property, which CSS defaults to `all`. */}
       {phase === "checking" && currentUrl && (
-        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240 transition-none">
+        <div className="text-muted-foreground animate-in fade-in flex items-center justify-between text-xs transition-none duration-240">
           <code
-            className="max-w-[75%] truncate font-mono text-muted-foreground text-xs"
+            className="text-muted-foreground max-w-[75%] truncate font-mono text-xs"
             title={currentUrl}
           >
             {currentUrl}
           </code>
           {currentScore !== undefined && (
-            <div className="flex items-center gap-1.5 ml-2 shrink-0">
+            <div className="ml-2 flex shrink-0 items-center gap-1.5">
               <span className="text-muted-foreground text-xs">Score</span>
-              <span className="font-semibold text-foreground text-sm tabular-nums">
+              <span className="text-foreground text-sm font-semibold tabular-nums">
                 {currentScore}
               </span>
             </div>

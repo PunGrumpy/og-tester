@@ -10,8 +10,6 @@ interface ScanPageProps {
   params: Promise<{ domain: string }>;
 }
 
-// A report is a snapshot of someone else's site, so it is rendered per request
-// rather than baked at build time.
 export const dynamic = "force-dynamic";
 
 export const generateMetadata = async ({
@@ -45,9 +43,6 @@ const ScanPage = async ({ params }: ScanPageProps) => {
   const stored = await getReport(domain);
 
   return (
-    // Keyed by domain so a different report is a different instance. The
-    // shell guards its start-up effect with a ref that survives a prop
-    // change, so a reused instance would show the previous domain's data.
     <ReportShell
       domain={domain}
       key={domain}

@@ -26,7 +26,7 @@ export const WhatsappPreview = ({
               sizes="64px"
               src={image}
             />
-            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+            <div className="pointer-events-none absolute inset-0 border border-black/10 dark:border-white/10" />
           </>
         ) : (
           <div className="flex size-full items-center justify-center">
@@ -34,13 +34,13 @@ export const WhatsappPreview = ({
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-        <p className="text-[#8696a0] text-xs">{displayUrl}</p>
-        <p className="line-clamp-2 font-medium text-[#e9edef] text-sm">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <p className="text-xs text-[#8696a0]">{displayUrl}</p>
+        <p className="line-clamp-2 text-sm font-medium text-[#e9edef]">
           {title}
         </p>
         {description ? (
-          <p className="line-clamp-2 text-[#8696a0] text-xs">{description}</p>
+          <p className="line-clamp-2 text-xs text-[#8696a0]">{description}</p>
         ) : null}
       </div>
     </div>

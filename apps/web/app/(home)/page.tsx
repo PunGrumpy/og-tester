@@ -12,10 +12,8 @@ export const metadata: Metadata = createMetadata(
   "Test your Open Graph metadata with this tool"
 );
 
-/** The home page shows a taste of the index; /scans has the rest. */
 const RECENT_ON_HOME = 8;
 
-/** Hand-picked, and shown only once each has actually been scanned. */
 const FEATURED_DOMAINS = [
   "vercel.com",
   "nextjs.org",
@@ -23,12 +21,6 @@ const FEATURED_DOMAINS = [
   "pungrumpy.com",
 ];
 
-/**
- * Served from the data cache rather than rebuilt per request. Every read is
- * tagged, and finishing a scan clears the tag, so a new result still appears
- * immediately — the difference is that the fourteen reads behind this page
- * only happen when something has actually changed.
- */
 const Home = async () => {
   const [featured, recent] = await Promise.all([
     Promise.all(FEATURED_DOMAINS.map((domain) => getReport(domain))),

@@ -23,11 +23,6 @@ const COVERAGE = [
   },
 ] as const;
 
-/**
- * What the page shows before the first URL is submitted. Two empty result
- * panels used to sit here, which told the reader only that nothing had
- * happened yet; this says what a scan will actually report on.
- */
 export const Coverage = () => (
   <PageSection>
     <SectionHeading
@@ -45,8 +40,8 @@ export const Coverage = () => (
           key={label}
         >
           <div className="flex min-w-0 items-baseline gap-3">
-            <span className="font-medium text-foreground text-sm">{label}</span>
-            <code className="font-mono text-muted-foreground text-xs">
+            <span className="text-foreground text-sm font-medium">{label}</span>
+            <code className="text-muted-foreground font-mono text-xs">
               {prefix}
             </code>
           </div>

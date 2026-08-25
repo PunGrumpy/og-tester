@@ -2,24 +2,13 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@stylex;
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -49,36 +38,27 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-info: var(--info);
   --color-score-excellent: var(--score-excellent);
-  --color-score-good: var(--score-good);
   --color-score-fair: var(--score-fair);
   --color-score-poor: var(--score-poor);
-  --color-score-excellent-fill: var(--score-excellent-fill);
-  --color-score-good-fill: var(--score-good-fill);
-  --color-score-fair-fill: var(--score-fair-fill);
-  --color-score-poor-fill: var(--score-poor-fill);
 
-  /* The one curve for the whole app; mirrored as EASE in lib/motion.ts for the
-     JS-driven animations. easeOutCubic — see lib/motion.ts for why the previous
-     drawer curve made every entrance read as a pop. */
+  /* Mirrored as EASE in lib/motion.ts. */
   --ease-out-custom: cubic-bezier(0.33, 1, 0.68, 1);
 
-  /* The single horizontal frame every block aligns to, via `max-w-page` in
-     components/layout.tsx. One value here rather than a `max-w-*` repeated at
-     each call site, which is how the old layout drifted into two edges. */
+  /* The measure for anything that reads as prose, via `max-w-measure`.
+     Its own name rather than `max-w-prose`, which Tailwind hardcodes at 65ch
+     and does not read a variable for — and `ch` is the width of a zero, far
+     wider than the average Geist glyph, so 65 of them landed at 87 real
+     characters. Measured in the browser, this holds 69–70 characters at every
+     size the app sets prose in. Same rule as `--container-page` below: one
+     value, not a `max-w-*` guessed at each call site. */
+  /* Prose measure. Holds ~70 characters; `ch` would not. */
+  --container-measure: 32rem;
+
   --container-page: 75rem;
 }
 
 :root {
-  /* Bare `transition-*` utilities (Button, Input, Table…) resolve their timing
-     through `var(--default-transition-*)`, and without this they fall back to
-     Tailwind's 150ms / cubic-bezier(0.4, 0, 0.2, 1) — which is why the press
-     feedback never matched the JS animations. Declared here rather than in
-     `@theme` because these two keys are read as plain custom properties, so a
-     later `:root` declaration is what actually wins the cascade. */
   --default-transition-duration: 240ms;
   --default-transition-timing-function: var(--ease-out-custom);
 
@@ -101,37 +81,12 @@
   --border: oklch(0.92 0 0);
   --input: oklch(0.94 0 0);
   --ring: oklch(0 0 0);
-  --chart-1: oklch(0.81 0.17 75.35);
-  --chart-2: oklch(0.55 0.22 264.53);
-  --chart-3: oklch(0.72 0 0);
-  --chart-4: oklch(0.92 0 0);
-  --chart-5: oklch(0.56 0 0);
-  --sidebar: oklch(0.99 0 0);
-  --sidebar-foreground: oklch(0 0 0);
-  --sidebar-primary: oklch(0 0 0);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(0.94 0 0);
-  --sidebar-ring: oklch(0 0 0);
   --radius: 0.5rem;
-  /* Status hues are dark enough to clear 4.5:1 as text on their own /5 and /10
-     tints against --background. Adjust L first, then clamp C to sRGB. */
-  --success: oklch(0.51 0.158 145);
-  --warning: oklch(0.53 0.107 85);
-  --info: oklch(0.525 0.147 250);
+
   --score-excellent: oklch(0.51 0.158 145);
-  --score-good: oklch(0.52 0.12 118);
   --score-fair: oklch(0.53 0.107 85);
   --score-poor: oklch(0.545 0.19 23.03);
-  /* The `--score-*` values above are held dark enough to pass 4.5:1 as text on
-     their own tints. Arcs and bars carry no text and always sit beside the
-     number they encode, so they use a brighter fill instead — at text
-     lightness the same ramp reads as muddy olive. */
-  --score-excellent-fill: oklch(0.65 0.17 145);
-  --score-good-fill: oklch(0.72 0.14 118);
-  --score-fair-fill: oklch(0.78 0.14 85);
-  --score-poor-fill: oklch(0.62 0.21 23.03);
+
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -175,32 +130,12 @@
   --border: oklch(0.26 0 0);
   --input: oklch(0.32 0 0);
   --ring: oklch(0.72 0 0);
-  --chart-1: oklch(0.81 0.17 75.35);
-  --chart-2: oklch(0.58 0.21 260.84);
-  --chart-3: oklch(0.56 0 0);
-  --chart-4: oklch(0.44 0 0);
-  --chart-5: oklch(0.92 0 0);
-  --sidebar: oklch(0.18 0 0);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(1 0 0);
-  --sidebar-primary-foreground: oklch(0 0 0);
-  --sidebar-accent: oklch(0.32 0 0);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.32 0 0);
-  --sidebar-ring: oklch(0.72 0 0);
   --radius: 0.5rem;
-  --success: oklch(0.72 0.19 150);
-  --warning: oklch(0.81 0.17 85);
-  --info: oklch(0.72 0.17 250);
+
   --score-excellent: oklch(0.72 0.19 150);
-  --score-good: oklch(0.8 0.17 118);
   --score-fair: oklch(0.81 0.17 85);
   --score-poor: oklch(0.69 0.2 23.91);
-  /* Already bright enough against the dark background, so fills match. */
-  --score-excellent-fill: var(--score-excellent);
-  --score-good-fill: var(--score-good);
-  --score-fair-fill: var(--score-fair);
-  --score-poor-fill: var(--score-poor);
+
   --shadow-x: 0px;
   --shadow-y: 1px;
   --shadow-blur: 2px;
@@ -222,7 +157,6 @@
   --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
 }
 
-/* This layer is by next-forge */
 @layer base {
   ::after,
   ::before,
@@ -230,12 +164,15 @@
   ::file-selector-button {
     @apply border-border;
   }
+  ::selection {
+    @apply bg-foreground text-background;
+  }
   * {
-    @apply min-w-0;
     @apply border-border outline-ring/50;
   }
   html {
-    text-rendering: optimizelegibility;
+    font-feature-settings: "ss01";
+    text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
   }
   body {
@@ -250,38 +187,30 @@
   [role="button"]:not(:disabled) {
     @apply cursor-pointer;
   }
-}
-
-/* This layer is by PunGrumpy */
-@layer base {
-  *::selection {
-    @apply bg-primary text-primary-foreground;
+  a[target="_blank"],
+  a[target="_blank"] *,
+  a[href^="mailto:"],
+  a[href^="mailto:"] * {
+    @apply cursor-alias;
   }
-
+  button:focus,
+  input:focus,
+  textarea:focus,
+  a:focus {
+    @apply focus-visible:ring-primary focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+      transition-property:
+        color, background-color, border-color, outline-color,
+        text-decoration-color, fill, stroke, opacity !important;
+      transition-duration: 150ms !important;
     }
-  }
-
-  button:not([role="tab"]),
-  [role="button"]:not([role="tab"]) {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    /* DURATION.fast in lib/motion.ts. */
-    transition:
-      transform 140ms var(--ease-out-custom),
-      opacity 140ms var(--ease-out-custom);
-  }
-
-  button:active:not(:disabled):not([role="tab"]),
-  [role="button"]:active:not(:disabled):not([role="tab"]) {
-    transform: scale(0.96);
   }
 }
 
@@ -290,39 +219,5 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
-  }
-}
-
-/**
- * A slow sweep of light across text that is waiting on something.
- *
- * Applied to a status line rather than a skeleton: the content underneath is
- * real and still readable, and this only says it is being replaced. Falls
- * back to plain muted text when the shimmer cannot run, so the sentence never
- * depends on the animation to be legible.
- */
-@utility waiting-glimmer {
-  background: linear-gradient(
-      90deg,
-      var(--muted-foreground) 0%,
-      var(--foreground) 40%,
-      var(--muted-foreground) 80%
-    )
-    0 0 / 300% 100%;
-  animation: waiting-glimmer 2.4s linear infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    background: none;
-    color: var(--muted-foreground);
-  }
-}
-
-@keyframes waiting-glimmer {
-  to {
-    background-position: -300% 0;
   }
 }
