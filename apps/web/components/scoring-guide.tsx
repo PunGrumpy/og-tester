@@ -44,18 +44,11 @@ const SECTIONS = [
 const LINK_CLASS =
   "text-inherit underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
 
-/**
- * The reference material for the numbers above it. Prose rather than a table
- * because the questions it answers ("why is this page 88?") are about how the
- * scoring behaves, not about which value goes where.
- */
 export const ScoringGuide = () => (
   <section aria-labelledby="scoring-guide-title" className="py-12 sm:py-16">
-    {/* Same 760px column as the hero, so the two share one edge
-          instead of landing 4px apart. */}
     <div className="mx-auto grid w-full max-w-[760px] gap-5 px-5 sm:px-8">
       <h2
-        className="font-medium text-2xl tracking-tight"
+        className="text-2xl font-medium tracking-tight"
         id="scoring-guide-title"
       >
         How scoring works
@@ -64,10 +57,10 @@ export const ScoringGuide = () => (
       <div className="grid gap-8">
         {SECTIONS.map(({ body, title }) => (
           <section className="grid gap-3" key={title}>
-            <h3 className="font-medium text-lg tracking-tight">{title}</h3>
+            <h3 className="text-lg font-medium tracking-tight">{title}</h3>
             {body.map((paragraph) => (
               <p
-                className="text-pretty text-muted-foreground leading-7"
+                className="max-w-measure text-muted-foreground leading-7 text-pretty"
                 key={paragraph.slice(0, 32)}
               >
                 {paragraph}
