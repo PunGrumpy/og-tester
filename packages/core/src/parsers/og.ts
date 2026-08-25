@@ -92,7 +92,14 @@ const getMetaContent = (
   return null;
 };
 
-const resolveUrl = (url: string, baseOrigin?: string): string => {
+const resolveUrl = (rawUrl: string, baseOrigin?: string): string => {
+  // Attribute values carry whatever whitespace the author's formatter left in
+  // them, and a meta tag on its own line is ordinary. Untrimmed, a trailing
+  // newline survives all the way to the consumer's <img>, and a leading one
+  // defeats every prefix test below — turning an absolute URL into
+  // `${baseOrigin}/ https://…`.
+  const url = rawUrl.trim();
+
   if (
     url.startsWith("http://") ||
     url.startsWith("https://") ||
