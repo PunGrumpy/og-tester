@@ -1,6 +1,7 @@
 import * as Schema from "effect/Schema";
 
 // Severity level of each diagnostic (using Schema.Literals for v4)
+// oxlint-disable-next-line eslint/no-redeclare -- Schema idiom: value + type
 export const Severity = Schema.Literals(["error", "warning", "info"]);
 export type Severity = Schema.Schema.Type<typeof Severity>;
 

@@ -107,7 +107,7 @@ export const crawlSite = (
 
     const extractInternalLinks = (html: string, baseUrl: string): string[] => {
       const links: string[] = [];
-      const hrefRegex = /href=["']([^"']+)["']/giu;
+      const hrefRegex = /href=["'](?<g1>[^"']+)["']/giu;
       let match;
       while ((match = hrefRegex.exec(html)) !== null) {
         const [, rawHref] = match;

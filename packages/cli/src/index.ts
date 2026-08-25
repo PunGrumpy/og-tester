@@ -5,6 +5,7 @@ import { robotsCommand } from "./commands/robots";
 import { scanCommand } from "./commands/scan";
 import { sitemapCommand } from "./commands/sitemap";
 import { defaultAction } from "./default-action";
+import { parseCount, parseScore } from "./options";
 
 const program = new Command();
 
@@ -26,19 +27,19 @@ program
   .option(
     "--concurrency <number>",
     "Number of concurrent URL requests during scanning",
-    (val) => Number.parseInt(val, 10)
+    parseCount
   )
   .option(
     "--max-urls <number>",
     "Maximum number of URLs to discover and scan",
-    (val) => Number.parseInt(val, 10)
+    parseCount
   )
   .option("--json", "Output raw JSON report to stdout instead of TUI")
   .option("--output <path>", "File path to write the JSON report")
   .option(
     "--min-score <number>",
     "Minimum average score threshold (exit 1 if below)",
-    (val) => Number.parseInt(val, 10)
+    parseScore
   )
   .action(defaultAction);
 
