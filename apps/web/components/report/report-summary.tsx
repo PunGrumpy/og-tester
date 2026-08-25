@@ -55,6 +55,7 @@ export const ReportSummary = ({ domain }: { domain: string }) => {
   const categoryAverages = useScannerStore((state) => state.categoryAverages);
   const pages = useScannerStore((state) => state.pages);
   const startScan = useScannerStore((state) => state.startScan);
+  const refreshing = useScannerStore((state) => state.refreshing);
   const displayed = useCountUp(averageScore);
 
   return (
@@ -94,11 +95,12 @@ export const ReportSummary = ({ domain }: { domain: string }) => {
 
           <div className="mt-2 flex justify-center">
             <button
-              className="inline-flex min-h-6 items-center justify-center px-2 py-1 text-muted-foreground text-sm underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+              className="inline-flex min-h-6 items-center justify-center px-2 py-1 text-muted-foreground text-sm underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:text-muted-foreground/60 disabled:decoration-border/60 disabled:hover:text-muted-foreground/60"
+              disabled={refreshing}
               onClick={() => startScan(`https://${domain}`)}
               type="button"
             >
-              Rescan
+              {refreshing ? "Rescanning…" : "Rescan"}
             </button>
           </div>
         </div>

@@ -292,3 +292,37 @@
     display: none;
   }
 }
+
+/**
+ * A slow sweep of light across text that is waiting on something.
+ *
+ * Applied to a status line rather than a skeleton: the content underneath is
+ * real and still readable, and this only says it is being replaced. Falls
+ * back to plain muted text when the shimmer cannot run, so the sentence never
+ * depends on the animation to be legible.
+ */
+@utility waiting-glimmer {
+  background: linear-gradient(
+      90deg,
+      var(--muted-foreground) 0%,
+      var(--foreground) 40%,
+      var(--muted-foreground) 80%
+    )
+    0 0 / 300% 100%;
+  animation: waiting-glimmer 2.4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: none;
+    color: var(--muted-foreground);
+  }
+}
+
+@keyframes waiting-glimmer {
+  to {
+    background-position: -300% 0;
+  }
+}

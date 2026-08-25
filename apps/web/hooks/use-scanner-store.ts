@@ -56,6 +56,12 @@ interface ScannerState {
   categoryAverages: CategoryAverages;
   summary: ScoreSummary;
   errorMsg: string;
+  /**
+   * A scan is running over a report that is already on screen. The results
+   * stay put until the new ones land, so a rescan never blanks the score you
+   * were reading.
+   */
+  refreshing: boolean;
 
   startScan: (targetUrl: string) => Promise<void>;
   cancelScan: () => void;
@@ -90,6 +96,7 @@ const initialStates = {
   isLoading: false,
   pages: [],
   phase: "idle" as ScanPhase,
+  refreshing: false,
   summary: {
     excellent: 0,
     fair: 0,
@@ -123,10 +130,19 @@ const handleSseEvent = (
   ) => void,
   get: () => ScannerState
 ) => {
+  // While refreshing, progress is reported but the finished report is not
+  // touched: phase stays "complete" so the summary keeps rendering, and the
+  // page list is left alone until the replacement arrives.
+  const {refreshing} = get();
+
   if (event.type === "discovery") {
-    set({ phase: "discovery" });
+    if (!refreshing) {
+      set({ phase: "discovery" });
+    }
   } else if (event.type === "checking") {
-    const nextState: Partial<ScannerState> = { phase: "checking" };
+    const nextState: Partial<ScannerState> = refreshing
+      ? {}
+      : { phase: "checking" };
 
     if (event.completedUrls !== undefined) {
       nextState.completedUrls = event.completedUrls;
@@ -139,18 +155,21 @@ const handleSseEvent = (
     }
     if (event.result) {
       nextState.currentScore = event.result.score;
-      const resultVal = event.result;
-      const currentPages = get().pages;
-      const exists = currentPages.some((p) => p.url === resultVal.url);
-      nextState.pages = exists
-        ? currentPages.map((p) => (p.url === resultVal.url ? resultVal : p))
-        : [...currentPages, resultVal];
+      if (!refreshing) {
+        const resultVal = event.result;
+        const currentPages = get().pages;
+        const exists = currentPages.some((p) => p.url === resultVal.url);
+        nextState.pages = exists
+          ? currentPages.map((p) => (p.url === resultVal.url ? resultVal : p))
+          : [...currentPages, resultVal];
+      }
     }
     set(nextState);
   } else if (event.type === "complete") {
     const update: Partial<ScannerState> = {
       isLoading: false,
       phase: "complete",
+      refreshing: false,
     };
     if (event.report) {
       update.averageScore = event.report.averageScore;
@@ -160,10 +179,14 @@ const handleSseEvent = (
     }
     set(update);
   } else if (event.type === "error") {
+    // A failed refresh keeps the report it was refreshing. Throwing away a
+    // good score because the retry failed would lose the reader more than the
+    // failure itself did.
     set({
       errorMsg: event.error || "An error occurred during scanning",
       isLoading: false,
-      phase: "error",
+      phase: refreshing ? "complete" : "error",
+      refreshing: false,
     });
   }
 };
@@ -200,11 +223,22 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   },
 
   startScan: async (targetUrl: string) => {
-    set({
-      ...initialStates,
-      isLoading: true,
-      phase: "discovery",
-    });
+    // Rescanning a report that is already on screen keeps it there. Only a
+    // first scan clears the slate, because there is nothing to preserve.
+    const isRefresh = get().phase === "complete";
+    set(
+      isRefresh
+        ? {
+            completedUrls: 0,
+            currentScore: undefined,
+            currentUrl: "",
+            errorMsg: "",
+            isLoading: true,
+            refreshing: true,
+            totalUrls: 0,
+          }
+        : { ...initialStates, isLoading: true, phase: "discovery" }
+    );
 
     const controller = new AbortController();
     abortController = controller;
@@ -253,17 +287,20 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
         }
       }
     } catch (error) {
+      const wasRefreshing = get().refreshing;
       if (error instanceof Error && error.name === "AbortError") {
         set({
           errorMsg: "Scan was cancelled by user.",
           isLoading: false,
-          phase: "idle",
+          phase: wasRefreshing ? "complete" : "idle",
+          refreshing: false,
         });
       } else {
         set({
           errorMsg: error instanceof Error ? error.message : String(error),
           isLoading: false,
-          phase: "error",
+          phase: wasRefreshing ? "complete" : "error",
+          refreshing: false,
         });
       }
     } finally {

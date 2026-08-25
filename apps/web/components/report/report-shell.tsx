@@ -17,6 +17,7 @@ import type { OgData } from "@/lib/schemas/og";
 import { Findings } from "./findings";
 import { PagesList } from "./pages-list";
 import { Previews } from "./previews";
+import { RefreshStatus } from "./refresh-status";
 import { ReportSummary } from "./report-summary";
 import { TagSections } from "./tag-sections";
 
@@ -57,6 +58,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
   const currentScore = useScannerStore((state) => state.currentScore);
   const pages = useScannerStore((state) => state.pages);
   const errorMsg = useScannerStore((state) => state.errorMsg);
+  const refreshing = useScannerStore((state) => state.refreshing);
   const cancelScan = useScannerStore((state) => state.cancelScan);
   const loadReport = useScannerStore((state) => state.loadReport);
   const startScan = useScannerStore((state) => state.startScan);
@@ -164,6 +166,17 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
           </m.div>
         )}
       </AnimatePresence>
+
+      {/* Sits under the summary rather than replacing it: a rescan is an
+          update to something you are already reading, not a reason to take it
+          away. Mounted either way so the collapse can animate. */}
+      {phase === "complete" && (
+        <RefreshStatus
+          active={refreshing}
+          completed={completedUrls}
+          total={totalUrls}
+        />
+      )}
 
       {/* Straight after the score: for a link-preview tool this is the answer
           the reader came for, and it arrives on the first request rather than
