@@ -1,5 +1,10 @@
-import { runScanSite } from "@og-tester/core";
+import { fetchOgTags, runScanSite } from "@og-tester/core";
+import { revalidateTag } from "next/cache";
 import type { NextRequest } from "next/server";
+import { after } from "next/server";
+
+import { normalizeDomain } from "@/lib/reports/domain";
+import { REPORTS_TAG, saveReport } from "@/lib/reports/store";
 
 export const dynamic = "force-dynamic";
 
@@ -48,12 +53,32 @@ export const POST = async (req: NextRequest) => {
         };
 
         try {
-          const report = await runScanSite({
-            concurrency: 5,
-            maxUrls: 50,
-            onProgress: sendEvent,
-            siteUrl: parsedUrl,
-          });
+          // The entry page's tags come along for the ride: the report page
+          // renders the social previews from them, and fetching them here
+          // means one stored payload holds everything that page needs.
+          const [report, og] = await Promise.all([
+            runScanSite({
+              concurrency: 5,
+              maxUrls: 50,
+              onProgress: sendEvent,
+              siteUrl: parsedUrl,
+            }),
+            fetchOgTags(parsedUrl).catch(() => ({})),
+          ]);
+
+          // Persisted here rather than from the browser, so a completed report
+          // is one the server actually produced.
+          const domain = normalizeDomain(parsedUrl);
+          if (domain) {
+            await saveReport({
+              domain,
+              og,
+              report,
+              scannedAt: report.scannedAt,
+              siteUrl: parsedUrl,
+            });
+          }
+
           sendEvent({ report, type: "complete" });
         } catch (error) {
           sendEvent({
@@ -66,6 +91,15 @@ export const POST = async (req: NextRequest) => {
           controller.close();
         }
       },
+    });
+
+    // Clearing the tag has to happen where the request context still exists.
+    // Calling it from inside the stream above silently does nothing — the
+    // callback runs after the response is handed back, detached from the
+    // store `revalidateTag` reads. `after` keeps that context and runs once
+    // the response has finished, which is after the report is written.
+    after(() => {
+      revalidateTag(REPORTS_TAG, { expire: 0 });
     });
 
     return new Response(stream, {

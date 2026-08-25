@@ -60,6 +60,17 @@ interface ScannerState {
   startScan: (targetUrl: string) => Promise<void>;
   cancelScan: () => void;
   resetScan: () => void;
+  /** Fill the store from a report that was completed earlier and stored. */
+  loadReport: (report: StoredScanReport) => void;
+}
+
+/** The parts of a stored `ScanReport` this store renders. */
+export interface StoredScanReport {
+  averageScore: number;
+  categoryAverages: CategoryAverages;
+  summary: ScoreSummary;
+  pages: PageScoreResult[];
+  totalPages: number;
 }
 
 let abortController: AbortController | null = null;
@@ -165,6 +176,18 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       abortController.abort();
     }
   },
+
+  loadReport: (report) =>
+    set({
+      ...initialStates,
+      averageScore: report.averageScore,
+      categoryAverages: report.categoryAverages,
+      completedUrls: report.totalPages,
+      pages: report.pages,
+      phase: "complete",
+      summary: report.summary,
+      totalUrls: report.totalPages,
+    }),
 
   resetScan: () => {
     set(initialStates);
