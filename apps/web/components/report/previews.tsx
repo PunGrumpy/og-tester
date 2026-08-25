@@ -7,7 +7,6 @@ import type { ReactNode } from "react";
 import { Icons } from "@/components/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { OgStatus } from "@/hooks/use-og-store";
-import { useOgStore } from "@/hooks/use-og-store";
 import { toImageSrc } from "@/lib/image-src";
 import { DURATION, transition } from "@/lib/motion";
 import { normalizeDomain } from "@/lib/reports/domain";
@@ -24,8 +23,6 @@ import { ReportSection } from "./section";
 const getPreviewData = (data: OgData, url: string) => ({
   description:
     data["og:description"] || data["twitter:description"] || data.description,
-  // The bare host is what a platform shows under a card. Falling back to the
-  // raw string keeps something on screen if it ever stops being a URL.
   displayUrl: normalizeDomain(url) ?? url,
   image: toImageSrc(data["og:image"] || data["twitter:image"]),
   siteName: data["og:site_name"],
@@ -36,7 +33,7 @@ type Preview = ReturnType<typeof getPreviewData>;
 
 const PLATFORMS = [
   {
-    icon: Icons.x,
+    icon: Icons.X,
     id: "x",
     label: "X",
     render: (p: Preview) => (
@@ -49,7 +46,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.slack,
+    icon: Icons.Slack,
     id: "slack",
     label: "Slack",
     render: (p: Preview) => (
@@ -62,7 +59,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.facebook,
+    icon: Icons.Facebook,
     id: "facebook",
     label: "Facebook",
     render: (p: Preview) => (
@@ -75,7 +72,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.linkedin,
+    icon: Icons.Linkedin,
     id: "linkedin",
     label: "LinkedIn",
     render: (p: Preview) => (
@@ -87,7 +84,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.discord,
+    icon: Icons.Discord,
     id: "discord",
     label: "Discord",
     render: (p: Preview) => (
@@ -100,7 +97,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.whatsapp,
+    icon: Icons.Whatsapp,
     id: "whatsapp",
     label: "WhatsApp",
     render: (p: Preview) => (
@@ -116,17 +113,14 @@ const PLATFORMS = [
 
 type PlatformId = (typeof PLATFORMS)[number]["id"];
 
-/**
- * A failed fetch is not an empty page. Rendering a card from nothing would
- * show a preview of a site we never read, so the failure says so instead and
- * names the way out.
- */
 const PreviewBody = ({
+  canRescan,
   status,
   errorMessage,
   preview,
   render,
 }: {
+  canRescan: boolean;
   status: OgStatus;
   errorMessage: string;
   preview: Preview;
@@ -134,7 +128,7 @@ const PreviewBody = ({
 }) => {
   if (status === "loading") {
     return (
-      <p className="py-8 text-muted-foreground text-sm">
+      <p className="text-muted-foreground py-8 text-sm">
         Reading the page’s tags…
       </p>
     );
@@ -142,11 +136,13 @@ const PreviewBody = ({
   if (status === "error") {
     return (
       <div className="grid gap-1 py-8">
-        <p className="font-medium text-foreground text-sm">
+        <p className="text-foreground text-sm font-medium">
           Could not read this page
         </p>
-        <p className="max-w-md text-pretty text-muted-foreground text-sm">
-          {`${errorMessage} Rescan above once the page responds.`}
+        <p className="text-muted-foreground max-w-md text-sm text-pretty">
+          {canRescan
+            ? `${errorMessage} Rescan above once the page responds.`
+            : `${errorMessage} The scan is still running; you can rescan once it finishes.`}
         </p>
       </div>
     );
@@ -154,20 +150,21 @@ const PreviewBody = ({
   return <>{render(preview)}</>;
 };
 
-/**
- * What the link actually looks like, directly under the score — for a tool
- * about link previews this is the answer the reader came for, and everything
- * below it is the explanation.
- *
- * Tabbed rather than stacked precisely because it sits this high: six cards in
- * a column run past two thousand pixels and push the findings off the page,
- * where one card and a switcher keeps the rest of the report within reach.
- */
-export const Previews = () => {
-  const url = useOgStore((state) => state.url);
-  const data = useOgStore((state) => state.data);
-  const status = useOgStore((state) => state.status);
-  const errorMessage = useOgStore((state) => state.errorMessage);
+interface PreviewsProps {
+  canRescan: boolean;
+  data: OgData;
+  errorMessage: string;
+  status: OgStatus;
+  url: string;
+}
+
+export const Previews = ({
+  canRescan,
+  data,
+  errorMessage,
+  status,
+  url,
+}: PreviewsProps) => {
   const [active, setActive] = useState<PlatformId>("x");
   const preview = useMemo(() => getPreviewData(data, url), [data, url]);
 
@@ -182,12 +179,6 @@ export const Previews = () => {
         onValueChange={(value) => setActive(value as PlatformId)}
         value={active}
       >
-        {/* The rule belongs to the strip, not to this box: an `overflow-x`
-            scroller is a vertical scroller too (CSS turns the other axis from
-            `visible` into `auto`), so anything drawn past the bottom edge —
-            such as the underline riding the rule — makes it scroll up and
-            down. With the border inside, the box is exactly as tall as its
-            content and only ever scrolls sideways. */}
         <div className="hide-scrollbar overflow-x-auto">
           <TabsList
             className="w-max min-w-full justify-start gap-7 rounded-none border-b p-0 group-data-[orientation=horizontal]/tabs:h-auto"
@@ -195,12 +186,7 @@ export const Previews = () => {
           >
             {PLATFORMS.map(({ icon: Icon, id, label }) => (
               <TabsTrigger
-                // `after:hidden` turns off the component's own line-variant
-                // underline. It is drawn 5px below the trigger to clear the
-                // list's usual 3px padding, which this strip does not have —
-                // so it sat detached from the rule, and doubled the animated
-                // underline below.
-                className="relative flex-none gap-2 whitespace-nowrap rounded-none border-0 bg-transparent px-0 pt-0.5 pb-3 font-mono text-muted-foreground text-sm shadow-none transition-colors after:hidden hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                className="text-muted-foreground hover:text-foreground relative flex-none gap-2 rounded-none border-0 bg-transparent px-0 pt-0.5 pb-3 font-mono text-sm whitespace-nowrap shadow-none transition-colors after:hidden"
                 key={id}
                 value={id}
               >
@@ -208,7 +194,7 @@ export const Previews = () => {
                 {label}
                 {active === id && (
                   <m.span
-                    className="absolute right-0 -bottom-px left-0 h-px bg-foreground"
+                    className="bg-foreground absolute right-0 -bottom-px left-0 h-px"
                     layoutId="active-preview-tab"
                     transition={transition(DURATION.fast)}
                   />
@@ -218,12 +204,12 @@ export const Previews = () => {
           </TabsList>
         </div>
 
-        {/* Every platform gets a panel so each trigger's `aria-controls`
-            resolves; Radix renders only the selected one's contents. */}
         {PLATFORMS.map(({ id, render }) => (
-          <TabsContent className="pt-6" key={id} value={id}>
+          // min-w-0: without it a truncated og:title sizes the tabs grid.
+          <TabsContent className="min-w-0 pt-6" key={id} value={id}>
             <div className="max-w-md">
               <PreviewBody
+                canRescan={canRescan}
                 errorMessage={errorMessage}
                 preview={preview}
                 render={render}

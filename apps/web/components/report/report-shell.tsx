@@ -25,11 +25,9 @@ import { TagSections } from "./tag-sections";
 interface ReportShellProps {
   domain: string;
   siteUrl: string;
-  /** `null` when nothing has been scanned for this domain yet. */
   stored: { report: StoredScanReport; og: OgData } | null;
 }
 
-// Each phase swaps out the whole panel, so they share one enter/exit.
 const PHASE_MOTION = {
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -TRAVEL },
@@ -37,34 +35,31 @@ const PHASE_MOTION = {
   transition: transition(DURATION.slow),
 };
 
-/**
- * Puts a report on screen, from storage when there is one and from a live scan
- * when there is not.
- *
- * The two paths converge on the same stores, so everything below renders a
- * stored report and a running one identically — the only difference is where
- * the numbers came from.
- */
+const NO_CATEGORIES = { image: 0, og: 0, seo: 0, twitter: 0 };
+
 export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
-  // One selector per field. Subscribing to the whole store re-rendered this
-  // subtree on every scan event — measured at 34 for a 31-page site — even
-  // though the previews and tag sections below read from a different store.
-  const phase = useScannerStore((state) => state.phase);
+  const storePhase = useScannerStore((state) => state.phase);
+  const storeAverageScore = useScannerStore((state) => state.averageScore);
+  const storeCategoryAverages = useScannerStore(
+    (state) => state.categoryAverages
+  );
+  const storePages = useScannerStore((state) => state.pages);
   const completedUrls = useScannerStore((state) => state.completedUrls);
   const totalUrls = useScannerStore((state) => state.totalUrls);
   const currentUrl = useScannerStore((state) => state.currentUrl);
   const currentScore = useScannerStore((state) => state.currentScore);
-  const pages = useScannerStore((state) => state.pages);
   const errorMsg = useScannerStore((state) => state.errorMsg);
   const refreshing = useScannerStore((state) => state.refreshing);
   const cancelScan = useScannerStore((state) => state.cancelScan);
   const loadReport = useScannerStore((state) => state.loadReport);
   const startScan = useScannerStore((state) => state.startScan);
+  const storeOgUrl = useOgStore((state) => state.url);
+  const storeOgData = useOgStore((state) => state.data);
+  const storeOgStatus = useOgStore((state) => state.status);
+  const storeOgError = useOgStore((state) => state.errorMessage);
   const setResult = useOgStore((state) => state.setResult);
   const setLoading = useOgStore((state) => state.setLoading);
   const setOgError = useOgStore((state) => state.setError);
-  // The entry page's tags land in one request, well before the crawl finishes,
-  // so the previews fill in while the scan is still running.
   const { execute: fetchOg } = useAction(ogAction, {
     onError: ({ error }) =>
       setOgError(
@@ -74,8 +69,6 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
       ),
     onSuccess: ({ data }) => setResult(siteUrl, data ?? {}),
   });
-  // Stores outlive the route, so without this a second visit would replay the
-  // scan on top of state the first one left behind.
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -94,6 +87,38 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
     startScan(siteUrl);
   }, [fetchOg, loadReport, setLoading, setResult, siteUrl, startScan, stored]);
 
+  const scan =
+    storePhase === "idle" && stored
+      ? {
+          averageScore: stored.report.averageScore,
+          categoryAverages: stored.report.categoryAverages,
+          pages: stored.report.pages,
+          phase: "complete" as const,
+        }
+      : {
+          averageScore: storeAverageScore,
+          categoryAverages:
+            storePhase === "idle" ? NO_CATEGORIES : storeCategoryAverages,
+          pages: storePages,
+          phase: storePhase,
+        };
+
+  const og =
+    storeOgUrl === "" && stored
+      ? {
+          data: stored.og,
+          errorMessage: "",
+          status: "ready" as const,
+          url: siteUrl,
+        }
+      : {
+          data: storeOgData,
+          errorMessage: storeOgError,
+          status: storeOgStatus,
+          url: storeOgUrl || siteUrl,
+        };
+
+  const { phase } = scan;
   const isRunning = phase === "discovery" || phase === "checking";
 
   return (
@@ -101,15 +126,12 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
       <AnimatePresence mode="wait">
         {isRunning && (
           <m.div key="progress" {...PHASE_MOTION}>
-            {/* The page names itself from the first paint, not only once the
-                crawl finishes — a scan can run for a minute, and until the
-                summary renders this was a page with no heading at all. */}
             <Container className="flex flex-col items-center gap-6 border-b py-16">
               <div className="w-full max-w-xl text-center">
-                <p className="font-mono text-muted-foreground text-sm">
+                <p className="text-muted-foreground font-mono text-sm">
                   {domain}
                 </p>
-                <h1 className="mt-2 text-balance font-semibold text-2xl tracking-tight">
+                <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance">
                   Scanning the site
                 </h1>
               </div>
@@ -137,13 +159,13 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
           <m.div key="error" {...PHASE_MOTION}>
             <Container className="flex flex-col items-center gap-4 border-b py-16 text-center">
               <div className="flex flex-col gap-2">
-                <p className="font-mono text-muted-foreground text-sm">
+                <p className="text-muted-foreground font-mono text-sm">
                   {domain}
                 </p>
-                <h1 className="text-balance font-semibold text-2xl tracking-tight">
+                <h1 className="text-2xl font-semibold tracking-tight text-balance">
                   Scan stopped
                 </h1>
-                <p className="max-w-md text-pretty text-muted-foreground text-sm">
+                <p className="text-muted-foreground max-w-md text-sm text-pretty">
                   {errorMsg}
                 </p>
               </div>
@@ -160,14 +182,18 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
 
         {phase === "complete" && (
           <m.div key="complete" {...PHASE_MOTION}>
-            <ReportSummary domain={domain} />
+            <ReportSummary
+              averageScore={scan.averageScore}
+              categoryAverages={scan.categoryAverages}
+              domain={domain}
+              onRescan={() => startScan(siteUrl)}
+              pages={scan.pages}
+              refreshing={refreshing}
+            />
           </m.div>
         )}
       </AnimatePresence>
 
-      {/* Sits under the summary rather than replacing it: a rescan is an
-          update to something you are already reading, not a reason to take it
-          away. Mounted either way so the collapse can animate. */}
       {phase === "complete" && (
         <RefreshStatus
           active={refreshing}
@@ -176,19 +202,31 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
         />
       )}
 
-      {/* Straight after the score: for a link-preview tool this is the answer
-          the reader came for, and it arrives on the first request rather than
-          waiting for the crawl. */}
-      {phase !== "error" && <Previews />}
+      {phase !== "error" && (
+        <Previews
+          canRescan={phase === "complete"}
+          data={og.data}
+          errorMessage={og.errorMessage}
+          status={og.status}
+          url={og.url}
+        />
+      )}
 
       {phase === "complete" && (
         <>
-          <Findings pages={pages} />
-          <PagesList pages={pages} />
+          <Findings pages={scan.pages} />
+          <PagesList pages={scan.pages} />
         </>
       )}
 
-      {phase !== "error" && <TagSections />}
+      {phase !== "error" && (
+        <TagSections
+          canRescan={phase === "complete"}
+          data={og.data}
+          errorMessage={og.errorMessage}
+          status={og.status}
+        />
+      )}
     </div>
   );
 };

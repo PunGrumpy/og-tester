@@ -3,7 +3,7 @@
 import { ExternalLink, ImageOff } from "lucide-react";
 import Image from "next/image";
 
-import { useOgStore } from "@/hooks/use-og-store";
+import type { OgStatus } from "@/hooks/use-og-store";
 import { toImageSrc } from "@/lib/image-src";
 import type { OgData } from "@/lib/schemas/og";
 
@@ -71,7 +71,7 @@ const isUrl = (value: string) =>
 
 const TagLink = ({ href }: { href: string }) => (
   <a
-    className="break-all text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+    className="text-foreground decoration-border hover:decoration-foreground break-all underline underline-offset-4 transition-colors"
     href={href}
     rel="noopener noreferrer"
     target="_blank"
@@ -94,7 +94,7 @@ const TagValue = ({ field, data }: { field: Field; data: OgData }) => {
     const src = toImageSrc(value);
     return (
       <span className="flex items-start gap-3">
-        <span className="relative flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted outline outline-black/10 dark:outline-white/10">
+        <span className="bg-muted relative flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md outline outline-black/10 dark:outline-white/10">
           {src ? (
             <Image
               alt=""
@@ -106,12 +106,10 @@ const TagValue = ({ field, data }: { field: Field; data: OgData }) => {
           ) : (
             <ImageOff
               aria-hidden="true"
-              className="size-4 text-muted-foreground"
+              className="text-muted-foreground size-4"
             />
           )}
         </span>
-        {/* The raw value is still shown and still linked: a tag we cannot
-            render is exactly the finding the reader came here for. */}
         <TagLink href={value} />
       </span>
     );
@@ -124,25 +122,27 @@ const TagValue = ({ field, data }: { field: Field; data: OgData }) => {
   return <span className="break-words">{value}</span>;
 };
 
-/**
- * The tags themselves, one ruled section per family rather than behind tabs.
- * Sections put every value on the page at once, which is what a report is for
- * — a tab hides three quarters of the evidence behind a click.
- */
-export const TagSections = () => {
-  const data = useOgStore((state) => state.data);
-  const status = useOgStore((state) => state.status);
-  const errorMessage = useOgStore((state) => state.errorMessage);
+interface TagSectionsProps {
+  canRescan: boolean;
+  data: OgData;
+  errorMessage: string;
+  status: OgStatus;
+}
 
-  // "Not set" against 25 tags is a claim about someone's site. It is only
-  // honest once the page has actually been read.
+export const TagSections = ({
+  canRescan,
+  data,
+  errorMessage,
+  status,
+}: TagSectionsProps) => {
   if (status !== "ready") {
+    const failure = canRescan
+      ? `${errorMessage} Rescan above once the page responds.`
+      : `${errorMessage} The scan is still running; you can rescan once it finishes.`;
     return (
       <ReportSection
         description={
-          status === "loading"
-            ? "Reading the page’s tags…"
-            : `${errorMessage} Rescan above once the page responds.`
+          status === "loading" ? "Reading the page’s tags…" : failure
         }
         id="tags-status"
         title="Tags"
@@ -165,10 +165,10 @@ export const TagSections = () => {
                 className="grid gap-1 py-4 sm:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] sm:gap-6"
                 key={field.key}
               >
-                <dt className="font-mono text-muted-foreground text-sm">
+                <dt className="text-muted-foreground font-mono text-sm">
                   {field.key}
                 </dt>
-                <dd className="m-0 min-w-0 text-foreground text-sm">
+                <dd className="text-foreground m-0 min-w-0 text-sm">
                   <TagValue data={data} field={field} />
                 </dd>
               </div>
