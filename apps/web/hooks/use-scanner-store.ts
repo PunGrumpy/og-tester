@@ -121,6 +121,25 @@ interface ScanEvent {
   error?: string;
 }
 
+/**
+ * Where a scan lands when it does not finish.
+ *
+ * A refresh keeps the report it was refreshing, whatever went wrong: throwing
+ * away a good score because the retry failed would lose the reader more than
+ * the failure itself did. A first scan has nothing to fall back to, so it
+ * shows `landing` instead.
+ */
+const stoppedState = (
+  refreshing: boolean,
+  errorMsg: string,
+  landing: ScanPhase
+): Partial<ScannerState> => ({
+  errorMsg,
+  isLoading: false,
+  phase: refreshing ? "complete" : landing,
+  refreshing: false,
+});
+
 const handleSseEvent = (
   event: ScanEvent,
   set: (
@@ -133,7 +152,7 @@ const handleSseEvent = (
   // While refreshing, progress is reported but the finished report is not
   // touched: phase stays "complete" so the summary keeps rendering, and the
   // page list is left alone until the replacement arrives.
-  const {refreshing} = get();
+  const { refreshing } = get();
 
   if (event.type === "discovery") {
     if (!refreshing) {
@@ -179,15 +198,13 @@ const handleSseEvent = (
     }
     set(update);
   } else if (event.type === "error") {
-    // A failed refresh keeps the report it was refreshing. Throwing away a
-    // good score because the retry failed would lose the reader more than the
-    // failure itself did.
-    set({
-      errorMsg: event.error || "An error occurred during scanning",
-      isLoading: false,
-      phase: refreshing ? "complete" : "error",
-      refreshing: false,
-    });
+    set(
+      stoppedState(
+        refreshing,
+        event.error || "An error occurred during scanning",
+        "error"
+      )
+    );
   }
 };
 
@@ -288,21 +305,16 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       }
     } catch (error) {
       const wasRefreshing = get().refreshing;
-      if (error instanceof Error && error.name === "AbortError") {
-        set({
-          errorMsg: "Scan was cancelled by user.",
-          isLoading: false,
-          phase: wasRefreshing ? "complete" : "idle",
-          refreshing: false,
-        });
-      } else {
-        set({
-          errorMsg: error instanceof Error ? error.message : String(error),
-          isLoading: false,
-          phase: wasRefreshing ? "complete" : "error",
-          refreshing: false,
-        });
-      }
+      const cancelled = error instanceof Error && error.name === "AbortError";
+      set(
+        cancelled
+          ? stoppedState(wasRefreshing, "Scan was cancelled by user.", "idle")
+          : stoppedState(
+              wasRefreshing,
+              error instanceof Error ? error.message : String(error),
+              "error"
+            )
+      );
     } finally {
       abortController = null;
     }

@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { ogAction } from "@/actions/og-action";
 import { Container } from "@/components/layout";
 import { ScanProgress } from "@/components/scan/scan-progress";
+import { SECONDARY_BUTTON } from "@/components/secondary-button";
 import { useOgStore } from "@/hooks/use-og-store";
 import { useScannerStore } from "@/hooks/use-scanner-store";
 import type { StoredScanReport } from "@/hooks/use-scanner-store";
@@ -27,9 +28,6 @@ interface ReportShellProps {
   /** `null` when nothing has been scanned for this domain yet. */
   stored: { report: StoredScanReport; og: OgData } | null;
 }
-
-const ACTION_BUTTON_CLASS =
-  "inline-flex h-9 items-center rounded-lg border px-4 text-sm transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
 
 // Each phase swaps out the whole panel, so they share one enter/exit.
 const PHASE_MOTION = {
@@ -125,7 +123,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
                 />
               </div>
               <button
-                className={ACTION_BUTTON_CLASS}
+                className={SECONDARY_BUTTON}
                 onClick={cancelScan}
                 type="button"
               >
@@ -150,7 +148,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
                 </p>
               </div>
               <button
-                className={ACTION_BUTTON_CLASS}
+                className={SECONDARY_BUTTON}
                 onClick={() => startScan(siteUrl)}
                 type="button"
               >

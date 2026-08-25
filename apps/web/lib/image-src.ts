@@ -1,13 +1,11 @@
 /**
  * Characters `next/image` refuses at either end of a src.
  *
- * Mirrors its own guard exactly — `/^[\x00-\x20]/` and `/[\x00-\x20]$/` in
- * `get-img-props` — so this accepts precisely what it accepts. Written with
- * Unicode escapes rather than literal control characters, which is what the
- * lint rule against control-character classes asks for.
+ * Mirrors its own guard exactly, `/^[\x00-\x20]/` and `/[\x00-\x20]$/` in
+ * `get-img-props`, so this accepts precisely what it accepts. Escaped rather
+ * than written literally to keep the class readable; next/image carries the
+ * same lint exemption above the guard this mirrors.
  */
-// Matching control characters is the whole point here, and next/image
-// carries the identical disable above the guard this mirrors.
 // oxlint-disable-next-line no-control-regex
 const EDGE_REFUSED_BY_NEXT_IMAGE = /^[\u0000-\u0020]|[\u0000-\u0020]$/u;
 

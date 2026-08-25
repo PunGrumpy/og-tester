@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import { Container } from "@/components/layout";
+import { SECONDARY_BUTTON } from "@/components/secondary-button";
 
 /**
  * The floor under every route.
@@ -52,10 +53,7 @@ const RouteError = ({
         >
           Try again
         </button>
-        <Link
-          className="inline-flex min-h-9 items-center rounded-md border px-4 text-sm transition-colors hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none dark:hover:bg-muted/50"
-          href="/"
-        >
+        <Link className={SECONDARY_BUTTON} href="/">
           Start over
         </Link>
       </div>

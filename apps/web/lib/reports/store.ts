@@ -64,7 +64,7 @@ const RECENT_KEY = "reports:recent";
  * the process, which is fine for development and useless in production — hence
  * the warning rather than a silent fallback.
  */
-export interface ReportPage {
+interface ReportPage {
   entries: RecentEntry[];
   /** Domains in the index, for working out how many pages there are. */
   total: number;

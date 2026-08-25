@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ScoreList } from "@/components/home/score-list";
 import { Container } from "@/components/layout";
+import { SECONDARY_BUTTON } from "@/components/secondary-button";
 import { createMetadata } from "@/lib/metadata";
 import { listReports } from "@/lib/reports/store";
 
@@ -19,9 +20,6 @@ const parsePage = (raw: string | string[] | undefined): number => {
   const value = Number(Array.isArray(raw) ? raw[0] : (raw ?? "1"));
   return Number.isInteger(value) && value >= 1 ? value : 1;
 };
-
-const LINK_CLASS =
-  "inline-flex min-h-9 items-center rounded-md border px-3 text-sm transition-colors hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none dark:hover:bg-muted/50";
 
 /**
  * At the ends of the range there is nowhere to go, and a disabled link is not
@@ -45,7 +43,7 @@ const PageLink = ({
     </span>
   ) : (
     <Link
-      className={LINK_CLASS}
+      className={SECONDARY_BUTTON}
       href={page <= 1 ? "/scans" : `/scans?page=${page}`}
       rel={rel}
     >

@@ -29,7 +29,6 @@ const FEATURED_DOMAINS = [
  * immediately — the difference is that the fourteen reads behind this page
  * only happen when something has actually changed.
  */
-
 const Home = async () => {
   const [featured, recent] = await Promise.all([
     Promise.all(FEATURED_DOMAINS.map((domain) => getReport(domain))),
@@ -44,7 +43,7 @@ const Home = async () => {
       score: entry.report.averageScore,
     }));
 
-  const featuredDomains = new Set(featuredEntries.map((e) => e.domain));
+  const featuredDomains = new Set(featuredEntries.map((entry) => entry.domain));
 
   return (
     <>
