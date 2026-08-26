@@ -2,7 +2,13 @@
 
 import { useEffect } from "react";
 
-const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
+const GlobalError = ({
+  error,
+  retry,
+}: {
+  error: Error & { digest?: string };
+  retry: () => void;
+}) => {
   useEffect(() => {
     console.error("Root layout error", error.digest ?? "", error);
   }, [error]);
@@ -43,10 +49,21 @@ const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
               {`Reference: ${error.digest}`}
             </p>
           ) : null}
-          {/* oxlint-disable-next-line next/no-html-link-for-pages */}
-          <a href="/" style={{ display: "inline-block", marginTop: "1.5rem" }}>
-            Reload
-          </a>
+          <button
+            onClick={() => retry()}
+            style={{
+              background: "none",
+              border: "1px solid currentColor",
+              borderRadius: "0.375rem",
+              cursor: "pointer",
+              font: "inherit",
+              marginTop: "1.5rem",
+              padding: "0.5rem 0.875rem",
+            }}
+            type="button"
+          >
+            Try again
+          </button>
         </main>
       </body>
     </html>
