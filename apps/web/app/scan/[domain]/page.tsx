@@ -23,9 +23,6 @@ export const generateMetadata = async ({
         "Report not found | OG Tester",
         "That does not look like a domain we can scan. Enter a site like example.com to see its metadata report."
       ),
-      // Measured: the prerendered shell commits a 200 before `notFound()` runs,
-      // so this answers 404 in the body but not in the status. Staying out of
-      // the index is the part of that status worth keeping.
       robots: { index: false },
     };
   }

@@ -32,9 +32,6 @@ export const Coverage = () => (
     />
     <div className="mt-3.5 border-t">
       {COVERAGE.map(({ detail, label, prefix }) => (
-        // The detail is what makes the row worth reading, so on a narrow
-        // viewport it drops to a second line rather than being hidden and
-        // leaving a row that says almost nothing.
         <div
           className="flex min-w-0 flex-col items-start gap-1 border-b py-3.5 md:flex-row md:items-center md:gap-4"
           key={label}

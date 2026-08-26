@@ -9,10 +9,8 @@ import type { OgData } from "@/lib/schemas/og";
 interface StoredReport {
   domain: string;
   siteUrl: string;
-  /** ISO 8601, set when the scan completed. */
   scannedAt: string;
   report: ScanReport;
-  /** Tags from the entry page, for the previews the report page renders. */
   og: OgData;
 }
 
@@ -22,32 +20,12 @@ export interface RecentEntry {
   scannedAt: string;
 }
 
-/**
- * How many domains the index keeps. Everything past this falls off the end of
- * the browsable list; the report itself stays reachable at its own URL.
- */
 const RECENT_LIMIT = 500;
 
-/**
- * The index and every list over it. A scan finishing can change any page of
- * the list, so they all clear together.
- */
 export const REPORTS_TAG = "reports";
 
-/**
- * One report. Kept off `REPORTS_TAG` so that scanning one site re-reads that
- * site rather than dropping all five hundred cached reports with it.
- */
 export const reportTag = (domain: string) => `reports:${domain}`;
 
-/**
- * How long a cached read survives without anyone clearing the tag.
- *
- * The tag is the fast path, but it only fires if the request that wrote the
- * report gets far enough to clear it. `minutes` revalidates every 60 seconds,
- * which is the guarantee underneath: a list is never more than a minute behind
- * the store, whatever happened to the scan that filled it.
- */
 const CACHE_PROFILE = "minutes";
 
 const toRecentEntry = (entry: StoredReport): RecentEntry => ({
@@ -59,19 +37,8 @@ const toRecentEntry = (entry: StoredReport): RecentEntry => ({
 const key = (domain: string) => `report:${domain}`;
 const RECENT_KEY = "reports:recent";
 
-/**
- * Reports are keyed by domain and never expire on their own — a report is a
- * snapshot with a date on it, and a stale one is still the last thing we
- * observed. Rescanning is what replaces it.
- *
- * Redis is used when it is configured and an in-process Map when it is not, so
- * `bun dev` works with no credentials. The Map is per-instance and dies with
- * the process, which is fine for development and useless in production — hence
- * the warning rather than a silent fallback.
- */
 interface ReportPage {
   entries: RecentEntry[];
-  /** Domains in the index, for working out how many pages there are. */
   total: number;
 }
 
@@ -86,9 +53,6 @@ const createRedisStore = (redis: Redis): ReportStore => ({
     return await redis.get<StoredReport>(key(domain));
   },
   async list(offset, limit) {
-    // Newest first, and the score is the timestamp so the set stays ordered
-    // without a second read. The count comes from the same sorted set, so a
-    // page and its total can never disagree about what is in the index.
     const [domains, total] = await Promise.all([
       redis.zrange<string[]>(RECENT_KEY, offset, offset + limit - 1, {
         rev: true,
@@ -116,16 +80,10 @@ const createRedisStore = (redis: Redis): ReportStore => ({
         score: Date.parse(entry.scannedAt),
       }),
     ]);
-    // Keep the tail bounded; rank 0 is the oldest with the default ordering.
     await redis.zremrangebyrank(RECENT_KEY, 0, -(RECENT_LIMIT + 1));
   },
 });
 
-/**
- * Held on `globalThis` because Next bundles this module once per route, so a
- * plain module-level Map would give the scan route and the report page a store
- * each, and nothing saved by one would ever be found by the other.
- */
 const memoryEntries = ((): Map<string, StoredReport> => {
   const scope = globalThis as typeof globalThis & {
     __ogTesterReports?: Map<string, StoredReport>;
@@ -173,11 +131,6 @@ const getStore = (): ReportStore => {
   return store;
 };
 
-/**
- * Reads never take the whole page down with them: a report that cannot be
- * fetched is indistinguishable from one that was never run, and both mean the
- * reader gets a fresh scan.
- */
 export const getReport = async (
   domain: string
 ): Promise<StoredReport | null> => {
@@ -194,11 +147,6 @@ export const getReport = async (
 
 export const saveReport = async (entry: StoredReport): Promise<void> => {
   try {
-    // Round-tripped through JSON so both backends hold the same plain shape:
-    // the scorer builds diagnostics as Effect schema classes, which Redis
-    // flattens on write but the in-memory map would keep — and a prototype
-    // cannot cross the server/client boundary. Not `structuredClone`, which
-    // preserves the `undefined` values Redis drops; JSON is what Redis does.
     // oxlint-disable-next-line unicorn/prefer-structured-clone
     await getStore().save(JSON.parse(JSON.stringify(entry)) as StoredReport);
   } catch (error) {
@@ -206,13 +154,6 @@ export const saveReport = async (entry: StoredReport): Promise<void> => {
   }
 };
 
-/**
- * A window onto the index, newest first.
- *
- * Cached rather than read per request: the lists change only when a scan
- * finishes, and that path clears the tag itself, so the pages can be served
- * from the data cache without ever going stale.
- */
 export const listReports = async (
   offset = 0,
   limit = 10

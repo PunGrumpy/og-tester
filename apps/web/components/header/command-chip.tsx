@@ -58,11 +58,6 @@ const CommandText = ({
   </code>
 );
 
-/**
- * What the shell prerenders while the path is still unknown. A span rather
- * than a button, and out of the accessibility tree, because it has nothing to
- * copy yet.
- */
 export const CommandChipFallback = () => (
   <span aria-hidden="true" className={CHIP_CLASS}>
     <CommandText argument="" resolved={null} />

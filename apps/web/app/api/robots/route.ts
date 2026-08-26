@@ -23,8 +23,6 @@ export const GET = withUnkey(
         },
       });
     } catch (error) {
-      // A refused target is the caller's input being rejected, not a server
-      // fault, so it answers 400 rather than surfacing as an unhandled 500.
       if (error instanceof BlockedUrlError) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }

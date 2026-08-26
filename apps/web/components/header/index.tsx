@@ -29,9 +29,6 @@ export const Header = () => (
         </span>
       </Link>
 
-      {/* The chip reads the path, which the shell does not have. Only
-          `/scan/[domain]` streams it in; elsewhere the path is known at
-          prerender and the boundary resolves there. */}
       <Suspense fallback={<CommandChipFallback />}>
         <CommandChip />
       </Suspense>

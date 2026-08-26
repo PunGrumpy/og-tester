@@ -205,7 +205,6 @@ export const Previews = ({
         </div>
 
         {PLATFORMS.map(({ id, render }) => (
-          // min-w-0: without it a truncated og:title sizes the tabs grid.
           <TabsContent className="min-w-0 pt-6" key={id} value={id}>
             <div className="max-w-md">
               <PreviewBody

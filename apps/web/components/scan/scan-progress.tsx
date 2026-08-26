@@ -5,8 +5,6 @@ import { m, useReducedMotion } from "motion/react";
 import type { ScanPhase } from "@/hooks/use-scanner-store";
 import { DURATION, transition } from "@/lib/motion";
 
-// Ambient loops sit outside the interaction scale — they signal "still working"
-// rather than responding to input, so they run slower than anything in DURATION.
 const PULSE_DURATION = 1.2;
 const SHINE_DURATION = 1.4;
 
@@ -38,8 +36,6 @@ export const ScanProgress = ({
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {/* <output> carries an implicit role="status", so the scan reports
-          progress to screen readers without an explicit live region. */}
       <output
         aria-atomic="true"
         className="flex items-center justify-between text-sm"
@@ -65,25 +61,16 @@ export const ScanProgress = ({
         </span>
       </output>
 
-      {/* Decorative. The <output> above is a live region already carrying the
-          phase and the "17 / 50 (34%)" count, so a progressbar role here would
-          announce the same value a second time. */}
       <div
         aria-hidden="true"
         className="bg-muted relative h-1.5 w-full overflow-hidden rounded-full"
       >
-        {/* Full width and slid in from the left rather than grown by width:
-            animating width re-runs layout on every scan event, while a
-            transform stays on the compositor. */}
         <m.div
           animate={{ x: `${percentage - 100}%` }}
           className="bg-primary relative size-full overflow-hidden rounded-full"
           initial={{ x: "-100%" }}
           transition={transition(DURATION.slow)}
         >
-          {/* Animated scanning shine. Counter-translated by the same amount as
-              the fill, so it keeps sweeping the part of the bar that is on
-              screen instead of the clipped tail off to the left. */}
           {shouldReduceMotion ? null : (
             <m.div
               animate={{ x: `${100 - percentage}%` }}
@@ -106,9 +93,6 @@ export const ScanProgress = ({
         </m.div>
       </div>
 
-      {/* `transition-none` below because `duration-240` is there for the enter
-          keyframes: on its own it sets transition-duration with no
-          transition-property, which CSS defaults to `all`. */}
       {phase === "checking" && currentUrl && (
         <div className="text-muted-foreground animate-in fade-in flex items-center justify-between text-xs transition-none duration-240">
           <code

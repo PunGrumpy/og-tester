@@ -1,11 +1,5 @@
 import type { CategoryAverages } from "@/hooks/use-scanner-store";
 
-/**
- * The weight each category carries out of 100, mirroring `CATEGORY_INFO` in
- * `@og-tester/core`. Restated here rather than imported so a client bundle does
- * not pull the scoring engine — and asserted against the total below, so the
- * two cannot drift apart silently.
- */
 export const CATEGORY_META = [
   { id: "og", label: "Open Graph", max: 40 },
   { id: "seo", label: "Core SEO", max: 25 },
@@ -17,10 +11,6 @@ export const CATEGORY_META = [
   max: number;
 }[];
 
-/**
- * A sentence for the score, so the headline says what the number means before
- * anyone has to learn the scale.
- */
 export const getVerdict = (score: number): string => {
   if (score >= 90) {
     return "Strong metadata across the site";
@@ -36,7 +26,6 @@ export const getVerdict = (score: number): string => {
 
 export type Standing = "clean" | "partial" | "weak";
 
-/** Where a category sits, as a word rather than only as a hue. */
 export const getStanding = (percent: number): Standing => {
   if (percent >= 90) {
     return "clean";
@@ -65,6 +54,5 @@ export const STANDING_LABEL: Record<Standing, string> = {
   weak: "Failing",
 };
 
-/** The category's percentage expressed in the points it contributes to 100. */
 export const toPoints = (percent: number, max: number): number =>
   Math.round((percent / 100) * max * 10) / 10;

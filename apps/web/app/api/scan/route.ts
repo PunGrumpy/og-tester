@@ -41,8 +41,6 @@ export const POST = async (req: NextRequest) => {
 
     activeScans.add(ip);
 
-    // Resolved out here so `after` below can name the report's own tag; the
-    // stream's callback runs too late to hand anything back.
     const domain = normalizeDomain(parsedUrl);
 
     const encoder = new TextEncoder();
@@ -55,9 +53,6 @@ export const POST = async (req: NextRequest) => {
         };
 
         try {
-          // The entry page's tags come along for the ride: the report page
-          // renders the social previews from them, and fetching them here
-          // means one stored payload holds everything that page needs.
           const [report, og] = await Promise.all([
             runScanSite({
               concurrency: 5,
@@ -68,8 +63,6 @@ export const POST = async (req: NextRequest) => {
             fetchOgTags(parsedUrl).catch(() => ({})),
           ]);
 
-          // Persisted here rather than from the browser, so a completed report
-          // is one the server actually produced.
           if (domain) {
             await saveReport({
               domain,
@@ -94,11 +87,6 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    // Clearing the tag has to happen where the request context still exists.
-    // Calling it from inside the stream above silently does nothing — the
-    // callback runs after the response is handed back, detached from the
-    // store `revalidateTag` reads. `after` keeps that context and runs once
-    // the response has finished, which is after the report is written.
     after(() => {
       revalidateTag(REPORTS_TAG, { expire: 0 });
       if (domain) {

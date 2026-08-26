@@ -2,12 +2,6 @@ import { create } from "zustand";
 
 import type { OgData } from "@/lib/schemas/og";
 
-/**
- * `error` is a distinct state and not an absence of data. Without it a failed
- * fetch and a page with no tags look identical, and the report would report
- * "Not set" against every tag as though it had checked — stating a finding
- * about someone's site that it never actually observed.
- */
 export type OgStatus = "loading" | "ready" | "error";
 
 interface OgStore {

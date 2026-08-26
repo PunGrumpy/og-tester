@@ -46,8 +46,6 @@ const Home = async () => {
         title="Featured scores"
       />
       <ScoreList
-        // Featured already has its own block, so the same domain does not
-        // appear twice on one screen.
         entries={recent.entries.filter(
           (entry) => !featuredDomains.has(entry.domain)
         )}

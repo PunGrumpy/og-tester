@@ -56,21 +56,14 @@ interface ScannerState {
   categoryAverages: CategoryAverages;
   summary: ScoreSummary;
   errorMsg: string;
-  /**
-   * A scan is running over a report that is already on screen. The results
-   * stay put until the new ones land, so a rescan never blanks the score you
-   * were reading.
-   */
   refreshing: boolean;
 
   startScan: (targetUrl: string) => Promise<void>;
   cancelScan: () => void;
   resetScan: () => void;
-  /** Fill the store from a report that was completed earlier and stored. */
   loadReport: (report: StoredScanReport) => void;
 }
 
-/** The parts of a stored `ScanReport` this store renders. */
 export interface StoredScanReport {
   averageScore: number;
   categoryAverages: CategoryAverages;
@@ -121,14 +114,6 @@ interface ScanEvent {
   error?: string;
 }
 
-/**
- * Where a scan lands when it does not finish.
- *
- * A refresh keeps the report it was refreshing, whatever went wrong: throwing
- * away a good score because the retry failed would lose the reader more than
- * the failure itself did. A first scan has nothing to fall back to, so it
- * shows `landing` instead.
- */
 const stoppedState = (
   refreshing: boolean,
   errorMsg: string,
@@ -149,9 +134,6 @@ const handleSseEvent = (
   ) => void,
   get: () => ScannerState
 ) => {
-  // While refreshing, progress is reported but the finished report is not
-  // touched: phase stays "complete" so the summary keeps rendering, and the
-  // page list is left alone until the replacement arrives.
   const { refreshing } = get();
 
   if (event.type === "discovery") {
@@ -232,7 +214,6 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   resetScan: () => {
     set(initialStates);
 
-    // Smooth scroll back to checker input at the top
     const element = document.querySelector("#checker");
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -240,8 +221,6 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   },
 
   startScan: async (targetUrl: string) => {
-    // Rescanning a report that is already on screen keeps it there. Only a
-    // first scan clears the slate, because there is nothing to preserve.
     const isRefresh = get().phase === "complete";
     set(
       isRefresh

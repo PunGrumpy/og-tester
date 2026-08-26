@@ -3,15 +3,6 @@ const WWW_REGEX = /^www\./iu;
 const HOSTNAME_REGEX =
   /^[a-z0-9](?<label>[a-z0-9-]*[a-z0-9])?(?<rest>\.[a-z0-9-]+)+$/iu;
 
-/**
- * The canonical form of a site, and the only thing that ever appears in a
- * report URL or a storage key.
- *
- * One site has to resolve to one report, so `https://WWW.Example.com/pricing?x`
- * and `example.com` are the same key. Everything past the host is dropped —
- * the scan crawls the whole origin anyway, so a per-path report would be a
- * different report of the same thing.
- */
 export const normalizeDomain = (input: string): string | null => {
   const trimmed = input.trim().toLowerCase();
   if (!trimmed) {
@@ -36,5 +27,4 @@ export const normalizeDomain = (input: string): string | null => {
   return HOSTNAME_REGEX.test(withoutWww) ? withoutWww : null;
 };
 
-/** The URL a scan actually starts from, given a canonical domain. */
 export const domainToUrl = (domain: string): string => `https://${domain}`;

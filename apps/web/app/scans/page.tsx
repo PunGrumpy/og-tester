@@ -53,7 +53,6 @@ interface ScansPageProps {
   searchParams: Promise<{ page?: string | string[] }>;
 }
 
-/** Shared by the shell and the streamed page so the two cannot drift apart. */
 const Heading = ({ children }: { children?: ReactNode }) => (
   <Container className="pt-14 pb-2 sm:pt-20">
     <h1 className="m-0 text-2xl font-semibold tracking-tight text-balance">
@@ -121,7 +120,6 @@ const Listing = async ({ searchParams }: ScansPageProps) => {
   );
 };
 
-/** The frame both the heading and the list land in, minus anything per-page. */
 const ScansFallback = () => (
   <>
     <Heading />
@@ -132,11 +130,6 @@ const ScansFallback = () => (
   </>
 );
 
-/**
- * The heading and the list frame are the same on every page of the index, so
- * they prerender. Which window you asked for comes from the URL, so the count
- * and the rows stream in.
- */
 const ScansPage = ({ searchParams }: ScansPageProps) => (
   <Suspense fallback={<ScansFallback />}>
     <Listing searchParams={searchParams} />

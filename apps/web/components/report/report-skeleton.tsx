@@ -1,14 +1,6 @@
 import { Container } from "@/components/layout";
 import { CATEGORY_META } from "@/lib/reports/verdict";
 
-/**
- * What the shell prerenders while the domain is still unknown.
- *
- * The four categories and the points each is worth are the same on every
- * report, so they are real content rather than a placeholder shape — only the
- * score against them waits on the scan. The heights match `ReportSummary`, so
- * the figures arriving fills the frame instead of moving it.
- */
 export const ReportSkeleton = () => (
   <div className="py-12">
     <Container className="grid gap-10 border-b pb-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">

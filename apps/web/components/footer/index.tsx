@@ -17,7 +17,6 @@ const INLINE_LINK_CLASS =
 const LINK_CLASS =
   "inline-flex min-h-6 w-fit items-center text-inherit underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
 
-/** Cached so the footer stays in the static shell; it changes once a year. */
 // oxlint-disable-next-line require-await
 const currentYear = async () => {
   "use cache";
