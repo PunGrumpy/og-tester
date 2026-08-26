@@ -5,11 +5,6 @@ import { m, useReducedMotion } from "motion/react";
 import type { ScanPhase } from "@/hooks/use-scanner-store";
 import { DURATION, transition } from "@/lib/motion";
 
-import { ScoreBadge } from "./score-badge";
-
-// Ambient loops sit outside the interaction scale — they signal "still working"
-// rather than responding to input, so they run slower than anything in DURATION.
-const PULSE_DURATION = 1.2;
 const SHINE_DURATION = 1.4;
 
 interface ScanProgressProps {
@@ -18,6 +13,7 @@ interface ScanProgressProps {
   totalUrls: number;
   currentUrl?: string;
   currentScore?: number;
+  domain: string;
 }
 
 export const ScanProgress = ({
@@ -26,69 +22,37 @@ export const ScanProgress = ({
   totalUrls,
   currentUrl,
   currentScore,
+  domain,
 }: ScanProgressProps) => {
   const shouldReduceMotion = useReducedMotion();
   const percentage =
     totalUrls > 0 ? Math.round((completedUrls / totalUrls) * 100) : 0;
-
-  const phaseLabel =
-    phase === "discovery" ? "Discovering pages…" : "Scanning pages…";
-  const countLabel =
-    phase === "discovery"
-      ? ""
-      : `${completedUrls} / ${totalUrls} (${percentage}%)`;
+  const counted =
+    totalUrls > 0 ? `${completedUrls} / ${totalUrls} pages` : "… pages";
+  const target =
+    phase === "checking" && currentUrl ? currentUrl : `resolving ${domain}…`;
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      {/* <output> carries an implicit role="status", so the scan reports
-          progress to screen readers without an explicit live region. */}
-      <output
-        aria-atomic="true"
-        className="flex justify-between items-center text-sm"
-      >
-        <div className="flex items-center gap-2">
-          <span aria-hidden="true" className="relative flex size-2.5">
-            {shouldReduceMotion ? null : (
-              <m.span
-                animate={{ opacity: [0.75, 0], scale: [1, 2.2] }}
-                transition={{
-                  ...transition(PULSE_DURATION),
-                  repeat: Number.POSITIVE_INFINITY,
-                }}
-                className="absolute inline-flex size-full rounded-full bg-primary"
-              />
-            )}
-            <span className="relative inline-flex rounded-full size-2.5 bg-primary" />
-          </span>
-          <span className="font-medium text-foreground">{phaseLabel}</span>
-        </div>
-        <span className="font-mono text-muted-foreground tabular-nums">
-          {countLabel}
+    <div className="min-w-0">
+      <div className="flex items-baseline justify-between gap-4 border-b pb-3.5">
+        <h2 className="text-foreground m-0 text-base font-semibold tracking-tight">
+          Scan progress
+        </h2>
+        <span className="text-muted-foreground shrink-0 font-mono text-sm tabular-nums">
+          {counted}
         </span>
-      </output>
+      </div>
 
-      {/* A native <progress> cannot host the animated fill, so the ARIA
-          progressbar pattern is used instead (same shape as Radix Progress). */}
       <div
-        aria-label="Scan progress"
-        aria-valuemax={100}
-        aria-valuemin={0}
-        aria-valuenow={phase === "discovery" ? undefined : percentage}
-        className="h-3 w-full bg-muted/40 dash-background border rounded-full overflow-hidden relative"
-        role="progressbar"
+        aria-hidden="true"
+        className="bg-muted relative mt-4 h-1 w-full overflow-hidden rounded-full"
       >
-        {/* Full width and slid in from the left rather than grown by width:
-            animating width re-runs layout on every scan event, while a
-            transform stays on the compositor. */}
         <m.div
           animate={{ x: `${percentage - 100}%` }}
-          className="size-full bg-primary rounded-full relative overflow-hidden"
+          className="bg-foreground relative size-full overflow-hidden rounded-full"
           initial={{ x: "-100%" }}
           transition={transition(DURATION.slow)}
         >
-          {/* Animated scanning shine. Counter-translated by the same amount as
-              the fill, so it keeps sweeping the part of the bar that is on
-              screen instead of the clipped tail off to the left. */}
           {shouldReduceMotion ? null : (
             <m.div
               animate={{ x: `${100 - percentage}%` }}
@@ -97,41 +61,43 @@ export const ScanProgress = ({
               transition={transition(DURATION.slow)}
             >
               <m.div
-                className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
                 animate={{ x: ["-100%", "200%"] }}
+                className="absolute inset-0 bg-linear-to-r from-transparent via-white/25 to-transparent"
+                style={{ width: "50%" }}
                 transition={{
                   duration: SHINE_DURATION,
                   ease: "linear",
                   repeat: Number.POSITIVE_INFINITY,
                 }}
-                style={{ width: "50%" }}
               />
             </m.div>
           )}
         </m.div>
       </div>
 
-      {/* `transition-none` below because `duration-240` is there for the enter
-          keyframes: on its own it sets transition-duration with no
-          transition-property, which CSS defaults to `all`. */}
-      {phase === "checking" && currentUrl && (
-        <div className="flex justify-between items-center text-xs text-muted-foreground animate-in fade-in duration-240 transition-none">
+      <output aria-atomic="true" className="mt-5 block">
+        <span className="text-muted-foreground block text-sm">
+          Now checking
+        </span>
+        <span className="mt-1 flex items-baseline justify-between gap-3">
           <code
-            className="truncate max-w-[75%] bg-muted/60 border px-1.5 py-0.5 rounded font-mono text-xs text-foreground"
-            title={currentUrl}
+            className="text-foreground min-w-0 truncate font-mono text-sm"
+            title={target}
           >
-            {currentUrl}
+            {target}
           </code>
-          {currentScore !== undefined && (
-            <div className="flex items-center gap-1.5 ml-2 shrink-0">
-              <span className="text-muted-foreground text-xs uppercase font-bold tracking-wider">
-                Score:
-              </span>
-              <ScoreBadge score={currentScore} />
-            </div>
-          )}
-        </div>
-      )}
+          {phase === "checking" && currentScore !== undefined ? (
+            <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
+              {`${currentScore} / 100`}
+            </span>
+          ) : null}
+        </span>
+      </output>
+
+      <p className="text-muted-foreground mt-6 border-t pt-6 text-sm text-pretty">
+        The pages checked so far are grouped into Open Graph, Core SEO, Twitter
+        Card and Image validation once the scan settles.
+      </p>
     </div>
   );
 };

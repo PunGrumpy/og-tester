@@ -1,3 +1,1 @@
-import { xmcpHandler } from "@xmcp/adapter";
-
-export { xmcpHandler as GET, xmcpHandler as POST };
+export { xmcpHandler as GET, xmcpHandler as POST } from "@xmcp/adapter";

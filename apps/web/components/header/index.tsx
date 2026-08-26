@@ -1,57 +1,37 @@
-"use client";
-
-import { useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense } from "react";
 
-import { cn } from "@/lib/utils";
+import { Container } from "@/components/layout";
 
-import { Icons } from "../icons";
-import { Section } from "../section";
-import { ViewAnimation } from "../view-animation";
-import { Navigation } from "./navigation";
+import { LogoIcon } from "../icons";
+import { CommandChip, CommandChipFallback } from "./command-chip";
 
-export const Header = () => {
-  const { scrollY } = useScroll();
-  const [scrolled, setScrolled] = useState(false);
-
-  useMotionValueEvent(scrollY, "change", (latestValue) => {
-    setScrolled(latestValue >= 8);
-  });
-
-  return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 max-w-screen overflow-x-hidden bg-background",
-        "data-[scrolled=true]:shadow-2xs dark:data-[scrolled=true]:shadow-xs",
-        "not-dark:data-[scrolled=true]:**:data-header-container:after:bg-border",
-        "transition-shadow duration-380"
-      )}
-      data-scrolled={scrolled}
-    >
-      <Section
-        className="flex items-center justify-between p-6"
-        data-header-container
+export const Header = () => (
+  <header className="relative z-10">
+    <Container className="flex min-h-9 items-center justify-between gap-2 py-5 sm:gap-4">
+      <Link
+        className="focus-visible:ring-ring/50 flex min-w-0 items-center gap-2 overflow-hidden rounded-sm text-inherit focus-visible:ring-[3px] focus-visible:outline-none"
+        href="/"
       >
-        <ViewAnimation
-          initial={{ opacity: 0, translateY: -8 }}
-          whileInView={{ opacity: 1, translateY: 0 }}
-          className="flex items-center gap-x-6"
-        >
-          <Link
-            aria-label="Home"
-            className="flex items-center gap-x-2"
-            href="/"
-          >
-            <Icons.logo className="size-8" />
-            <span className="font-semibold text-lg tracking-tight hidden xs:inline-block">
-              OG Tester
-            </span>
-          </Link>
-        </ViewAnimation>
+        <LogoIcon aria-hidden="true" className="size-[18px] shrink-0" />
+        <span aria-hidden="true" className="text-muted-foreground/60 shrink-0">
+          <svg fill="none" height="16" viewBox="0 0 16 16" width="16">
+            <path
+              d="M10.75 1.5 5.25 14.5"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="1.5"
+            />
+          </svg>
+        </span>
+        <span className="truncate text-lg font-medium tracking-tight">
+          OG Tester
+        </span>
+      </Link>
 
-        <Navigation />
-      </Section>
-    </header>
-  );
-};
+      <Suspense fallback={<CommandChipFallback />}>
+        <CommandChip />
+      </Suspense>
+    </Container>
+  </header>
+);

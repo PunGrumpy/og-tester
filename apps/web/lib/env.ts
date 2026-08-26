@@ -8,17 +8,17 @@ export const env = createEnv({
   },
   extends: [vercel()],
   runtimeEnv: {
-    BETTERSTACK_API_KEY: process.env.BETTERSTACK_API_KEY,
-    BETTERSTACK_URL: process.env.BETTERSTACK_URL,
     NEXT_PUBLIC_DATABUDDY_CLIENT_ID:
       process.env.NEXT_PUBLIC_DATABUDDY_CLIENT_ID,
     UNKEY_API_KEY: process.env.UNKEY_API_KEY,
     UNKEY_ROOT_KEY: process.env.UNKEY_ROOT_KEY,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
   },
   server: {
-    BETTERSTACK_API_KEY: z.string().optional(),
-    BETTERSTACK_URL: z.url().optional(),
     UNKEY_API_KEY: z.string(),
     UNKEY_ROOT_KEY: z.string().startsWith("unkey_"),
+    UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+    UPSTASH_REDIS_REST_URL: z.url().optional(),
   },
 });

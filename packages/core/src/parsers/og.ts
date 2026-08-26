@@ -1,57 +1,57 @@
 import type { OgData } from "../schemas/og";
 
-const TITLE_TAG_REGEX = /<title[^>]*>([^<]+)<\/title>/iu;
+const TITLE_TAG_REGEX = /<title[^>]*>(?<g1>[^<]+)<\/title>/iu;
 
-const HTML_LANG_REGEX = /<html[^>]*lang=["']?([^"'\s>]+)["']?/iu;
-const CHARSET_META_REGEX = /<meta[^>]*charset=["']?([^"'\s>]+)["']?/iu;
+const HTML_LANG_REGEX = /<html[^>]*lang=["']?(?<g1>[^"'\s>]+)["']?/iu;
+const CHARSET_META_REGEX = /<meta[^>]*charset=["']?(?<g1>[^"'\s>]+)["']?/iu;
 const CHARSET_HTTP_EQUIV_REGEX =
-  /<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^"'>]*charset=["']?([^"'\s>;]+)/iu;
+  /<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^"'>]*charset=["']?(?<g1>[^"'\s>;]+)/iu;
 
 const META_DESC_NAME_FIRST_REGEX =
-  /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/iu;
+  /<meta[^>]*name=["']description["'][^>]*content=["'](?<g1>[^"']+)["'][^>]*>/iu;
 
 const META_DESC_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/iu;
+  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*name=["']description["'][^>]*>/iu;
 
 const OG_META_PROP_FIRST_REGEX =
-  /<meta[^>]*property=["'](og:[^"']+)["'][^>]*content=["']([^"']+)["'][^>]*>/giu;
+  /<meta[^>]*property=["'](?<g1>og:[^"']+)["'][^>]*content=["'](?<g2>[^"']+)["'][^>]*>/giu;
 
 const OG_META_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["']([^"']+)["'][^>]*property=["'](og:[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*property=["'](?<g2>og:[^"']+)["'][^>]*>/giu;
 
 const TWITTER_META_PROP_FIRST_REGEX =
-  /<meta[^>]*(?:name|property)=["'](twitter:[^"']+)["'][^>]*content=["']([^"']+)["'][^>]*>/giu;
+  /<meta[^>]*(?:name|property)=["'](?<g1>twitter:[^"']+)["'][^>]*content=["'](?<g2>[^"']+)["'][^>]*>/giu;
 
 const TWITTER_META_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["']([^"']+)["'][^>]*(?:name|property)=["'](twitter:[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*(?:name|property)=["'](?<g2>twitter:[^"']+)["'][^>]*>/giu;
 
 const THEME_COLOR_REGEX =
-  /<meta[^>]*name=["']theme-color["'][^>]*content=["']([^"']+)["'][^>]*(?:media=["']([^"']+)["'])?[^>]*>/giu;
+  /<meta[^>]*name=["']theme-color["'][^>]*content=["'](?<g1>[^"']+)["'][^>]*(?:media=["'](?<g2>[^"']+)["'])?[^>]*>/giu;
 
 const THEME_COLOR_REGEX_ALT =
-  /<meta[^>]*content=["']([^"']+)["'][^>]*name=["']theme-color["'][^>]*(?:media=["']([^"']+)["'])?[^>]*>/giu;
+  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*name=["']theme-color["'][^>]*(?:media=["'](?<g2>[^"']+)["'])?[^>]*>/giu;
 
-const THEME_MEDIA_REGEX = /\b(dark|light)\b/u;
+const THEME_MEDIA_REGEX = /\b(?<g1>dark|light)\b/u;
 
 const CANONICAL_LINK_REGEX =
-  /<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/iu;
+  /<link[^>]*rel=["']canonical["'][^>]*href=["'](?<g1>[^"']+)["'][^>]*>/iu;
 
-const HEAD_CONTENT_REGEX = /<head[^>]*>([\s\S]*?)<\/head>/iu;
+const HEAD_CONTENT_REGEX = /<head[^>]*>(?<g1>[\s\S]*?)<\/head>/iu;
 
 const ICON_LINK_REGEX =
-  /<link[^>]*rel=["']([^"']*icon[^"']*)["'][^>]*href=["']([^"']+)["'][^>]*>/giu;
+  /<link[^>]*rel=["'](?<g1>[^"']*icon[^"']*)["'][^>]*href=["'](?<g2>[^"']+)["'][^>]*>/giu;
 
 const ICON_LINK_REGEX_ALT =
-  /<link[^>]*href=["']([^"']+)["'][^>]*rel=["']([^"']*icon[^"']*)["'][^>]*>/giu;
+  /<link[^>]*href=["'](?<g1>[^"']+)["'][^>]*rel=["'](?<g2>[^"']*icon[^"']*)["'][^>]*>/giu;
 
 const SHORTCUT_ICON_REGEX =
-  /<link[^>]*rel=["']shortcut icon["'][^>]*href=["']([^"']+)["'][^>]*>/iu;
+  /<link[^>]*rel=["']shortcut icon["'][^>]*href=["'](?<g1>[^"']+)["'][^>]*>/iu;
 
 const APPLE_TOUCH_ICON_REGEX =
-  /<link[^>]*rel=["'](apple-touch-icon[^"']*)["'][^>]*href=["']([^"']+)["'][^>]*>/giu;
+  /<link[^>]*rel=["'](?<g1>apple-touch-icon[^"']*)["'][^>]*href=["'](?<g2>[^"']+)["'][^>]*>/giu;
 
-const ICON_TYPE_ATTR_REGEX = /type=["']([^"']+)["']/iu;
-const ICON_SIZES_ATTR_REGEX = /sizes=["']([^"']+)["']/iu;
+const ICON_TYPE_ATTR_REGEX = /type=["'](?<g1>[^"']+)["']/iu;
+const ICON_SIZES_ATTR_REGEX = /sizes=["'](?<g1>[^"']+)["']/iu;
 
 const decodeHtmlEntities = (text: string): string =>
   text
@@ -92,7 +92,14 @@ const getMetaContent = (
   return null;
 };
 
-const resolveUrl = (url: string, baseOrigin?: string): string => {
+const resolveUrl = (rawUrl: string, baseOrigin?: string): string => {
+  // Attribute values carry whatever whitespace the author's formatter left in
+  // them, and a meta tag on its own line is ordinary. Untrimmed, a trailing
+  // newline survives all the way to the consumer's <img>, and a leading one
+  // defeats every prefix test below — turning an absolute URL into
+  // `${baseOrigin}/ https://…`.
+  const url = rawUrl.trim();
+
   if (
     url.startsWith("http://") ||
     url.startsWith("https://") ||

@@ -108,13 +108,14 @@ const parseResponseMeta = (res: Response): Effect.Effect<ImageMeta, Error> =>
     const contentRange = res.headers.get("Content-Range");
     let size: number | undefined;
     if (contentRange) {
-      const match = contentRange.match(/\/(\d+)$/u);
+      const match = contentRange.match(/\/(?<g1>\d+)$/u);
       if (match) {
-        size = Number.parseInt(match[1], 10);
+        size = Math.trunc(Number(match[1]));
       }
     }
     if (!size && sizeHeader) {
-      size = Number.parseInt(sizeHeader, 10);
+      const parsed = Math.trunc(Number(sizeHeader));
+      size = Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
     }
 
     const contentType = res.headers.get("Content-Type") || undefined;

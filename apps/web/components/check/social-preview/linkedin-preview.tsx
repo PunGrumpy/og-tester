@@ -23,7 +23,7 @@ export const LinkedinPreview = ({
             sizes="(max-width: 768px) 100vw, 420px"
             src={image}
           />
-          <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+          <div className="pointer-events-none absolute inset-0 border border-black/10 dark:border-white/10" />
         </>
       ) : (
         <div className="flex size-full items-center justify-center">
@@ -32,10 +32,10 @@ export const LinkedinPreview = ({
       )}
     </div>
     <div className="flex flex-col gap-1 p-3">
-      <h3 className="truncate font-semibold text-[#ffffff] leading-tight">
+      <p className="truncate leading-tight font-semibold text-[#ffffff]">
         {title}
-      </h3>
-      <p className="text-[#ffffff99] text-xs">{displayUrl}</p>
+      </p>
+      <p className="text-xs text-[#ffffff99]">{displayUrl}</p>
     </div>
   </div>
 );

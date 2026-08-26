@@ -6,6 +6,7 @@ import type { ScanReport } from "@og-tester/core";
 import { Command } from "commander";
 import color from "picocolors";
 
+import { parseCount, parseScore } from "../options";
 import { drawScoreBlock } from "./check";
 
 export const getScoreColor = (score: number) => {
@@ -139,13 +140,13 @@ export const scanCommand = new Command("scan")
   .option(
     "--concurrency <number>",
     "Number of concurrent URL requests",
-    (val) => Number.parseInt(val, 10),
+    parseCount,
     5
   )
   .option(
     "--max-urls <number>",
     "Maximum number of URLs to discover and scan",
-    (val) => Number.parseInt(val, 10),
+    parseCount,
     200
   )
   .option("--json", "Output raw JSON report to stdout instead of TUI")
@@ -157,7 +158,7 @@ export const scanCommand = new Command("scan")
   .option(
     "--min-score <number>",
     "Minimum average score threshold (exit 1 if below)",
-    (val) => Number.parseInt(val, 10)
+    parseScore
   )
   .action(async (siteUrl, options) => {
     let parsedUrl = siteUrl;
@@ -243,19 +244,13 @@ export const scanCommand = new Command("scan")
         color.green(`Scan complete! Average score: ${report.averageScore}/100`)
       );
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       if (options.json) {
-        console.error(
-          JSON.stringify({
-            error: error instanceof Error ? error.message : String(error),
-          })
-        );
-        process.exit(1);
+        console.error(JSON.stringify({ error: message }));
       } else {
         s.stop("Failed to scan!");
-        log.error(
-          `Scan error: ${error instanceof Error ? error.message : String(error)}`
-        );
-        process.exit(1);
+        log.error(`Scan error: ${message}`);
       }
+      process.exit(1);
     }
   });

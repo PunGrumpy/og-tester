@@ -25,7 +25,7 @@ export const FacebookPreview = ({
             sizes="(max-width: 768px) 100vw, 420px"
             src={image}
           />
-          <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+          <div className="pointer-events-none absolute inset-0 border border-black/10 dark:border-white/10" />
         </>
       ) : (
         <div className="flex size-full items-center justify-center">
@@ -34,12 +34,12 @@ export const FacebookPreview = ({
       )}
     </div>
     <div className="flex flex-col gap-1 bg-[#3a3b3c] p-3">
-      <p className="text-[#b0b3b8] text-xs uppercase">{displayUrl}</p>
-      <h3 className="truncate font-semibold text-[#e4e6eb] leading-tight">
+      <p className="text-xs text-[#b0b3b8] uppercase">{displayUrl}</p>
+      <p className="truncate leading-tight font-semibold text-[#e4e6eb]">
         {title}
-      </h3>
+      </p>
       {description ? (
-        <p className="line-clamp-1 text-[#b0b3b8] text-sm">{description}</p>
+        <p className="line-clamp-1 text-sm text-[#b0b3b8]">{description}</p>
       ) : null}
     </div>
   </div>

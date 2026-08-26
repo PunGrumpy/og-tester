@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { env } from "@/lib/env";
@@ -34,8 +33,6 @@ export const ogAction = actionClientWithMeta
     if (!data) {
       throw new Error("Failed to fetch OG tags");
     }
-
-    revalidatePath("/");
 
     return data;
   });

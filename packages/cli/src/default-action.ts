@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, lstatSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, resolve, relative } from "node:path";
+import path from "node:path";
 import { setTimeout } from "node:timers/promises";
 
 import { intro, log, note, outro, spinner } from "@clack/prompts";
@@ -51,7 +51,7 @@ const getHtmlFiles = async (
   const files: string[] = [];
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
-    const fullPath = join(dir, entry.name);
+    const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (
         entry.name === "node_modules" ||
@@ -63,6 +63,7 @@ const getHtmlFiles = async (
       ) {
         continue;
       }
+      // oxlint-disable-next-line eslint/no-await-in-loop -- bounded recursion keeps fd use flat
       files.push(...(await getHtmlFiles(fullPath, rootDir)));
     } else if (entry.isFile() && entry.name.endsWith(".html")) {
       files.push(fullPath);
@@ -72,7 +73,7 @@ const getHtmlFiles = async (
 };
 
 const loadConfig = (dirPath: string): OgTesterConfig | null => {
-  const jsonConfigPath = join(dirPath, "og-tester.config.json");
+  const jsonConfigPath = path.join(dirPath, "og-tester.config.json");
   if (existsSync(jsonConfigPath)) {
     try {
       const content = readFileSync(jsonConfigPath, "utf-8");
@@ -82,7 +83,7 @@ const loadConfig = (dirPath: string): OgTesterConfig | null => {
     }
   }
 
-  const packageJsonPath = join(dirPath, "package.json");
+  const packageJsonPath = path.join(dirPath, "package.json");
   if (existsSync(packageJsonPath)) {
     try {
       const content = readFileSync(packageJsonPath, "utf-8");
@@ -174,6 +175,7 @@ const checkUrl = async (
             process.stdout.write("\u001B[7A\u001B[J");
           }
           process.stdout.write(drawScoreBlock(animatedScore));
+          // oxlint-disable-next-line eslint/no-await-in-loop -- animation frame pacing
           await setTimeout(delay);
         }
       } finally {
@@ -308,20 +310,14 @@ const scanUrl = async (
       color.green(`Scan complete! Average score: ${report.averageScore}/100`)
     );
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     if (options.json) {
-      console.error(
-        JSON.stringify({
-          error: error instanceof Error ? error.message : String(error),
-        })
-      );
-      process.exit(1);
+      console.error(JSON.stringify({ error: message }));
     } else {
       s.stop("Failed to scan!");
-      log.error(
-        `Scan error: ${error instanceof Error ? error.message : String(error)}`
-      );
-      process.exit(1);
+      log.error(`Scan error: ${message}`);
     }
+    process.exit(1);
   }
 };
 
@@ -413,7 +409,7 @@ const scanLocalDirectory = async (
   dirPath: string,
   options: ResolvedOptions
 ): Promise<void> => {
-  const resolvedDir = resolve(dirPath);
+  const resolvedDir = path.resolve(dirPath);
 
   if (!options.json) {
     intro(color.bgCyan(color.black(" OG Tester — Local HTML Scanner ")));
@@ -448,11 +444,13 @@ const scanLocalDirectory = async (
     let completed = 0;
 
     for (const filePath of htmlFiles) {
-      const relativePath = relative(resolvedDir, filePath);
+      const relativePath = path.relative(resolvedDir, filePath);
+      // oxlint-disable-next-line eslint/no-await-in-loop -- progress is reported per file
       const htmlContent = await readFile(filePath, "utf-8");
 
       const dummyUrl = `file:///${relativePath.replaceAll("\\", "/")}`;
       const ogData = parseOgTags(htmlContent, dummyUrl);
+      // oxlint-disable-next-line eslint/no-await-in-loop -- progress is reported per file
       const scoreResult = await runScoreOgTags(ogData, { pageUrl: dummyUrl });
 
       scoreResult.url = `/${relativePath.replaceAll("\\", "/")}`;
@@ -511,7 +509,7 @@ const resolveTargetUrl = (
   }
   if (
     urlOrDir &&
-    /^[a-z0-9]+([-.]?[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/iu.test(
+    /^[a-z0-9]+(?<labels>[-.]?[a-z0-9]+)*\.[a-z]{2,5}(?<port>:[0-9]{1,5})?(?<rest>\/.*)?$/iu.test(
       urlOrDir
     )
   ) {
@@ -527,7 +525,7 @@ export const defaultAction = async (
   urlOrDir: string,
   cliOptions: CliOptions
 ): Promise<void> => {
-  const targetPath = resolve(urlOrDir || ".");
+  const targetPath = path.resolve(urlOrDir || ".");
   let config: OgTesterConfig | null = null;
   let isDirectory = false;
 

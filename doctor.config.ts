@@ -15,10 +15,6 @@ const config: ReactDoctorConfig = {
       // analysis sees no static import and calls all three unreachable. They
       // are live — the dev server logs "Registered 3 tools" on boot.
       "tools/**",
-
-      // Imported only by components/ui/sidebar.tsx, which the first entry
-      // already excludes, so it reads as orphaned purely because of that.
-      "hooks/use-mobile.ts",
     ],
   },
 };

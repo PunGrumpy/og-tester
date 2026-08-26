@@ -14,22 +14,22 @@ export const SlackPreview = ({
   title,
   description,
 }: SlackPreviewProps) => (
-  <div className="overflow-hidden rounded border border-border/50 bg-card p-3 shadow-[inset_3px_0_0_0_#36C5F0]">
+  <div className="overflow-hidden rounded border border-white/10 bg-[#1A1D21] p-3 shadow-[inset_3px_0_0_0_#36C5F0]">
     <div className="flex gap-3">
-      <div className="flex-1 flex flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1">
         {siteName ? (
           <div className="flex items-center gap-2">
-            <span className="font-medium text-foreground text-sm">
+            <span className="text-sm font-medium text-[#D1D2D3]">
               {siteName}
             </span>
           </div>
         ) : null}
-        <h3 className="truncate font-semibold text-[#1264A3]">{title}</h3>
-        <p className="line-clamp-2 text-muted-foreground text-sm">
+        <p className="truncate font-semibold text-[#1D9BD1]">{title}</p>
+        <p className="line-clamp-2 text-sm text-[#ABABAD]">
           {description || "No description"}
         </p>
       </div>
-      <div className="relative size-20 shrink-0 overflow-hidden rounded bg-muted">
+      <div className="relative size-20 shrink-0 overflow-hidden rounded bg-[#222529]">
         {image ? (
           <>
             <Image
@@ -39,14 +39,11 @@ export const SlackPreview = ({
               sizes="80px"
               src={image}
             />
-            <div className="absolute inset-0 border border-black/10 dark:border-white/10 pointer-events-none" />
+            <div className="pointer-events-none absolute inset-0 border border-white/10" />
           </>
         ) : (
           <div className="flex size-full items-center justify-center">
-            <ImageOff
-              aria-hidden="true"
-              className="size-6 text-muted-foreground/50"
-            />
+            <ImageOff aria-hidden="true" className="size-6 text-[#ABABAD]/50" />
           </div>
         )}
       </div>

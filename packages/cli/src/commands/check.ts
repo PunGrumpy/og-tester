@@ -6,6 +6,8 @@ import { fetchOgTags, runScoreOgTags } from "@og-tester/core";
 import { Command } from "commander";
 import color from "picocolors";
 
+import { parseScore } from "../options";
+
 const formatFields = (
   data: OgData,
   fields: string[],
@@ -166,7 +168,7 @@ export const checkCommand = new Command("check")
   .option(
     "--min-score <number>",
     "Minimum score threshold (exit 1 if below)",
-    (val) => Number.parseInt(val, 10)
+    parseScore
   )
   .action(async (url, options) => {
     let parsedUrl = url;
@@ -222,6 +224,7 @@ export const checkCommand = new Command("check")
               process.stdout.write("\u001B[7A\u001B[J");
             }
             process.stdout.write(drawScoreBlock(animatedScore));
+            // oxlint-disable-next-line eslint/no-await-in-loop -- animation frame pacing
             await setTimeout(delay);
           }
         } finally {

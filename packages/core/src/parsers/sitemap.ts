@@ -1,10 +1,10 @@
 import type { SitemapUrl } from "../schemas/sitemap";
 
-const URL_REGEX = /<url>([\s\S]*?)<\/url>/giu;
-const LOC_REGEX = /<loc>([^<]+)<\/loc>/iu;
-const LASTMOD_REGEX = /<lastmod>([^<]+)<\/lastmod>/iu;
-const CHANGEFREQ_REGEX = /<changefreq>([^<]+)<\/changefreq>/iu;
-const PRIORITY_REGEX = /<priority>([^<]+)<\/priority>/iu;
+const URL_REGEX = /<url>(?<g1>[\s\S]*?)<\/url>/giu;
+const LOC_REGEX = /<loc>(?<g1>[^<]+)<\/loc>/iu;
+const LASTMOD_REGEX = /<lastmod>(?<g1>[^<]+)<\/lastmod>/iu;
+const CHANGEFREQ_REGEX = /<changefreq>(?<g1>[^<]+)<\/changefreq>/iu;
+const PRIORITY_REGEX = /<priority>(?<g1>[^<]+)<\/priority>/iu;
 
 export const parseSitemap = (xml: string): SitemapUrl[] => {
   const urls: SitemapUrl[] = [];
@@ -45,7 +45,7 @@ export const parseSitemap = (xml: string): SitemapUrl[] => {
   return urls;
 };
 
-const SITEMAP_REGEX = /<sitemap>([\s\S]*?)<\/sitemap>/giu;
+const SITEMAP_REGEX = /<sitemap>(?<g1>[\s\S]*?)<\/sitemap>/giu;
 
 export const isSitemapIndex = (xml: string): boolean =>
   /<sitemapindex/iu.test(xml);

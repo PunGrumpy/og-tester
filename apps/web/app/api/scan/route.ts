@@ -1,7 +1,10 @@
-import { runScanSite } from "@og-tester/core";
+import { fetchOgTags, runScanSite } from "@og-tester/core";
+import { revalidateTag } from "next/cache";
 import type { NextRequest } from "next/server";
+import { after } from "next/server";
 
-export const dynamic = "force-dynamic";
+import { normalizeDomain } from "@/lib/reports/domain";
+import { REPORTS_TAG, reportTag, saveReport } from "@/lib/reports/store";
 
 const activeScans = new Set<string>();
 const cooldowns = new Map<string, number>();
@@ -38,6 +41,8 @@ export const POST = async (req: NextRequest) => {
 
     activeScans.add(ip);
 
+    const domain = normalizeDomain(parsedUrl);
+
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -48,12 +53,26 @@ export const POST = async (req: NextRequest) => {
         };
 
         try {
-          const report = await runScanSite({
-            concurrency: 5,
-            maxUrls: 50,
-            onProgress: sendEvent,
-            siteUrl: parsedUrl,
-          });
+          const [report, og] = await Promise.all([
+            runScanSite({
+              concurrency: 5,
+              maxUrls: 50,
+              onProgress: sendEvent,
+              siteUrl: parsedUrl,
+            }),
+            fetchOgTags(parsedUrl).catch(() => ({})),
+          ]);
+
+          if (domain) {
+            await saveReport({
+              domain,
+              og,
+              report,
+              scannedAt: report.scannedAt,
+              siteUrl: parsedUrl,
+            });
+          }
+
           sendEvent({ report, type: "complete" });
         } catch (error) {
           sendEvent({
@@ -66,6 +85,13 @@ export const POST = async (req: NextRequest) => {
           controller.close();
         }
       },
+    });
+
+    after(() => {
+      revalidateTag(REPORTS_TAG, { expire: 0 });
+      if (domain) {
+        revalidateTag(reportTag(domain), { expire: 0 });
+      }
     });
 
     return new Response(stream, {

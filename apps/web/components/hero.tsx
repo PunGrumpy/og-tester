@@ -1,28 +1,17 @@
-import { Section } from "@/components/section";
-import { ViewAnimation } from "@/components/view-animation";
-import { STAGGER } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { InputForm } from "@/components/check/input-form";
+import { PixelCycle } from "@/components/pixel-cycle";
 
 export const Hero = () => (
-  <Section
-    className={cn(
-      "p-6 py-12 sm:py-0 sm:aspect-3/1",
-      "flex items-center justify-center",
-      "pattern-background bg-foreground/2"
-    )}
-  >
-    <div className="flex flex-col items-center justify-center gap-6">
-      <ViewAnimation delay={0}>
-        <h1 className="text-balance text-center font-semibold text-4xl xs:text-5xl md:text-7xl">
-          Open Graph Tester
-        </h1>
-      </ViewAnimation>
-      <ViewAnimation delay={STAGGER}>
-        <p className="max-w-2xl text-pretty text-center text-base sm:text-lg text-muted-foreground">
-          Test and preview your Open Graph and Twitter Card metadata. See how
-          your links will appear when shared on social media platforms.
-        </p>
-      </ViewAnimation>
-    </div>
-  </Section>
+  <section className="mx-auto w-full max-w-[760px] px-5 pt-16 text-center sm:px-8 sm:pt-24">
+    <h1 className="text-4xl leading-[1.05] font-semibold tracking-[-0.04em] text-balance sm:text-5xl md:text-[54px]">
+      See how your <PixelCycle>links</PixelCycle> look when shared
+    </h1>
+
+    <p className="max-w-measure text-muted-foreground mx-auto mt-4 mb-10 text-lg text-balance">
+      Enter a URL to read its Open Graph, Twitter Card and SEO tags, preview the
+      result on six platforms, then audit every page we can reach.
+    </p>
+
+    <InputForm />
+  </section>
 );
