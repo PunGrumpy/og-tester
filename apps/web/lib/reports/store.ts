@@ -84,29 +84,36 @@ const createRedisStore = (redis: Redis): ReportStore => ({
   },
 });
 
-const memoryEntries = ((): Map<string, StoredReport> => {
+// Holds the JSON Redis would hold, not the object handed in. The scorer builds
+// diagnostics as schema classes and Redis flattens them on write, so keeping
+// live objects here would make the two backends return different shapes for
+// the same report.
+const memoryEntries = ((): Map<string, string> => {
   const scope = globalThis as typeof globalThis & {
-    __ogTesterReports?: Map<string, StoredReport>;
+    __ogTesterReports?: Map<string, string>;
   };
   scope.__ogTesterReports ??= new Map();
   return scope.__ogTesterReports;
 })();
 
+const readEntry = (raw: string) => JSON.parse(raw) as StoredReport;
+
 const memoryStore: ReportStore = {
   get(domain) {
-    return Promise.resolve(memoryEntries.get(domain) ?? null);
+    const raw = memoryEntries.get(domain);
+    return Promise.resolve(raw ? readEntry(raw) : null);
   },
   list(offset, limit) {
-    const sorted = [...memoryEntries.values()].toSorted(
-      (a, b) => Date.parse(b.scannedAt) - Date.parse(a.scannedAt)
-    );
+    const sorted = [...memoryEntries.values()]
+      .map(readEntry)
+      .toSorted((a, b) => Date.parse(b.scannedAt) - Date.parse(a.scannedAt));
     return Promise.resolve({
       entries: sorted.slice(offset, offset + limit).map(toRecentEntry),
       total: sorted.length,
     });
   },
   save(entry) {
-    memoryEntries.set(entry.domain, entry);
+    memoryEntries.set(entry.domain, JSON.stringify(entry));
     return Promise.resolve();
   },
 };
@@ -147,8 +154,7 @@ export const getReport = async (
 
 export const saveReport = async (entry: StoredReport): Promise<void> => {
   try {
-    // oxlint-disable-next-line unicorn/prefer-structured-clone
-    await getStore().save(JSON.parse(JSON.stringify(entry)) as StoredReport);
+    await getStore().save(entry);
   } catch (error) {
     console.error("Failed to save report", error);
   }
