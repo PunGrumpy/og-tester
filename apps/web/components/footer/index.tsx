@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 
 import { Container } from "@/components/layout";
@@ -16,13 +17,21 @@ const INLINE_LINK_CLASS =
 const LINK_CLASS =
   "inline-flex min-h-6 w-fit items-center text-inherit underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
 
-export const Footer = () => (
+/** Cached so the footer stays in the static shell; it changes once a year. */
+// oxlint-disable-next-line require-await
+const currentYear = async () => {
+  "use cache";
+  cacheLife("days");
+  return new Date().getFullYear();
+};
+
+export const Footer = async () => (
   <footer className="text-muted-foreground mt-auto border-t py-8 text-sm">
     <Container>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-6 gap-y-7 lg:flex lg:items-center lg:gap-6">
         <p className="col-start-1 row-start-2 m-0 flex min-w-0 flex-wrap gap-x-1.5 leading-6 lg:order-1 lg:mr-auto">
           <span className="whitespace-nowrap">
-            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
+            © {await currentYear()}{" "}
             <Link className={INLINE_LINK_CLASS} href="https://pungrumpy.com">
               Noppakorn Kaewsalabnil
             </Link>
