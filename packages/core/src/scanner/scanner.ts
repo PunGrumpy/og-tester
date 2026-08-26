@@ -5,9 +5,8 @@ import { discoverUrls } from "../crawler/discovery";
 import { fetchOgTagsEffect } from "../fetchers/og";
 import type { OgData } from "../schemas/og";
 import type { CategoryId } from "../scoring/categories";
-import { scoreOgTags } from "../scoring/engine";
 import type { PageScoreResult } from "../scoring/engine";
-import { checkImageMeta } from "../scoring/image";
+import { scorePage } from "../scoring/page";
 
 export interface ScanOptions {
   siteUrl: string;
@@ -105,20 +104,7 @@ export const scanSite = (
           data = dataResult.success;
         }
 
-        let imageMeta = null;
-        if (data["og:image"]) {
-          const imgResult = yield* checkImageMeta(data["og:image"]).pipe(
-            Effect.result
-          );
-          if (imgResult._tag === "Success") {
-            imageMeta = imgResult.success;
-          }
-        }
-
-        const scoreResult = yield* scoreOgTags(data, {
-          imageMeta,
-          pageUrl: url,
-        });
+        const scoreResult = yield* scorePage(data, url);
 
         const page: ScannedPage = { ...scoreResult, foundOn };
 
