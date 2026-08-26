@@ -1,6 +1,7 @@
 import * as Effect from "effect/Effect";
 
 import { fetchSitemapEffect } from "../fetchers/sitemap";
+import type { DiscoveredUrl } from "./crawler";
 import { crawlSite, isHtmlPageUrl, isSameSite } from "./crawler";
 
 export interface DiscoveryOptions {
@@ -11,7 +12,7 @@ export interface DiscoveryOptions {
 export const discoverUrls = (
   siteUrl: string,
   options: DiscoveryOptions
-): Effect.Effect<string[], Error> =>
+): Effect.Effect<DiscoveredUrl[], Error> =>
   Effect.gen(function* discoverUrlsGen() {
     const sitemapResult = yield* fetchSitemapEffect(siteUrl).pipe(
       Effect.result
@@ -43,7 +44,11 @@ export const discoverUrls = (
       });
 
       if (sameOriginUrls.length > 0) {
-        return sameOriginUrls.slice(0, options.maxUrls);
+        // A sitemap lists pages, it does not link them, so none of these
+        // carries a page it was found on.
+        return sameOriginUrls
+          .slice(0, options.maxUrls)
+          .map((url) => ({ url }) satisfies DiscoveredUrl);
       }
     }
 

@@ -31,7 +31,7 @@ export { ScoreResult } from "./schemas/score";
 
 // Crawler & Discovery
 export { crawlSite } from "./crawler/crawler";
-export type { CrawlerOptions } from "./crawler/crawler";
+export type { CrawlerOptions, DiscoveredUrl } from "./crawler/crawler";
 export { discoverUrls } from "./crawler/discovery";
 export type { DiscoveryOptions } from "./crawler/discovery";
 
@@ -39,6 +39,7 @@ export type { DiscoveryOptions } from "./crawler/discovery";
 export { scanSite, runScanSite } from "./scanner/scanner";
 export type {
   ScanOptions,
+  ScannedPage,
   ScanProgressEvent,
   ScanReport,
 } from "./scanner/scanner";

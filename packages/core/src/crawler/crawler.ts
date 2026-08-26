@@ -73,10 +73,19 @@ export interface CrawlerOptions {
   concurrency?: number;
 }
 
+export interface DiscoveredUrl {
+  url: string;
+  /**
+   * The page whose HTML linked here. Absent for the entry point, and for
+   * anything a sitemap listed rather than a link.
+   */
+  foundOn?: string;
+}
+
 export const crawlSite = (
   startUrl: string,
   options: CrawlerOptions
-): Effect.Effect<string[], Error> =>
+): Effect.Effect<DiscoveredUrl[], Error> =>
   Effect.gen(function* crawlSiteGen() {
     const originUrl = yield* Effect.try({
       catch: (e) =>
@@ -98,9 +107,11 @@ export const crawlSite = (
     }
 
     const visited = new Set<string>();
-    const discovered = new Set<string>();
+    // Every URL we have seen, against the page we saw it on. The entry point
+    // was not linked from anywhere, so it maps to undefined.
+    const discovered = new Map<string, string | undefined>();
     const queue: string[] = [originUrl.href];
-    discovered.add(originUrl.href);
+    discovered.set(originUrl.href, undefined);
 
     const { maxUrls } = options;
     const concurrency = options.concurrency || 5;
@@ -171,14 +182,16 @@ export const crawlSite = (
         const newLinks = extractInternalLinks(res.html, res.url);
         for (const link of newLinks) {
           if (!discovered.has(link) && discovered.size < maxUrls * 2) {
-            discovered.add(link);
+            discovered.set(link, res.url);
             queue.push(link);
           }
         }
       }
     }
 
-    return [...visited].slice(0, maxUrls);
+    return [...visited]
+      .slice(0, maxUrls)
+      .map((url) => ({ foundOn: discovered.get(url), url }));
   }).pipe(
     Effect.mapError((err) =>
       err instanceof Error ? err : new Error(String(err))

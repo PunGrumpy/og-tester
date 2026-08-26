@@ -1,5 +1,6 @@
 import * as Effect from "effect/Effect";
 
+import type { DiscoveredUrl } from "../crawler/crawler";
 import { discoverUrls } from "../crawler/discovery";
 import { fetchOgTagsEffect } from "../fetchers/og";
 import type { OgData } from "../schemas/og";
@@ -16,12 +17,20 @@ export interface ScanOptions {
   signal?: AbortSignal;
 }
 
+export interface ScannedPage extends PageScoreResult {
+  /**
+   * The page whose HTML linked here, so a report can be read as the walk that
+   * produced it. Absent for the entry page and for anything a sitemap listed.
+   */
+  foundOn?: string;
+}
+
 export interface ScanProgressEvent {
   type: "discovery" | "checking" | "complete" | "error";
   url?: string;
   totalUrls: number;
   completedUrls: number;
-  result?: PageScoreResult;
+  result?: ScannedPage;
 }
 
 export interface ScanReport {
@@ -30,7 +39,7 @@ export interface ScanReport {
   totalPages: number;
   averageScore: number;
   categoryAverages: Record<CategoryId, number>;
-  pages: PageScoreResult[];
+  pages: ScannedPage[];
   summary: {
     // 90-100
     excellent: number;
@@ -84,7 +93,7 @@ export const scanSite = (
       });
     }
 
-    const scanSingleUrl = (url: string) =>
+    const scanSingleUrl = ({ foundOn, url }: DiscoveredUrl) =>
       Effect.gen(function* scanSingleUrlGen() {
         if (options.signal?.aborted) {
           return yield* Effect.fail(new Error("Scan aborted"));
@@ -111,22 +120,24 @@ export const scanSite = (
           pageUrl: url,
         });
 
+        const page: ScannedPage = { ...scoreResult, foundOn };
+
         completedUrls += 1;
         if (options.onProgress) {
           options.onProgress({
             completedUrls,
-            result: scoreResult,
+            result: page,
             totalUrls,
             type: "checking",
             url,
           });
         }
 
-        return scoreResult;
+        return page;
       });
 
     const pageScores = yield* Effect.all(
-      urls.map((url) => scanSingleUrl(url)),
+      urls.map((entry) => scanSingleUrl(entry)),
       { concurrency: options.concurrency }
     );
 
