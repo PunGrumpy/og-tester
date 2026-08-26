@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { PageSection, SectionHeading } from "@/components/layout";
@@ -5,14 +6,14 @@ import type { RecentEntry } from "@/lib/reports/store";
 
 const Favicon = ({ domain }: { domain: string }) => (
   <span className="bg-muted/40 grid size-7 shrink-0 place-items-center overflow-hidden rounded-full border">
-    {/* oxlint-disable-next-line next/no-img-element */}
-    <img
+    <Image
       alt=""
       className="size-[18px] rounded-full object-contain"
       height={18}
       loading="lazy"
       referrerPolicy="no-referrer"
       src={`/api/favicon?host=${encodeURIComponent(domain)}`}
+      unoptimized
       width={18}
     />
   </span>
