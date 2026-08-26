@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 import { Container } from "@/components/layout";
 
-import { Icons } from "../icons";
+import { LogoIcon } from "../icons";
 import { CommandChip, CommandChipFallback } from "./command-chip";
 
 export const Header = () => (
@@ -13,7 +13,7 @@ export const Header = () => (
         className="focus-visible:ring-ring/50 flex min-w-0 items-center gap-2 overflow-hidden rounded-sm text-inherit focus-visible:ring-[3px] focus-visible:outline-none"
         href="/"
       >
-        <Icons.Logo aria-hidden="true" className="size-[18px] shrink-0" />
+        <LogoIcon aria-hidden="true" className="size-[18px] shrink-0" />
         <span aria-hidden="true" className="text-muted-foreground/60 shrink-0">
           <svg fill="none" height="16" viewBox="0 0 16 16" width="16">
             <path

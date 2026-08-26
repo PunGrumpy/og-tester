@@ -4,7 +4,14 @@ import { m } from "motion/react";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
-import { Icons } from "@/components/icons";
+import {
+  DiscordIcon,
+  FacebookIcon,
+  LinkedinIcon,
+  SlackIcon,
+  WhatsappIcon,
+  XIcon,
+} from "@/components/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { OgStatus } from "@/hooks/use-og-store";
 import { toImageSrc } from "@/lib/image-src";
@@ -33,7 +40,7 @@ type Preview = ReturnType<typeof getPreviewData>;
 
 const PLATFORMS = [
   {
-    icon: Icons.X,
+    icon: XIcon,
     id: "x",
     label: "X",
     render: (p: Preview) => (
@@ -46,7 +53,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.Slack,
+    icon: SlackIcon,
     id: "slack",
     label: "Slack",
     render: (p: Preview) => (
@@ -59,7 +66,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.Facebook,
+    icon: FacebookIcon,
     id: "facebook",
     label: "Facebook",
     render: (p: Preview) => (
@@ -72,7 +79,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.Linkedin,
+    icon: LinkedinIcon,
     id: "linkedin",
     label: "LinkedIn",
     render: (p: Preview) => (
@@ -84,7 +91,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.Discord,
+    icon: DiscordIcon,
     id: "discord",
     label: "Discord",
     render: (p: Preview) => (
@@ -97,7 +104,7 @@ const PLATFORMS = [
     ),
   },
   {
-    icon: Icons.Whatsapp,
+    icon: WhatsappIcon,
     id: "whatsapp",
     label: "WhatsApp",
     render: (p: Preview) => (
