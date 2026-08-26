@@ -6,8 +6,12 @@ import { usePathname } from "next/navigation";
 import { useCopy } from "@/hooks/use-copy";
 import { useDraftStore } from "@/hooks/use-draft-store";
 import { normalizeDomain } from "@/lib/reports/domain";
+import { cn } from "@/lib/utils";
 
 const BASE = "npx og-tester";
+
+const CHIP_CLASS =
+  "group bg-card ml-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-left transition-colors sm:flex";
 
 const CopyGlyph = () => (
   <svg
@@ -36,6 +40,38 @@ const CopyGlyph = () => (
   </svg>
 );
 
+const CommandText = ({
+  argument,
+  resolved,
+}: {
+  argument: string;
+  resolved: string | null;
+}) => (
+  <code className="text-foreground truncate font-mono text-[13px]">
+    <span aria-hidden="true" className="text-muted-foreground/60">
+      ${" "}
+    </span>
+    {BASE}{" "}
+    <span className={resolved ? undefined : "text-muted-foreground"}>
+      {argument || "[url]"}
+    </span>
+  </code>
+);
+
+/**
+ * What the shell prerenders while the path is still unknown. A span rather
+ * than a button, and out of the accessibility tree, because it has nothing to
+ * copy yet.
+ */
+export const CommandChipFallback = () => (
+  <span aria-hidden="true" className={CHIP_CLASS}>
+    <CommandText argument="" resolved={null} />
+    <span className="text-muted-foreground shrink-0">
+      <CopyGlyph />
+    </span>
+  </span>
+);
+
 export const CommandChip = () => {
   const pathname = usePathname();
   const routeDomain = pathname?.startsWith("/scan/")
@@ -52,19 +88,14 @@ export const CommandChip = () => {
   return (
     <button
       aria-label={`Copy command: ${command}`}
-      className="group bg-card hover:border-foreground/25 focus-visible:ring-ring/50 dark:hover:bg-muted ml-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-left transition-colors focus-visible:ring-[3px] focus-visible:outline-none sm:flex"
+      className={cn(
+        CHIP_CLASS,
+        "hover:border-foreground/25 focus-visible:ring-ring/50 dark:hover:bg-muted focus-visible:ring-[3px] focus-visible:outline-none"
+      )}
       onClick={() => copy(command)}
       type="button"
     >
-      <code className="text-foreground truncate font-mono text-[13px]">
-        <span aria-hidden="true" className="text-muted-foreground/60">
-          ${" "}
-        </span>
-        {BASE}{" "}
-        <span className={resolved ? undefined : "text-muted-foreground"}>
-          {argument || "[url]"}
-        </span>
-      </code>
+      <CommandText argument={argument} resolved={resolved} />
 
       <span
         aria-hidden="true"

@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { Container } from "@/components/layout";
 
 import { Icons } from "../icons";
-import { CommandChip } from "./command-chip";
+import { CommandChip, CommandChipFallback } from "./command-chip";
 
 export const Header = () => (
   <header className="relative z-10">
@@ -28,7 +29,12 @@ export const Header = () => (
         </span>
       </Link>
 
-      <CommandChip />
+      {/* The chip reads the path, which the shell does not have. Only
+          `/scan/[domain]` streams it in; elsewhere the path is known at
+          prerender and the boundary resolves there. */}
+      <Suspense fallback={<CommandChipFallback />}>
+        <CommandChip />
+      </Suspense>
     </Container>
   </header>
 );
