@@ -6,7 +6,7 @@ import { setTimeout } from "node:timers/promises";
 import { intro, log, note, outro, spinner } from "@clack/prompts";
 import {
   fetchOgTags,
-  runScoreOgTags,
+  runScorePage,
   runScanSite,
   parseOgTags,
 } from "@og-tester/core";
@@ -138,7 +138,7 @@ const checkUrl = async (
 
   try {
     const data = await fetchOgTags(parsedUrl);
-    const scoreResult = await runScoreOgTags(data);
+    const scoreResult = await runScorePage(data, parsedUrl);
 
     if (options.json) {
       const jsonOutput = {
@@ -451,7 +451,7 @@ const scanLocalDirectory = async (
       const dummyUrl = `file:///${relativePath.replaceAll("\\", "/")}`;
       const ogData = parseOgTags(htmlContent, dummyUrl);
       // oxlint-disable-next-line eslint/no-await-in-loop -- progress is reported per file
-      const scoreResult = await runScoreOgTags(ogData, { pageUrl: dummyUrl });
+      const scoreResult = await runScorePage(ogData, dummyUrl);
 
       scoreResult.url = `/${relativePath.replaceAll("\\", "/")}`;
 
