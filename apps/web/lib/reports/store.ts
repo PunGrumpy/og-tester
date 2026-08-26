@@ -1,7 +1,7 @@
 import "server-only";
 import type { ScanReport } from "@og-tester/core";
 import { Redis } from "@upstash/redis";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 import { env } from "@/lib/env";
 import type { OgData } from "@/lib/schemas/og";
@@ -29,21 +29,26 @@ export interface RecentEntry {
 const RECENT_LIMIT = 500;
 
 /**
- * One tag over every read, so a finished scan invalidates the lists and the
- * report together rather than each entry aging out on its own clock. The scan
- * route clears it; see `revalidateReports`.
+ * The index and every list over it. A scan finishing can change any page of
+ * the list, so they all clear together.
  */
 export const REPORTS_TAG = "reports";
+
+/**
+ * One report. Kept off `REPORTS_TAG` so that scanning one site re-reads that
+ * site rather than dropping all five hundred cached reports with it.
+ */
+export const reportTag = (domain: string) => `reports:${domain}`;
 
 /**
  * How long a cached read survives without anyone clearing the tag.
  *
  * The tag is the fast path, but it only fires if the request that wrote the
- * report gets far enough to clear it. This window is the guarantee underneath
- * that: a list is never more than a minute behind the store, whatever happened
- * to the scan that filled it.
+ * report gets far enough to clear it. `minutes` revalidates every 60 seconds,
+ * which is the guarantee underneath: a list is never more than a minute behind
+ * the store, whatever happened to the scan that filled it.
  */
-const CACHE_SECONDS = 60;
+const CACHE_PROFILE = "minutes";
 
 const toRecentEntry = (entry: StoredReport): RecentEntry => ({
   domain: entry.domain,
@@ -173,18 +178,19 @@ const getStore = (): ReportStore => {
  * fetched is indistinguishable from one that was never run, and both mean the
  * reader gets a fresh scan.
  */
-export const getReport = unstable_cache(
-  async (domain: string): Promise<StoredReport | null> => {
-    try {
-      return await getStore().get(domain);
-    } catch (error) {
-      console.error("Failed to read report", error);
-      return null;
-    }
-  },
-  ["report"],
-  { revalidate: CACHE_SECONDS, tags: [REPORTS_TAG] }
-);
+export const getReport = async (
+  domain: string
+): Promise<StoredReport | null> => {
+  "use cache";
+  cacheLife(CACHE_PROFILE);
+  cacheTag(reportTag(domain));
+  try {
+    return await getStore().get(domain);
+  } catch (error) {
+    console.error("Failed to read report", error);
+    return null;
+  }
+};
 
 export const saveReport = async (entry: StoredReport): Promise<void> => {
   try {
@@ -207,15 +213,17 @@ export const saveReport = async (entry: StoredReport): Promise<void> => {
  * finishes, and that path clears the tag itself, so the pages can be served
  * from the data cache without ever going stale.
  */
-export const listReports = unstable_cache(
-  async (offset = 0, limit = 10): Promise<ReportPage> => {
-    try {
-      return await getStore().list(offset, limit);
-    } catch (error) {
-      console.error("Failed to list reports", error);
-      return { entries: [], total: 0 };
-    }
-  },
-  ["reports"],
-  { revalidate: CACHE_SECONDS, tags: [REPORTS_TAG] }
-);
+export const listReports = async (
+  offset = 0,
+  limit = 10
+): Promise<ReportPage> => {
+  "use cache";
+  cacheLife(CACHE_PROFILE);
+  cacheTag(REPORTS_TAG);
+  try {
+    return await getStore().list(offset, limit);
+  } catch (error) {
+    console.error("Failed to list reports", error);
+    return { entries: [], total: 0 };
+  }
+};

@@ -4,9 +4,7 @@ import type { NextRequest } from "next/server";
 import { after } from "next/server";
 
 import { normalizeDomain } from "@/lib/reports/domain";
-import { REPORTS_TAG, saveReport } from "@/lib/reports/store";
-
-export const dynamic = "force-dynamic";
+import { REPORTS_TAG, reportTag, saveReport } from "@/lib/reports/store";
 
 const activeScans = new Set<string>();
 const cooldowns = new Map<string, number>();
@@ -43,6 +41,10 @@ export const POST = async (req: NextRequest) => {
 
     activeScans.add(ip);
 
+    // Resolved out here so `after` below can name the report's own tag; the
+    // stream's callback runs too late to hand anything back.
+    const domain = normalizeDomain(parsedUrl);
+
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -68,7 +70,6 @@ export const POST = async (req: NextRequest) => {
 
           // Persisted here rather than from the browser, so a completed report
           // is one the server actually produced.
-          const domain = normalizeDomain(parsedUrl);
           if (domain) {
             await saveReport({
               domain,
@@ -100,6 +101,9 @@ export const POST = async (req: NextRequest) => {
     // the response has finished, which is after the report is written.
     after(() => {
       revalidateTag(REPORTS_TAG, { expire: 0 });
+      if (domain) {
+        revalidateTag(reportTag(domain), { expire: 0 });
+      }
     });
 
     return new Response(stream, {
