@@ -1,10 +1,14 @@
 import { Container } from "@/components/layout";
 import { CATEGORY_META } from "@/lib/reports/verdict";
 
+import { PendingScore, SUMMARY_GRID, SUMMARY_MAIN } from "./pending-score";
+
 export const ReportSkeleton = () => (
   <div className="py-12">
-    <Container className="grid gap-10 border-b pb-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-      <div aria-hidden="true" className="min-w-0 lg:min-h-[22rem]" />
+    <Container className={SUMMARY_GRID}>
+      <div className={SUMMARY_MAIN}>
+        <PendingScore caption="Final score appears once the report loads." />
+      </div>
 
       <ul className="m-0 min-w-0 list-none divide-y border-y p-0 lg:grid lg:min-h-[18rem] lg:grid-rows-4">
         {CATEGORY_META.map(({ id, label, max }) => (

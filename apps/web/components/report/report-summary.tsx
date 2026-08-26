@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { FixPromptButton } from "./fix-prompt-button";
+import { SUMMARY_GRID, SUMMARY_MAIN } from "./pending-score";
 import { ScoreDial } from "./score-dial";
 import { ShareButton } from "./share-button";
 
@@ -69,8 +70,8 @@ export const ReportSummary = ({
   const displayed = useCountUp(averageScore);
 
   return (
-    <Container className="grid gap-10 border-b pb-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-      <div className="min-w-0 lg:min-h-[22rem]">
+    <Container className={SUMMARY_GRID}>
+      <div className={SUMMARY_MAIN}>
         <div className="flex items-baseline justify-between gap-4">
           <p className="text-muted-foreground min-w-0 font-mono text-sm break-words">
             {domain}

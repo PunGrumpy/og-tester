@@ -4,7 +4,9 @@ import { m, useReducedMotion } from "motion/react";
 
 import { DURATION, transition } from "@/lib/motion";
 
-const SIZE = 104;
+import { DIAL_SIZE } from "./pending-score";
+
+const SIZE = DIAL_SIZE;
 const RADIUS = SIZE / 4;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 

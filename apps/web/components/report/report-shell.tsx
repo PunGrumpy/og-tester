@@ -17,6 +17,7 @@ import type { OgData } from "@/lib/schemas/og";
 
 import { Findings } from "./findings";
 import { PagesList } from "./pages-list";
+import { PendingScore, SUMMARY_GRID, SUMMARY_MAIN } from "./pending-score";
 import { Previews } from "./previews";
 import { RefreshStatus } from "./refresh-status";
 import { ReportSummary } from "./report-summary";
@@ -126,31 +127,37 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
       <AnimatePresence mode="wait">
         {isRunning && (
           <m.div key="progress" {...PHASE_MOTION}>
-            <Container className="flex flex-col items-center gap-6 border-b py-16">
-              <div className="w-full max-w-xl text-center">
-                <p className="text-muted-foreground font-mono text-sm">
+            <Container className={SUMMARY_GRID}>
+              <div className={SUMMARY_MAIN}>
+                <p className="text-muted-foreground min-w-0 font-mono text-sm break-words">
                   {domain}
                 </p>
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance">
-                  Scanning the site
+
+                <h1 className="mt-5 max-w-2xl text-2xl font-semibold tracking-tight text-balance sm:mt-4">
+                  Reading the tags across the site
                 </h1>
+
+                <PendingScore caption="Final score appears when every page has been checked." />
+
+                <div className="mt-8 max-w-lg">
+                  <button
+                    className={SECONDARY_BUTTON}
+                    onClick={cancelScan}
+                    type="button"
+                  >
+                    Cancel scan
+                  </button>
+                </div>
               </div>
-              <div className="w-full max-w-xl">
-                <ScanProgress
-                  completedUrls={completedUrls}
-                  currentScore={currentScore}
-                  currentUrl={currentUrl}
-                  phase={phase}
-                  totalUrls={totalUrls}
-                />
-              </div>
-              <button
-                className={SECONDARY_BUTTON}
-                onClick={cancelScan}
-                type="button"
-              >
-                Cancel scan
-              </button>
+
+              <ScanProgress
+                completedUrls={completedUrls}
+                currentScore={currentScore}
+                currentUrl={currentUrl}
+                domain={domain}
+                phase={phase}
+                totalUrls={totalUrls}
+              />
             </Container>
           </m.div>
         )}
