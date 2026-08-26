@@ -2,6 +2,11 @@
 
 import { Fragment, useMemo } from "react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import type { PageTreeNode } from "@/lib/reports/page-tree";
 import { buildPageTree, labelUnder, pathOf } from "@/lib/reports/page-tree";
@@ -17,10 +22,14 @@ const HALF = ROW / 2;
 
 const CHIP_TONE: Record<Standing, string> = {
   clean:
-    "text-score-excellent border-score-excellent/40 bg-score-excellent/[0.06]",
-  partial: "text-score-fair border-score-fair/40 bg-score-fair/[0.06]",
-  weak: "text-score-poor border-score-poor/40 bg-score-poor/[0.06]",
+    "text-score-excellent border-score-excellent/40 bg-score-excellent/[0.06] hover:border-score-excellent/70 hover:bg-score-excellent/[0.13]",
+  partial:
+    "text-score-fair border-score-fair/40 bg-score-fair/[0.06] hover:border-score-fair/70 hover:bg-score-fair/[0.13]",
+  weak: "text-score-poor border-score-poor/40 bg-score-poor/[0.06] hover:border-score-poor/70 hover:bg-score-poor/[0.13]",
 };
+
+/** Long enough not to fire while the pointer crosses a row on its way past. */
+const HOVER_DELAY = 150;
 
 const LinkGlyph = () => (
   <svg
@@ -62,20 +71,40 @@ const Chip = ({
   label: string;
   mixed: boolean;
   page: PageScoreResult;
-}) => (
-  <span
-    className={cn(
-      "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none",
-      CHIP_TONE[getStanding(page.score)]
-    )}
-    style={{ height: ROW }}
-    title={`${page.url ?? pathOf(page.url)} — ${page.foundOn ? `linked from ${page.foundOn}` : "listed in the sitemap"}`}
-  >
-    {mixed ? <Glyph page={page} /> : null}
-    <span className="max-w-[22rem] truncate">{label}</span>
-    <span className="text-muted-foreground tabular-nums">{page.score}</span>
-  </span>
-);
+}) => {
+  const origin = page.foundOn
+    ? `Linked from ${pathOf(page.foundOn)}`
+    : "Listed in the sitemap";
+
+  return (
+    <Tooltip>
+      {/* The popup is decoration: this version of Base UI gives it no role and
+          wires no `aria-describedby`, so the whole statement has to live on
+          the trigger or a screen reader hears the path and nothing else. */}
+      <TooltipTrigger
+        aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}`}
+        className={cn(
+          "inline-flex shrink-0 cursor-help items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none transition-colors",
+          "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
+          CHIP_TONE[getStanding(page.score)]
+        )}
+        delay={HOVER_DELAY}
+        render={<span />}
+        style={{ height: ROW }}
+        tabIndex={0}
+      >
+        {mixed ? <Glyph page={page} /> : null}
+        <span className="max-w-[22rem] truncate">{label}</span>
+        <span className="text-muted-foreground tabular-nums">{page.score}</span>
+      </TooltipTrigger>
+
+      <TooltipContent className="flex-col items-start gap-1">
+        <span className="font-mono">{pathOf(page.url)}</span>
+        <span className="opacity-75">{`${origin} · scores ${page.score} of ${page.maxScore}`}</span>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 /** The line that carries the eye from one chip to the next along a chain. */
 const Link = () => (
