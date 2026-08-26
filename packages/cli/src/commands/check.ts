@@ -2,7 +2,7 @@ import { setTimeout } from "node:timers/promises";
 
 import { intro, log, note, outro, spinner } from "@clack/prompts";
 import type { OgData } from "@og-tester/core";
-import { fetchOgTags, runScoreOgTags } from "@og-tester/core";
+import { fetchOgTags, runScorePage } from "@og-tester/core";
 import { Command } from "commander";
 import color from "picocolors";
 
@@ -187,7 +187,7 @@ export const checkCommand = new Command("check")
 
     try {
       const data = await fetchOgTags(parsedUrl);
-      const scoreResult = await runScoreOgTags(data);
+      const scoreResult = await runScorePage(data, parsedUrl);
 
       if (options.json) {
         const jsonOutput = {

@@ -19,6 +19,7 @@ export { sitemapSchema, sitemapUrlSchema } from "./schemas/sitemap";
 
 // Scoring
 export { scoreOgTags, runScoreOgTags } from "./scoring/engine";
+export { scorePage, runScorePage } from "./scoring/page";
 export type { PageScoreResult, CategoryScore } from "./scoring/engine";
 export { ogRules } from "./scoring/rules";
 export type { OgRule } from "./scoring/rules";
