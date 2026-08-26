@@ -3,6 +3,12 @@ import type { PageScoreResult } from "@/hooks/use-scanner-store";
 export interface PageTreeNode {
   page: PageScoreResult;
   children: PageTreeNode[];
+  /**
+   * Identity for rendering. A page is its URL; the scanner always sets one,
+   * but the type allows it to be missing and a render key falling back to an
+   * array position would re-use a row when the list reorders.
+   */
+  key: string;
 }
 
 export const pathOf = (url: string | undefined): string => {
@@ -47,6 +53,27 @@ const parentOf = (
   return undefined;
 };
 
+/**
+ * What a path adds to the one it hangs from. The connector already says who
+ * the parent is, so repeating its prefix on every child is noise — but a page
+ * reached by a link need not sit under its own path, and then the whole path
+ * is the only honest label.
+ */
+export const labelUnder = (
+  url: string | undefined,
+  parentUrl: string | undefined
+): string => {
+  const path = pathOf(url);
+  if (parentUrl === undefined) {
+    return path;
+  }
+  const parent = pathOf(parentUrl).replace(/\/$/u, "");
+  if (parent && path.startsWith(`${parent}/`)) {
+    return path.slice(parent.length);
+  }
+  return path;
+};
+
 export const buildPageTree = (pages: PageScoreResult[]): PageTreeNode[] => {
   const byUrl = new Map(pages.map((page) => [page.url ?? "", page]));
   const byPath = new Map<string, PageScoreResult>();
@@ -54,8 +81,15 @@ export const buildPageTree = (pages: PageScoreResult[]): PageTreeNode[] => {
     byPath.set(pathKey(page.url), page);
   }
 
+  let untitled = 0;
   const nodes = new Map<PageScoreResult, PageTreeNode>(
-    pages.map((page) => [page, { children: [], page }])
+    pages.map((page) => {
+      untitled += page.url ? 0 : 1;
+      return [
+        page,
+        { children: [], key: page.url ?? `untitled-${untitled}`, page },
+      ];
+    })
   );
   const roots: PageTreeNode[] = [];
 
