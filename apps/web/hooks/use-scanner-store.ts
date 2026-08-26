@@ -10,6 +10,8 @@ export interface Diagnostic {
 
 export interface PageScoreResult {
   url?: string;
+  /** The page whose HTML linked here; absent when a sitemap listed it. */
+  foundOn?: string;
   score: number;
   maxScore: number;
   passed: boolean;

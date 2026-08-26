@@ -16,6 +16,7 @@ import { DURATION, transition, TRAVEL } from "@/lib/motion";
 import type { OgData } from "@/lib/schemas/og";
 
 import { Findings } from "./findings";
+import { PageTree } from "./page-tree";
 import { PagesList } from "./pages-list";
 import { PendingScore, SUMMARY_GRID, SUMMARY_MAIN } from "./pending-score";
 import { Previews } from "./previews";
@@ -222,6 +223,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
       {phase === "complete" && (
         <>
           <Findings pages={scan.pages} />
+          <PageTree pages={scan.pages} />
           <PagesList pages={scan.pages} />
         </>
       )}
