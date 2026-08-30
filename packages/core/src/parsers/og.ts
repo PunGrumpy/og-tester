@@ -8,47 +8,47 @@ const CHARSET_HTTP_EQUIV_REGEX =
   /<meta[^>]*http-equiv=["']?content-type["']?[^>]*content=["']?[^"'>]*charset=["']?(?<g1>[^"'\s>;]+)/iu;
 
 const META_DESC_NAME_FIRST_REGEX =
-  /<meta[^>]*name=["']description["'][^>]*content=["'](?<g1>[^"']+)["'][^>]*>/iu;
+  /<meta[^>]*name=["']description["'][^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*>/iu;
 
 const META_DESC_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*name=["']description["'][^>]*>/iu;
+  /<meta[^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*name=["']description["'][^>]*>/iu;
 
 const OG_META_PROP_FIRST_REGEX =
-  /<meta[^>]*property=["'](?<g1>og:[^"']+)["'][^>]*content=["'](?<g2>[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*property=(?<q1>["'])(?<g1>og:[^"']+)\k<q1>[^>]*content=(?<q2>["'])(?<g2>.*?)\k<q2>[^>]*>/giu;
 
 const OG_META_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*property=["'](?<g2>og:[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*property=(?<q2>["'])(?<g2>og:[^"']+)\k<q2>[^>]*>/giu;
 
 const TWITTER_META_PROP_FIRST_REGEX =
-  /<meta[^>]*(?:name|property)=["'](?<g1>twitter:[^"']+)["'][^>]*content=["'](?<g2>[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*(?:name|property)=(?<q1>["'])(?<g1>twitter:[^"']+)\k<q1>[^>]*content=(?<q2>["'])(?<g2>.*?)\k<q2>[^>]*>/giu;
 
 const TWITTER_META_CONTENT_FIRST_REGEX =
-  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*(?:name|property)=["'](?<g2>twitter:[^"']+)["'][^>]*>/giu;
+  /<meta[^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*(?:name|property)=(?<q2>["'])(?<g2>twitter:[^"']+)\k<q2>[^>]*>/giu;
 
 const THEME_COLOR_REGEX =
-  /<meta[^>]*name=["']theme-color["'][^>]*content=["'](?<g1>[^"']+)["'][^>]*(?:media=["'](?<g2>[^"']+)["'])?[^>]*>/giu;
+  /<meta[^>]*name=["']theme-color["'][^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*(?:media=(?<q2>["'])(?<g2>.*?)\k<q2>)?[^>]*>/giu;
 
 const THEME_COLOR_REGEX_ALT =
-  /<meta[^>]*content=["'](?<g1>[^"']+)["'][^>]*name=["']theme-color["'][^>]*(?:media=["'](?<g2>[^"']+)["'])?[^>]*>/giu;
+  /<meta[^>]*content=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*name=["']theme-color["'][^>]*(?:media=(?<q2>["'])(?<g2>.*?)\k<q2>)?[^>]*>/giu;
 
 const THEME_MEDIA_REGEX = /\b(?<g1>dark|light)\b/u;
 
 const CANONICAL_LINK_REGEX =
-  /<link[^>]*rel=["']canonical["'][^>]*href=["'](?<g1>[^"']+)["'][^>]*>/iu;
+  /<link[^>]*rel=["']canonical["'][^>]*href=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*>/iu;
 
 const HEAD_CONTENT_REGEX = /<head[^>]*>(?<g1>[\s\S]*?)<\/head>/iu;
 
 const ICON_LINK_REGEX =
-  /<link[^>]*rel=["'](?<g1>[^"']*icon[^"']*)["'][^>]*href=["'](?<g2>[^"']+)["'][^>]*>/giu;
+  /<link[^>]*rel=(?<q1>["'])(?<g1>.*?icon.*?)\k<q1>[^>]*href=(?<q2>["'])(?<g2>.*?)\k<q2>[^>]*>/giu;
 
 const ICON_LINK_REGEX_ALT =
-  /<link[^>]*href=["'](?<g1>[^"']+)["'][^>]*rel=["'](?<g2>[^"']*icon[^"']*)["'][^>]*>/giu;
+  /<link[^>]*href=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*rel=(?<q2>["'])(?<g2>.*?icon.*?)\k<q2>[^>]*>/giu;
 
 const SHORTCUT_ICON_REGEX =
-  /<link[^>]*rel=["']shortcut icon["'][^>]*href=["'](?<g1>[^"']+)["'][^>]*>/iu;
+  /<link[^>]*rel=["']shortcut icon["'][^>]*href=(?<q1>["'])(?<g1>.*?)\k<q1>[^>]*>/iu;
 
 const APPLE_TOUCH_ICON_REGEX =
-  /<link[^>]*rel=["'](?<g1>apple-touch-icon[^"']*)["'][^>]*href=["'](?<g2>[^"']+)["'][^>]*>/giu;
+  /<link[^>]*rel=(?<q1>["'])(?<g1>apple-touch-icon.*?)\k<q1>[^>]*href=(?<q2>["'])(?<g2>.*?)\k<q2>[^>]*>/giu;
 
 const ICON_TYPE_ATTR_REGEX = /type=["'](?<g1>[^"']+)["']/iu;
 const ICON_SIZES_ATTR_REGEX = /sizes=["'](?<g1>[^"']+)["']/iu;
@@ -71,22 +71,22 @@ const getMetaContent = (
 ): string | null => {
   const escapedName = name.replaceAll(/[.*+?^${}()|[\]\\]/gu, "\\$&");
   const regex1 = new RegExp(
-    `<meta[^>]*${attr}=["']${escapedName}["'][^>]*content=["']([^"']+)["'][^>]*>`,
+    `<meta[^>]*${attr}=["']${escapedName}["'][^>]*content=(?<q>["'])(?<content>.*?)\\k<q>[^>]*>`,
     "iu"
   );
   const regex2 = new RegExp(
-    `<meta[^>]*content=["']([^"']+)["'][^>]*${attr}=["']${escapedName}["'][^>]*>`,
+    `<meta[^>]*content=(?<q>["'])(?<content>.*?)\\k<q>[^>]*${attr}=["']${escapedName}["'][^>]*>`,
     "iu"
   );
 
   const match1 = html.match(regex1);
-  if (match1) {
-    return match1[1];
+  if (match1?.groups?.content !== undefined) {
+    return match1.groups.content;
   }
 
   const match2 = html.match(regex2);
-  if (match2) {
-    return match2[1];
+  if (match2?.groups?.content !== undefined) {
+    return match2.groups.content;
   }
 
   return null;
@@ -134,8 +134,8 @@ const applyDescription = (html: string, result: OgData): void => {
   const descMatch =
     html.match(META_DESC_NAME_FIRST_REGEX) ||
     html.match(META_DESC_CONTENT_FIRST_REGEX);
-  if (descMatch) {
-    result.description = decodeHtmlEntities(descMatch[1]);
+  if (descMatch?.groups?.g1 !== undefined) {
+    result.description = decodeHtmlEntities(descMatch.groups.g1);
   }
 };
 
@@ -166,7 +166,7 @@ const applyOpenGraph = (
   baseOrigin?: string
 ): void => {
   for (const match of html.matchAll(OG_META_PROP_FIRST_REGEX)) {
-    const [, property, content] = match;
+    const { g1: property, g2: content } = match.groups ?? {};
     if (property && content) {
       const value =
         property === "og:image"
@@ -176,7 +176,7 @@ const applyOpenGraph = (
     }
   }
   for (const match of html.matchAll(OG_META_CONTENT_FIRST_REGEX)) {
-    const [, content, property] = match;
+    const { g1: content, g2: property } = match.groups ?? {};
     if (property && content) {
       const value =
         property === "og:image"
@@ -193,7 +193,7 @@ const applyTwitterCard = (
   baseOrigin?: string
 ): void => {
   for (const match of html.matchAll(TWITTER_META_PROP_FIRST_REGEX)) {
-    const [, property, content] = match;
+    const { g1: property, g2: content } = match.groups ?? {};
     if (property && content) {
       const value =
         property === "twitter:image"
@@ -203,7 +203,7 @@ const applyTwitterCard = (
     }
   }
   for (const match of html.matchAll(TWITTER_META_CONTENT_FIRST_REGEX)) {
-    const [, content, property] = match;
+    const { g1: content, g2: property } = match.groups ?? {};
     if (property && content) {
       const value =
         property === "twitter:image"
@@ -222,7 +222,7 @@ const applyThemeColors = (html: string, result: OgData): void => {
 
   themeMatch = THEME_COLOR_REGEX.exec(html);
   while (themeMatch !== null) {
-    const [, color, media] = themeMatch;
+    const { g1: color, g2: media } = themeMatch.groups ?? {};
     const theme =
       typeof media === "string"
         ? media.match(THEME_MEDIA_REGEX)?.[1]
@@ -241,7 +241,7 @@ const applyThemeColors = (html: string, result: OgData): void => {
 
   themeMatch = THEME_COLOR_REGEX_ALT.exec(html);
   while (themeMatch !== null) {
-    const [, color, media] = themeMatch;
+    const { g1: color, g2: media } = themeMatch.groups ?? {};
     const theme =
       typeof media === "string"
         ? media.match(THEME_MEDIA_REGEX)?.[1]
@@ -266,8 +266,8 @@ const applyCanonical = (
 ): void => {
   const canonicalMatch = html.match(CANONICAL_LINK_REGEX);
 
-  if (canonicalMatch) {
-    result.canonical = resolveUrl(canonicalMatch[1], baseOrigin);
+  if (canonicalMatch?.groups?.g1 !== undefined) {
+    result.canonical = resolveUrl(canonicalMatch.groups.g1, baseOrigin);
   }
 };
 
@@ -293,18 +293,37 @@ const applyRawHead = (html: string, result: OgData): void => {
   }
 };
 
+interface FaviconData {
+  rel: string;
+  href: string;
+  type?: string;
+  sizes?: string;
+}
+
+const buildFavicon = (
+  rel: string | undefined,
+  rawHref: string | undefined,
+  baseOrigin: string | undefined,
+  type: string | undefined,
+  sizes: string | undefined
+): FaviconData | null => {
+  if (!rel || rawHref === undefined) {
+    return null;
+  }
+
+  return {
+    href: resolveUrl(rawHref, baseOrigin),
+    rel,
+    sizes,
+    type,
+  };
+};
+
 const applyIcons = (
   html: string,
   result: OgData,
   baseOrigin?: string
 ): void => {
-  interface FaviconData {
-    rel: string;
-    href: string;
-    type?: string;
-    sizes?: string;
-  }
-
   const favicons: FaviconData[] = [];
 
   let iconMatch: RegExpExecArray | null;
@@ -316,17 +335,19 @@ const applyIcons = (
   iconMatch = ICON_LINK_REGEX.exec(html);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (iconMatch !== null) {
-    const [fullMatch, rel, rawHref] = iconMatch;
-    const href = resolveUrl(rawHref, baseOrigin);
-    const typeMatch = fullMatch.match(ICON_TYPE_ATTR_REGEX);
-    const sizesMatch = fullMatch.match(ICON_SIZES_ATTR_REGEX);
-
-    favicons.push({
-      href,
+    const [fullMatch] = iconMatch;
+    const { g1: rel, g2: rawHref } = iconMatch.groups ?? {};
+    const favicon = buildFavicon(
       rel,
-      sizes: sizesMatch?.[1],
-      type: typeMatch?.[1],
-    });
+      rawHref,
+      baseOrigin,
+      fullMatch.match(ICON_TYPE_ATTR_REGEX)?.[1],
+      fullMatch.match(ICON_SIZES_ATTR_REGEX)?.[1]
+    );
+
+    if (favicon) {
+      favicons.push(favicon);
+    }
 
     iconMatch = ICON_LINK_REGEX.exec(html);
   }
@@ -334,26 +355,28 @@ const applyIcons = (
   iconMatch = ICON_LINK_REGEX_ALT.exec(html);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (iconMatch !== null) {
-    const [fullMatch, rawHref, rel] = iconMatch;
-    const href = resolveUrl(rawHref, baseOrigin);
-    const typeMatch = fullMatch.match(ICON_TYPE_ATTR_REGEX);
-    const sizesMatch = fullMatch.match(ICON_SIZES_ATTR_REGEX);
-
-    favicons.push({
-      href,
+    const [fullMatch] = iconMatch;
+    const { g1: rawHref, g2: rel } = iconMatch.groups ?? {};
+    const favicon = buildFavicon(
       rel,
-      sizes: sizesMatch?.[1],
-      type: typeMatch?.[1],
-    });
+      rawHref,
+      baseOrigin,
+      fullMatch.match(ICON_TYPE_ATTR_REGEX)?.[1],
+      fullMatch.match(ICON_SIZES_ATTR_REGEX)?.[1]
+    );
+
+    if (favicon) {
+      favicons.push(favicon);
+    }
 
     iconMatch = ICON_LINK_REGEX_ALT.exec(html);
   }
 
   const shortcutMatch = html.match(SHORTCUT_ICON_REGEX);
 
-  if (shortcutMatch) {
+  if (shortcutMatch?.groups?.g1 !== undefined) {
     favicons.unshift({
-      href: resolveUrl(shortcutMatch[1], baseOrigin),
+      href: resolveUrl(shortcutMatch.groups.g1, baseOrigin),
       rel: "shortcut icon",
     });
   }
@@ -361,12 +384,18 @@ const applyIcons = (
   iconMatch = APPLE_TOUCH_ICON_REGEX.exec(html);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (iconMatch !== null) {
-    const sizesMatch = iconMatch[0].match(ICON_SIZES_ATTR_REGEX);
-    favicons.push({
-      href: resolveUrl(iconMatch[2], baseOrigin),
-      rel: iconMatch[1],
-      sizes: sizesMatch?.[1],
-    });
+    const { g1: rel, g2: rawHref } = iconMatch.groups ?? {};
+    const favicon = buildFavicon(
+      rel,
+      rawHref,
+      baseOrigin,
+      undefined,
+      iconMatch[0].match(ICON_SIZES_ATTR_REGEX)?.[1]
+    );
+
+    if (favicon) {
+      favicons.push(favicon);
+    }
 
     iconMatch = APPLE_TOUCH_ICON_REGEX.exec(html);
   }
