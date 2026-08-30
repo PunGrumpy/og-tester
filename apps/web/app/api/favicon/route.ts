@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { readBytesCapped } from "@/lib/read-capped";
 import { normalizeDomain } from "@/lib/reports/domain";
 import { safeFetch } from "@/lib/safe-fetch";
 
@@ -55,8 +56,8 @@ export const GET = async (request: Request) => {
       return fallback();
     }
 
-    const body = await response.arrayBuffer();
-    if (body.byteLength === 0 || body.byteLength > MAX_BYTES) {
+    const body = await readBytesCapped(response, MAX_BYTES);
+    if (!body || body.byteLength === 0) {
       return fallback();
     }
 

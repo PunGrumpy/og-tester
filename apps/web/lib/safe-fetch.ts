@@ -2,6 +2,7 @@ import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
 const MAX_REDIRECTS = 5;
+const REQUEST_TIMEOUT_MS = 10_000;
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 const OCTET = 256;
 const IPV4_BITS = 32;
@@ -132,12 +133,14 @@ export const safeFetch = async (
   init?: RequestInit
 ): Promise<Response> => {
   let target = rawUrl;
+  // One shared budget across every redirect hop, not a fresh timeout per hop.
+  const signal = init?.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
     // oxlint-disable-next-line eslint/no-await-in-loop -- hops are sequential
     const url = await assertPublicUrl(target);
     // oxlint-disable-next-line eslint/no-await-in-loop -- hops are sequential
-    const response = await fetch(url, { ...init, redirect: "manual" });
+    const response = await fetch(url, { ...init, redirect: "manual", signal });
 
     if (!REDIRECT_STATUSES.has(response.status)) {
       return response;

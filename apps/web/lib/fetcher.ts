@@ -34,6 +34,8 @@ const baseURL = env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
   : "http://localhost:3000";
 
+const REQUEST_TIMEOUT_MS = 10_000;
+
 export const fetcher = createFetch({
   baseURL,
   retry: {
@@ -42,4 +44,5 @@ export const fetcher = createFetch({
     type: "linear",
   },
   schema,
+  timeout: REQUEST_TIMEOUT_MS,
 });

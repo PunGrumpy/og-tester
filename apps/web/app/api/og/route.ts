@@ -5,7 +5,10 @@ import { NextResponse } from "next/server";
 
 import { env } from "@/lib/env";
 import { parseError } from "@/lib/error";
+import { readTextCapped } from "@/lib/read-capped";
 import { BlockedUrlError, safeFetch } from "@/lib/safe-fetch";
+
+const HTML_MAX_BYTES = 2 * 1024 * 1024;
 
 export const GET = withUnkey(
   async (request: NextRequestWithUnkeyContext) => {
@@ -36,7 +39,13 @@ export const GET = withUnkey(
       return NextResponse.json({ error: message }, { status: response.status });
     }
 
-    const html = await response.text();
+    const html = await readTextCapped(response, HTML_MAX_BYTES);
+    if (html === null) {
+      return NextResponse.json(
+        { error: "Response body is too large" },
+        { status: 413 }
+      );
+    }
     const ogData = parseOgTags(html, url);
 
     return NextResponse.json(ogData);
