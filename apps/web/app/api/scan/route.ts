@@ -5,6 +5,7 @@ import { after } from "next/server";
 
 import { normalizeDomain } from "@/lib/reports/domain";
 import { REPORTS_TAG, reportTag, saveReport } from "@/lib/reports/store";
+import { safeFetch } from "@/lib/safe-fetch";
 
 const activeScans = new Set<string>();
 const cooldowns = new Map<string, number>();
@@ -56,11 +57,12 @@ export const POST = async (req: NextRequest) => {
           const [report, og] = await Promise.all([
             runScanSite({
               concurrency: 5,
+              fetch: safeFetch,
               maxUrls: 50,
               onProgress: sendEvent,
               siteUrl: parsedUrl,
             }),
-            fetchOgTags(parsedUrl).catch(() => ({})),
+            fetchOgTags(parsedUrl, { fetch: safeFetch }).catch(() => ({})),
           ]);
 
           if (domain) {

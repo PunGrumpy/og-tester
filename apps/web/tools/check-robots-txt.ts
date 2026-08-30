@@ -1,6 +1,8 @@
 import { fetchRobotsTxt } from "@og-tester/core";
 import { z } from "zod";
 
+import { safeFetch } from "@/lib/safe-fetch";
+
 export const schema = {
   url: z.url().describe("The URL of the site to fetch robots.txt from"),
 };
@@ -13,7 +15,7 @@ const handler = async (args: {
     text: string;
   }[];
 }> => {
-  const data = await fetchRobotsTxt(args.url);
+  const data = await fetchRobotsTxt(args.url, { fetch: safeFetch });
 
   return {
     content: [

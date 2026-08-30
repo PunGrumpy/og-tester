@@ -1,6 +1,8 @@
 import { fetchOgTags } from "@og-tester/core";
 import { z } from "zod";
 
+import { safeFetch } from "@/lib/safe-fetch";
+
 export const schema = {
   url: z.url().describe("The URL to fetch and analyze OG/meta tags for"),
 };
@@ -13,7 +15,7 @@ const handler = async (args: {
     text: string;
   }[];
 }> => {
-  const data = await fetchOgTags(args.url);
+  const data = await fetchOgTags(args.url, { fetch: safeFetch });
 
   return {
     content: [
