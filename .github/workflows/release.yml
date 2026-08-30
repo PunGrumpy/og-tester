@@ -46,6 +46,13 @@ jobs:
         run: bun install
       - name: Build CLI
         run: bun run build --filter=og-tester
+      - name: Smoke-check CLI artifact
+        run: |
+          node packages/cli/dist/index.mjs --version
+          if grep -q "@og-tester/core" packages/cli/dist/index.mjs; then
+            echo "dist still references @og-tester/core — bundling failed" >&2
+            exit 1
+          fi
       - name: Create Release PR or Publish to NPM
         id: changesets
         uses: changesets/action@v1
