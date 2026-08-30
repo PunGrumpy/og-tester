@@ -16,6 +16,7 @@
     }
   },
   "scripts": {
+    "test": "bun test",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
