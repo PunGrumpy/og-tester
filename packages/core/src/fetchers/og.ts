@@ -1,6 +1,7 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchOptions } from "../fetch-like";
+import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
 import { parseOgTags } from "../parsers/og";
 import type { OgData } from "../schemas/og";
 
@@ -11,7 +12,7 @@ export const fetchOgTagsEffect = (
   options?: FetchOptions
 ): Effect.Effect<OgData, Error> =>
   Effect.gen(function* runFetchOg() {
-    const doFetch = options?.fetch ?? fetch;
+    const doFetch = withTimeout(options?.fetch ?? fetch);
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(
@@ -33,8 +34,14 @@ export const fetchOgTagsEffect = (
         new Error(
           `Failed to read response body: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => response.text(),
+      try: () => readTextCapped(response, HTML_MAX_BYTES),
     });
+
+    if (html === null) {
+      return yield* Effect.fail(
+        new Error(`Failed to fetch ${url}: response body is too large`)
+      );
+    }
 
     return parseOgTags(html, url);
   });

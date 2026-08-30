@@ -1,6 +1,7 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchOptions } from "../fetch-like";
+import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
 import {
   parseSitemap,
   isSitemapIndex,
@@ -13,7 +14,7 @@ const fetchSitemapUrlsRecursive = (
   options?: FetchOptions
 ): Effect.Effect<SitemapUrl[], Error> =>
   Effect.gen(function* fetchSitemapUrlsRecursiveGen() {
-    const doFetch = options?.fetch ?? fetch;
+    const doFetch = withTimeout(options?.fetch ?? fetch);
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(
@@ -33,8 +34,16 @@ const fetchSitemapUrlsRecursive = (
         new Error(
           `Failed to read sitemap body at ${url}: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => response.text(),
+      try: () => readTextCapped(response, HTML_MAX_BYTES),
     });
+
+    if (content === null) {
+      return yield* Effect.fail(
+        new Error(
+          `Failed to read sitemap body at ${url}: response is too large`
+        )
+      );
+    }
 
     if (isSitemapIndex(content)) {
       const childSitemaps = parseSitemapIndex(content);
@@ -54,7 +63,7 @@ export const fetchSitemapEffect = (
   options?: FetchOptions
 ): Effect.Effect<{ content: string; urls: SitemapUrl[] }, Error> =>
   Effect.gen(function* runFetchSitemap() {
-    const doFetch = options?.fetch ?? fetch;
+    const doFetch = withTimeout(options?.fetch ?? fetch);
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
         new Error(`Invalid URL: ${e instanceof Error ? e.message : String(e)}`),
@@ -83,8 +92,14 @@ export const fetchSitemapEffect = (
         new Error(
           `Failed to read sitemap.xml body: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => response.text(),
+      try: () => readTextCapped(response, HTML_MAX_BYTES),
     });
+
+    if (content === null) {
+      return yield* Effect.fail(
+        new Error("Failed to read sitemap.xml body: response is too large")
+      );
+    }
 
     if (isSitemapIndex(content)) {
       const childSitemaps = parseSitemapIndex(content);

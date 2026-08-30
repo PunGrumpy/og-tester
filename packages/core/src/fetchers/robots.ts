@@ -1,6 +1,7 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchOptions } from "../fetch-like";
+import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
 import type { RobotsData } from "../schemas/robots";
 
 export const fetchRobotsTxtEffect = (
@@ -8,7 +9,7 @@ export const fetchRobotsTxtEffect = (
   options?: FetchOptions
 ): Effect.Effect<{ content: string }, Error> =>
   Effect.gen(function* runFetchRobots() {
-    const doFetch = options?.fetch ?? fetch;
+    const doFetch = withTimeout(options?.fetch ?? fetch);
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
         new Error(`Invalid URL: ${e instanceof Error ? e.message : String(e)}`),
@@ -35,8 +36,14 @@ export const fetchRobotsTxtEffect = (
         new Error(
           `Failed to read robots.txt body: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => response.text(),
+      try: () => readTextCapped(response, HTML_MAX_BYTES),
     });
+
+    if (content === null) {
+      return yield* Effect.fail(
+        new Error("Failed to read robots.txt body: response is too large")
+      );
+    }
 
     return { content };
   });
