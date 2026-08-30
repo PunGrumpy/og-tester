@@ -1,6 +1,8 @@
 import { fetchSitemap } from "@og-tester/core";
 import { z } from "zod";
 
+import { safeFetch } from "@/lib/safe-fetch";
+
 export const schema = {
   url: z
     .url()
@@ -15,7 +17,7 @@ const handler = async (args: {
     text: string;
   }[];
 }> => {
-  const data = await fetchSitemap(args.url);
+  const data = await fetchSitemap(args.url, { fetch: safeFetch });
 
   return {
     content: [

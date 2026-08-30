@@ -1,5 +1,6 @@
 import * as Effect from "effect/Effect";
 
+import type { FetchOptions } from "../fetch-like";
 import {
   parseSitemap,
   isSitemapIndex,
@@ -8,15 +9,17 @@ import {
 import type { SitemapData, SitemapUrl } from "../schemas/sitemap";
 
 const fetchSitemapUrlsRecursive = (
-  url: string
+  url: string,
+  options?: FetchOptions
 ): Effect.Effect<SitemapUrl[], Error> =>
   Effect.gen(function* fetchSitemapUrlsRecursiveGen() {
+    const doFetch = options?.fetch ?? fetch;
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(
           `Failed to fetch sitemap at ${url}: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => fetch(url),
+      try: () => doFetch(url),
     });
 
     if (!response.ok) {
@@ -36,7 +39,9 @@ const fetchSitemapUrlsRecursive = (
     if (isSitemapIndex(content)) {
       const childSitemaps = parseSitemapIndex(content);
       const childResults = yield* Effect.all(
-        childSitemaps.map((childUrl) => fetchSitemapUrlsRecursive(childUrl)),
+        childSitemaps.map((childUrl) =>
+          fetchSitemapUrlsRecursive(childUrl, options)
+        ),
         { concurrency: 5 }
       );
       return childResults.flat();
@@ -45,9 +50,11 @@ const fetchSitemapUrlsRecursive = (
   });
 
 export const fetchSitemapEffect = (
-  url: string
+  url: string,
+  options?: FetchOptions
 ): Effect.Effect<{ content: string; urls: SitemapUrl[] }, Error> =>
   Effect.gen(function* runFetchSitemap() {
+    const doFetch = options?.fetch ?? fetch;
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
         new Error(`Invalid URL: ${e instanceof Error ? e.message : String(e)}`),
@@ -62,7 +69,7 @@ export const fetchSitemapEffect = (
         new Error(
           `Failed to fetch sitemap.xml: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => fetch(sitemapUrl),
+      try: () => doFetch(sitemapUrl),
     });
 
     if (!response.ok) {
@@ -82,7 +89,9 @@ export const fetchSitemapEffect = (
     if (isSitemapIndex(content)) {
       const childSitemaps = parseSitemapIndex(content);
       const childResults = yield* Effect.all(
-        childSitemaps.map((childUrl) => fetchSitemapUrlsRecursive(childUrl)),
+        childSitemaps.map((childUrl) =>
+          fetchSitemapUrlsRecursive(childUrl, options)
+        ),
         { concurrency: 5 }
       );
       return { content, urls: childResults.flat() };
@@ -91,9 +100,12 @@ export const fetchSitemapEffect = (
     return { content, urls };
   });
 
-export const fetchSitemap = async (url: string): Promise<SitemapData> => {
+export const fetchSitemap = async (
+  url: string,
+  options?: FetchOptions
+): Promise<SitemapData> => {
   try {
-    return await Effect.runPromise(fetchSitemapEffect(url));
+    return await Effect.runPromise(fetchSitemapEffect(url, options));
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     return { error: msg };

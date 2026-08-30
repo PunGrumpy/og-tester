@@ -1,5 +1,6 @@
 import * as Effect from "effect/Effect";
 
+import type { FetchLike } from "../fetch-like";
 import { fetchSitemapEffect } from "../fetchers/sitemap";
 import type { DiscoveredUrl } from "./crawler";
 import { crawlSite, isHtmlPageUrl, isSameSite } from "./crawler";
@@ -7,6 +8,7 @@ import { crawlSite, isHtmlPageUrl, isSameSite } from "./crawler";
 export interface DiscoveryOptions {
   maxUrls: number;
   concurrency?: number;
+  fetch?: FetchLike;
 }
 
 export const discoverUrls = (
@@ -14,9 +16,9 @@ export const discoverUrls = (
   options: DiscoveryOptions
 ): Effect.Effect<DiscoveredUrl[], Error> =>
   Effect.gen(function* discoverUrlsGen() {
-    const sitemapResult = yield* fetchSitemapEffect(siteUrl).pipe(
-      Effect.result
-    );
+    const sitemapResult = yield* fetchSitemapEffect(siteUrl, {
+      fetch: options.fetch,
+    }).pipe(Effect.result);
     let sitemapUrls: string[] = [];
 
     if (sitemapResult._tag === "Success") {
@@ -54,6 +56,7 @@ export const discoverUrls = (
 
     return yield* crawlSite(siteUrl, {
       concurrency: options.concurrency,
+      fetch: options.fetch,
       maxUrls: options.maxUrls,
     });
   }).pipe(

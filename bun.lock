@@ -24,6 +24,7 @@
         "@hookform/resolvers": "^5.9.1",
         "@og-tester/core": "workspace:*",
         "@t3-oss/env-nextjs": "^0.13.11",
+        "@unkey/api": "^2.5.1",
         "@unkey/nextjs": "^2.0.0",
         "@upstash/redis": "^1.38.2",
         "class-variance-authority": "^0.7.1",

@@ -1,18 +1,23 @@
 import * as Effect from "effect/Effect";
 
+import type { FetchOptions } from "../fetch-like";
 import { parseOgTags } from "../parsers/og";
 import type { OgData } from "../schemas/og";
 
 const USER_AGENT = "OGTester/1.0 (+https://github.com/PunGrumpy/og-tester)";
 
-export const fetchOgTagsEffect = (url: string): Effect.Effect<OgData, Error> =>
+export const fetchOgTagsEffect = (
+  url: string,
+  options?: FetchOptions
+): Effect.Effect<OgData, Error> =>
   Effect.gen(function* runFetchOg() {
+    const doFetch = options?.fetch ?? fetch;
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(
           `Failed to fetch ${url}: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => fetch(url, { headers: { "User-Agent": USER_AGENT } }),
+      try: () => doFetch(url, { headers: { "User-Agent": USER_AGENT } }),
     });
 
     if (!response.ok) {
@@ -34,5 +39,7 @@ export const fetchOgTagsEffect = (url: string): Effect.Effect<OgData, Error> =>
     return parseOgTags(html, url);
   });
 
-export const fetchOgTags = (url: string): Promise<OgData> =>
-  Effect.runPromise(fetchOgTagsEffect(url));
+export const fetchOgTags = (
+  url: string,
+  options?: FetchOptions
+): Promise<OgData> => Effect.runPromise(fetchOgTagsEffect(url, options));

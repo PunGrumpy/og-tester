@@ -1,11 +1,14 @@
 import * as Effect from "effect/Effect";
 
+import type { FetchOptions } from "../fetch-like";
 import type { RobotsData } from "../schemas/robots";
 
 export const fetchRobotsTxtEffect = (
-  url: string
+  url: string,
+  options?: FetchOptions
 ): Effect.Effect<{ content: string }, Error> =>
   Effect.gen(function* runFetchRobots() {
+    const doFetch = options?.fetch ?? fetch;
     const parsedUrl = yield* Effect.try({
       catch: (e) =>
         new Error(`Invalid URL: ${e instanceof Error ? e.message : String(e)}`),
@@ -18,7 +21,7 @@ export const fetchRobotsTxtEffect = (
         new Error(
           `Failed to fetch robots.txt: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => fetch(robotsUrl),
+      try: () => doFetch(robotsUrl),
     });
 
     if (!response.ok) {
@@ -38,9 +41,12 @@ export const fetchRobotsTxtEffect = (
     return { content };
   });
 
-export const fetchRobotsTxt = async (url: string): Promise<RobotsData> => {
+export const fetchRobotsTxt = async (
+  url: string,
+  options?: FetchOptions
+): Promise<RobotsData> => {
   try {
-    return await Effect.runPromise(fetchRobotsTxtEffect(url));
+    return await Effect.runPromise(fetchRobotsTxtEffect(url, options));
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     return { error: msg };
