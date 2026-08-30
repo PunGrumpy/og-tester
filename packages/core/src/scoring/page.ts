@@ -1,5 +1,6 @@
 import * as Effect from "effect/Effect";
 
+import type { FetchOptions } from "../fetch-like";
 import type { OgData } from "../schemas/og";
 import { scoreOgTags } from "./engine";
 import type { PageScoreResult } from "./engine";
@@ -13,13 +14,16 @@ import type { ImageMeta } from "./image";
  */
 export const scorePage = (
   data: OgData,
-  pageUrl?: string
+  pageUrl?: string,
+  options?: FetchOptions
 ): Effect.Effect<PageScoreResult> =>
   Effect.gen(function* scorePageGen() {
     let imageMeta: ImageMeta | null = null;
     const imageUrl = data["og:image"];
     if (imageUrl) {
-      const result = yield* checkImageMeta(imageUrl).pipe(Effect.result);
+      const result = yield* checkImageMeta(imageUrl, options).pipe(
+        Effect.result
+      );
       if (result._tag === "Success") {
         imageMeta = result.success;
       }
@@ -30,5 +34,7 @@ export const scorePage = (
 
 export const runScorePage = (
   data: OgData,
-  pageUrl?: string
-): Promise<PageScoreResult> => Effect.runPromise(scorePage(data, pageUrl));
+  pageUrl?: string,
+  options?: FetchOptions
+): Promise<PageScoreResult> =>
+  Effect.runPromise(scorePage(data, pageUrl, options));

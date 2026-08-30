@@ -1,6 +1,8 @@
 /* eslint-disable no-bitwise, complexity */
 import * as Effect from "effect/Effect";
 
+import type { FetchOptions } from "../fetch-like";
+
 export interface ImageMeta {
   width?: number;
   height?: number;
@@ -131,16 +133,18 @@ const parseResponseMeta = (res: Response): Effect.Effect<ImageMeta, Error> =>
   });
 
 export const checkImageMeta = (
-  imageUrl: string
+  imageUrl: string,
+  options?: FetchOptions
 ): Effect.Effect<ImageMeta, Error> =>
   Effect.gen(function* checkImageMetaGen() {
+    const doFetch = options?.fetch ?? fetch;
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(
           `Failed to fetch image: ${e instanceof Error ? e.message : String(e)}`
         ),
       try: () =>
-        fetch(imageUrl, {
+        doFetch(imageUrl, {
           // Fetch first 128KB
           headers: {
             Range: "bytes=0-131072",
@@ -154,7 +158,7 @@ export const checkImageMeta = (
           new Error(
             `Failed fallback fetch image: ${e instanceof Error ? e.message : String(e)}`
           ),
-        try: () => fetch(imageUrl),
+        try: () => doFetch(imageUrl),
       });
       if (!fallbackResponse.ok) {
         return yield* Effect.fail(

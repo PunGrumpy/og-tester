@@ -1,3 +1,6 @@
+// Fetch injection seam
+export type { FetchLike, FetchOptions } from "./fetch-like";
+
 // Parsers
 
 // Fetchers (fetch + parse combined)

@@ -2,6 +2,7 @@ import * as Effect from "effect/Effect";
 
 import type { DiscoveredUrl } from "../crawler/crawler";
 import { discoverUrls } from "../crawler/discovery";
+import type { FetchLike } from "../fetch-like";
 import { fetchOgTagsEffect } from "../fetchers/og";
 import type { OgData } from "../schemas/og";
 import type { CategoryId } from "../scoring/categories";
@@ -14,6 +15,7 @@ export interface ScanOptions {
   concurrency: number;
   onProgress?: (event: ScanProgressEvent) => void;
   signal?: AbortSignal;
+  fetch?: FetchLike;
 }
 
 export interface ScannedPage extends PageScoreResult {
@@ -66,6 +68,7 @@ export const scanSite = (
 
     const urls = yield* discoverUrls(options.siteUrl, {
       concurrency: options.concurrency,
+      fetch: options.fetch,
       maxUrls: options.maxUrls,
     });
 
@@ -98,13 +101,17 @@ export const scanSite = (
           return yield* Effect.fail(new Error("Scan aborted"));
         }
 
-        const dataResult = yield* fetchOgTagsEffect(url).pipe(Effect.result);
+        const dataResult = yield* fetchOgTagsEffect(url, {
+          fetch: options.fetch,
+        }).pipe(Effect.result);
         let data: OgData = {};
         if (dataResult._tag === "Success") {
           data = dataResult.success;
         }
 
-        const scoreResult = yield* scorePage(data, url);
+        const scoreResult = yield* scorePage(data, url, {
+          fetch: options.fetch,
+        });
 
         const page: ScannedPage = { ...scoreResult, foundOn };
 

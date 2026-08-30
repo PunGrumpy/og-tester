@@ -1,6 +1,7 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 import * as Effect from "effect/Effect";
 
+import type { FetchLike } from "../fetch-like";
 import { fetchRobotsTxtEffect } from "../fetchers/robots";
 import { parseRobotsTxt, isUrlDisallowed } from "../parsers/robots";
 import type { RobotsRules } from "../parsers/robots";
@@ -71,6 +72,7 @@ export const isSameSite = (url1: URL, url2: URL): boolean => {
 export interface CrawlerOptions {
   maxUrls: number;
   concurrency?: number;
+  fetch?: FetchLike;
 }
 
 export interface DiscoveredUrl {
@@ -96,11 +98,12 @@ export const crawlSite = (
     });
 
     const { origin } = originUrl;
+    const doFetch = options.fetch ?? fetch;
 
     // 1. Fetch robots.txt and parse rules
-    const robotsResult = yield* fetchRobotsTxtEffect(startUrl).pipe(
-      Effect.result
-    );
+    const robotsResult = yield* fetchRobotsTxtEffect(startUrl, {
+      fetch: doFetch,
+    }).pipe(Effect.result);
     let robotsRules: RobotsRules = { disallowedPatterns: [] };
     if (robotsResult._tag === "Success") {
       robotsRules = parseRobotsTxt(robotsResult.success.content);
@@ -157,7 +160,7 @@ export const crawlSite = (
 
           return Effect.tryPromise({
             catch: () => new Error("Failed fetch"),
-            try: () => fetch(url),
+            try: () => doFetch(url),
           }).pipe(
             Effect.flatMap((response) => {
               if (!response.ok) {
