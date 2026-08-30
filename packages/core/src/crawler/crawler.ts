@@ -3,6 +3,7 @@ import * as Effect from "effect/Effect";
 
 import type { FetchLike } from "../fetch-like";
 import { fetchRobotsTxtEffect } from "../fetchers/robots";
+import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
 import { parseRobotsTxt, isUrlDisallowed } from "../parsers/robots";
 import type { RobotsRules } from "../parsers/robots";
 
@@ -98,7 +99,7 @@ export const crawlSite = (
     });
 
     const { origin } = originUrl;
-    const doFetch = options.fetch ?? fetch;
+    const doFetch = withTimeout(options.fetch ?? fetch);
 
     // 1. Fetch robots.txt and parse rules
     const robotsResult = yield* fetchRobotsTxtEffect(startUrl, {
@@ -168,8 +169,14 @@ export const crawlSite = (
               }
               return Effect.tryPromise({
                 catch: () => new Error("Failed read text"),
-                try: () => response.text(),
-              }).pipe(Effect.map((html) => ({ html, skipped: false, url })));
+                try: () => readTextCapped(response, HTML_MAX_BYTES),
+              }).pipe(
+                Effect.map((html) => ({
+                  html: html ?? "",
+                  skipped: html === null,
+                  url,
+                }))
+              );
             }),
             Effect.catch(() => Effect.succeed({ html: "", skipped: true, url }))
           );

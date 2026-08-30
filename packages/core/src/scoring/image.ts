@@ -2,6 +2,7 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchOptions } from "../fetch-like";
+import { IMAGE_MAX_BYTES, readBytesCapped, withTimeout } from "../http";
 
 export interface ImageMeta {
   width?: number;
@@ -126,8 +127,15 @@ const parseResponseMeta = (res: Response): Effect.Effect<ImageMeta, Error> =>
         new Error(
           `Failed to read image body: ${e instanceof Error ? e.message : String(e)}`
         ),
-      try: () => res.arrayBuffer(),
+      try: () => readBytesCapped(res, IMAGE_MAX_BYTES),
     });
+
+    if (arrayBuffer === null) {
+      return yield* Effect.fail(
+        new Error("Failed to read image body: response is too large")
+      );
+    }
+
     const meta = parseImageMeta(new Uint8Array(arrayBuffer));
     return { ...meta, size, type: meta.type || contentType };
   });
@@ -137,7 +145,7 @@ export const checkImageMeta = (
   options?: FetchOptions
 ): Effect.Effect<ImageMeta, Error> =>
   Effect.gen(function* checkImageMetaGen() {
-    const doFetch = options?.fetch ?? fetch;
+    const doFetch = withTimeout(options?.fetch ?? fetch);
     const response = yield* Effect.tryPromise({
       catch: (e) =>
         new Error(

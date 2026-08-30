@@ -4,7 +4,10 @@ import type { NextRequestWithUnkeyContext } from "@unkey/nextjs";
 import { NextResponse } from "next/server";
 
 import { env } from "@/lib/env";
+import { readTextCapped } from "@/lib/read-capped";
 import { BlockedUrlError, safeFetch } from "@/lib/safe-fetch";
+
+const HTML_MAX_BYTES = 2 * 1024 * 1024;
 
 export const GET = withUnkey(
   async (request: NextRequestWithUnkeyContext) => {
@@ -37,7 +40,13 @@ export const GET = withUnkey(
       );
     }
 
-    const data = await response.text();
+    const data = await readTextCapped(response, HTML_MAX_BYTES);
+    if (data === null) {
+      return NextResponse.json(
+        { error: "sitemap.xml is too large" },
+        { status: 413 }
+      );
+    }
     const urls = parseSitemap(data);
 
     return NextResponse.json({ content: data, urls });
