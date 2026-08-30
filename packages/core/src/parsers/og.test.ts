@@ -79,4 +79,54 @@ describe("parseOgTags", () => {
       "twitter:title": "Don't miss this: apostrophe test for twitter card",
     });
   });
+
+  describe("HTML entity decoding", () => {
+    const ENTITY_CASES: [name: string, input: string, expected: string][] = [
+      ["decodes numeric decimal entities", "Don&#8217;t stop", "Don’t stop"],
+      ["decodes numeric hex entities", "A&#x2019;s test", "A’s test"],
+      ["decodes basic named entities", "Fish &amp; Chips", "Fish & Chips"],
+      ["decodes lt and gt", "1 &lt; 2 &gt; 0", "1 < 2 > 0"],
+      [
+        "does not double-decode escaped entities",
+        "code &amp;lt; here",
+        "code &lt; here",
+      ],
+      [
+        "decodes named entities beyond the old list (mdash)",
+        "wait &mdash; what",
+        "wait — what",
+      ],
+      [
+        "decodes named entities beyond the old list (hellip)",
+        "dots&hellip;",
+        "dots…",
+      ],
+      [
+        "passes unknown named entities through unchanged",
+        "&unknownthing; stays",
+        "&unknownthing; stays",
+      ],
+      [
+        "leaves out-of-range numeric entities unchanged",
+        "big &#1114112; nope",
+        "big &#1114112; nope",
+      ],
+    ];
+
+    for (const [name, input, expected] of ENTITY_CASES) {
+      test(name, () => {
+        const html = `<head><meta property="og:title" content="${input}" /></head>`;
+        const result = parseOgTags(html);
+
+        expect(result["og:title"]).toBe(expected);
+      });
+    }
+
+    test("decodes entities in the title tag", () => {
+      const html = "<head><title>Don&#8217;t stop &amp; go</title></head>";
+      const result = parseOgTags(html);
+
+      expect(result.title).toBe("Don’t stop & go");
+    });
+  });
 });

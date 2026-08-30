@@ -53,16 +53,44 @@ const APPLE_TOUCH_ICON_REGEX =
 const ICON_TYPE_ATTR_REGEX = /type=["'](?<g1>[^"']+)["']/iu;
 const ICON_SIZES_ATTR_REGEX = /sizes=["'](?<g1>[^"']+)["']/iu;
 
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  apos: "'",
+  copy: "©",
+  gt: ">",
+  hellip: "…",
+  ldquo: "“",
+  lsquo: "‘",
+  lt: "<",
+  mdash: "—",
+  nbsp: " ",
+  ndash: "–",
+  quot: '"',
+  rdquo: "”",
+  reg: "®",
+  rsquo: "’",
+  trade: "™",
+};
+
+const ENTITY_REGEX =
+  /&(?:#x(?<hex>[0-9a-f]{1,6})|#(?<dec>\d{1,7})|(?<named>[a-z]{2,31}));/giu;
+
+const MAX_CODE_POINT = 0x10_ff_ff;
+
 const decodeHtmlEntities = (text: string): string =>
-  text
-    .replaceAll("&amp;", "&")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'")
-    .replaceAll("&#x27;", "'")
-    .replaceAll("&#x2F;", "/")
-    .replaceAll("&nbsp;", " ");
+  text.replace(ENTITY_REGEX, (match, ...rest) => {
+    const groups = rest.at(-1) as Record<string, string | undefined>;
+    if (groups.hex !== undefined || groups.dec !== undefined) {
+      const codePoint =
+        groups.hex === undefined
+          ? Number(groups.dec as string)
+          : Number.parseInt(groups.hex, 16);
+      return codePoint > 0 && codePoint <= MAX_CODE_POINT
+        ? String.fromCodePoint(codePoint)
+        : match;
+    }
+    return NAMED_ENTITIES[(groups.named as string).toLowerCase()] ?? match;
+  });
 
 const getMetaContent = (
   html: string,
