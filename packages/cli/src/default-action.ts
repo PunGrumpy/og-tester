@@ -507,13 +507,15 @@ const resolveTargetUrl = (
   ) {
     return { isUrl: true, url: urlOrDir };
   }
-  if (
-    urlOrDir &&
-    /^[a-z0-9]+(?<labels>[-.]?[a-z0-9]+)*\.[a-z]{2,5}(?<port>:[0-9]{1,5})?(?<rest>\/.*)?$/iu.test(
-      urlOrDir
-    )
-  ) {
-    return { isUrl: true, url: `https://${urlOrDir}` };
+  if (urlOrDir) {
+    const parsed = URL.parse(`https://${urlOrDir}`);
+    if (
+      parsed &&
+      parsed.hostname.replaceAll(".", "") !== "" &&
+      parsed.hostname.includes(".")
+    ) {
+      return { isUrl: true, url: parsed.href };
+    }
   }
   if (config?.url) {
     return { isUrl: true, url: config.url };
