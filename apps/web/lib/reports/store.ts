@@ -37,6 +37,10 @@ const toRecentEntry = (entry: StoredReport): RecentEntry => ({
 const key = (domain: string) => `report:${domain}`;
 const RECENT_KEY = "reports:recent";
 
+// A report behind a shareable link can be regenerated with one click, so 30
+// days is plenty of retention without letting the store grow unbounded.
+const REPORT_TTL_SECONDS = 60 * 60 * 24 * 30;
+
 interface ReportPage {
   entries: RecentEntry[];
   total: number;
@@ -65,22 +69,43 @@ const createRedisStore = (redis: Redis): ReportStore => ({
     const entries = await redis.mget<(StoredReport | null)[]>(
       ...domains.map(key)
     );
+    const missing = domains.filter((_, i) => entries[i] === null);
+    if (missing.length > 0) {
+      await redis.zrem(RECENT_KEY, ...missing).catch((error) => {
+        console.error("Failed to prune stale report index members", error);
+      });
+    }
     return {
       entries: entries
         .filter((entry): entry is StoredReport => entry !== null)
         .map(toRecentEntry),
-      total,
+      total: Math.max(0, total - missing.length),
     };
   },
   async save(entry) {
     await Promise.all([
-      redis.set(key(entry.domain), entry),
+      redis.set(key(entry.domain), entry, { ex: REPORT_TTL_SECONDS }),
       redis.zadd(RECENT_KEY, {
         member: entry.domain,
         score: Date.parse(entry.scannedAt),
       }),
     ]);
-    await redis.zremrangebyrank(RECENT_KEY, 0, -(RECENT_LIMIT + 1));
+    // zremrangebyrank returns a count, not the removed members, so read the
+    // range beyond the newest RECENT_LIMIT first and delete their payloads
+    // alongside the trim. Read-then-delete is not atomic; a concurrent save
+    // can race it, but the loser only deletes an entry the winner also
+    // considered evictable, and the TTL above backstops anything missed.
+    const evicted = await redis.zrange<string[]>(
+      RECENT_KEY,
+      0,
+      -(RECENT_LIMIT + 1)
+    );
+    if (evicted.length > 0) {
+      await Promise.all([
+        redis.del(...evicted.map(key)),
+        redis.zremrangebyrank(RECENT_KEY, 0, -(RECENT_LIMIT + 1)),
+      ]);
+    }
   },
 });
 
