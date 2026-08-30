@@ -1,5 +1,6 @@
 import { Command } from "commander";
 
+import packageJson from "../package.json";
 import { checkCommand } from "./commands/check";
 import { robotsCommand } from "./commands/robots";
 import { scanCommand } from "./commands/scan";
@@ -11,7 +12,7 @@ const program = new Command();
 
 program
   .name("og-tester")
-  .version("0.1.0")
+  .version(packageJson.version)
   .description(
     "Test and analyze Open Graph, Twitter Card, and meta tags from the command line"
   )
