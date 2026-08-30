@@ -21,14 +21,17 @@ const FIXTURES_DIR = new URL("../../test/fixtures/", import.meta.url);
 const readFixture = (name: string): Promise<string> =>
   Bun.file(new URL(name, FIXTURES_DIR)).text();
 
-const categoryScores = (categories: { id: string; score: number; maxScore: number }[]) =>
-  categories.map(({ id, score, maxScore }) => ({ id, maxScore, score }));
+const categoryScores = (
+  categories: { id: string; score: number; maxScore: number }[]
+) => categories.map(({ id, score, maxScore }) => ({ id, maxScore, score }));
 
 describe("runScoreOgTags", () => {
   test("scores a complete head", async () => {
     const html = await readFixture("complete.html");
     const data = parseOgTags(html, "https://example.com/");
-    const result = await runScoreOgTags(data, { pageUrl: "https://example.com/" });
+    const result = await runScoreOgTags(data, {
+      pageUrl: "https://example.com/",
+    });
 
     expect(result.score).toBe(63);
     expect(result.maxScore).toBe(100);
@@ -44,7 +47,9 @@ describe("runScoreOgTags", () => {
   test("scores an empty head", async () => {
     const html = await readFixture("empty.html");
     const data = parseOgTags(html, "https://example.com/");
-    const result = await runScoreOgTags(data, { pageUrl: "https://example.com/" });
+    const result = await runScoreOgTags(data, {
+      pageUrl: "https://example.com/",
+    });
 
     expect(result.score).toBe(13);
     expect(result.maxScore).toBe(100);
@@ -60,7 +65,9 @@ describe("runScoreOgTags", () => {
   test("scores a partial head", async () => {
     const html = await readFixture("partial.html");
     const data = parseOgTags(html, "https://example.com/");
-    const result = await runScoreOgTags(data, { pageUrl: "https://example.com/" });
+    const result = await runScoreOgTags(data, {
+      pageUrl: "https://example.com/",
+    });
 
     expect(result.score).toBe(23);
     expect(result.maxScore).toBe(100);

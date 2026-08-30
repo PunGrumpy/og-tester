@@ -19,23 +19,22 @@ describe("parseOgTags", () => {
     const result = parseOgTags(html, "https://example.com/");
 
     expect(result).toEqual({
-      title: "Complete Fixture Page Title Example",
+      canonical: "https://example.com/complete",
+      charset: "utf-8",
       description:
         "A complete meta description used for characterization testing of the parser.",
-      viewport: "width=device-width, initial-scale=1.0",
-      "og:title": "Complete Fixture OG Title",
-      "og:description":
-        "Complete fixture og description for testing purposes.",
-      "og:url": "https://example.com/complete",
-      "og:type": "website",
+      lang: "en",
+      "og:description": "Complete fixture og description for testing purposes.",
       "og:site_name": "Example Site",
+      "og:title": "Complete Fixture OG Title",
+      "og:type": "website",
+      "og:url": "https://example.com/complete",
+      rawHead:
+        '<meta charset="utf-8" />\n    <title>Complete Fixture Page Title Example</title>\n    <meta\n      name="description"\n      content="A complete meta description used for characterization testing of the parser."\n    />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <link rel="canonical" href="https://example.com/complete" />\n    <meta property="og:title" content="Complete Fixture OG Title" />\n    <meta\n      property="og:description"\n      content="Complete fixture og description for testing purposes."\n    />\n    <meta property="og:url" content="https://example.com/complete" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="Example Site" />\n    <meta name="twitter:card" content="summary_large_image" />\n    <meta name="twitter:title" content="Complete Fixture Twitter Title" />',
+      title: "Complete Fixture Page Title Example",
       "twitter:card": "summary_large_image",
       "twitter:title": "Complete Fixture Twitter Title",
-      canonical: "https://example.com/complete",
-      lang: "en",
-      charset: "utf-8",
-      rawHead:
-        '<meta charset="utf-8" />\n  <title>Complete Fixture Page Title Example</title>\n  <meta name="description" content="A complete meta description used for characterization testing of the parser." />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <link rel="canonical" href="https://example.com/complete" />\n  <meta property="og:title" content="Complete Fixture OG Title" />\n  <meta property="og:description" content="Complete fixture og description for testing purposes." />\n  <meta property="og:url" content="https://example.com/complete" />\n  <meta property="og:type" content="website" />\n  <meta property="og:site_name" content="Example Site" />\n  <meta name="twitter:card" content="summary_large_image" />\n  <meta name="twitter:title" content="Complete Fixture Twitter Title" />',
+      viewport: "width=device-width, initial-scale=1.0",
     });
   });
 
@@ -51,10 +50,10 @@ describe("parseOgTags", () => {
     const result = parseOgTags(html, "https://example.com/");
 
     expect(result).toEqual({
-      title: "Partial Fixture Title",
       "og:title": "Partial Fixture OG Title",
       rawHead:
-        '<title>Partial Fixture Title</title>\n  <meta property="og:title" content="Partial Fixture OG Title" />',
+        '<title>Partial Fixture Title</title>\n    <meta property="og:title" content="Partial Fixture OG Title" />',
+      title: "Partial Fixture Title",
     });
   });
 });
