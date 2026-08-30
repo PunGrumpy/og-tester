@@ -3,12 +3,10 @@ import { revalidateTag } from "next/cache";
 import type { NextRequest } from "next/server";
 import { after } from "next/server";
 
+import { checkScanRateLimit, getClientIp } from "@/lib/rate-limit";
 import { normalizeDomain } from "@/lib/reports/domain";
 import { REPORTS_TAG, reportTag, saveReport } from "@/lib/reports/store";
 import { safeFetch } from "@/lib/safe-fetch";
-
-const activeScans = new Set<string>();
-const cooldowns = new Map<string, number>();
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -22,25 +20,23 @@ export const POST = async (req: NextRequest) => {
       parsedUrl = `https://${url}`;
     }
 
-    const ip = req.headers.get("x-forwarded-for") || "local";
-    const now = Date.now();
+    const clientIp = getClientIp(req.headers.get("x-forwarded-for"));
+    const rateLimit = await checkScanRateLimit(clientIp);
 
-    if (activeScans.has(ip)) {
-      return Response.json(
-        { error: "A scan is already in progress for your IP address." },
-        { status: 429 }
-      );
-    }
-
-    const lastTime = cooldowns.get(ip);
-    if (lastTime && now - lastTime < 5000) {
+    if (!rateLimit.ok) {
+      if (rateLimit.reason === "in-progress") {
+        return Response.json(
+          { error: "A scan is already in progress for your IP address." },
+          { status: 429 }
+        );
+      }
       return Response.json(
         { error: "Please wait 5 seconds before starting a new scan." },
         { status: 429 }
       );
     }
 
-    activeScans.add(ip);
+    const { release } = rateLimit;
 
     const domain = normalizeDomain(parsedUrl);
 
@@ -82,8 +78,7 @@ export const POST = async (req: NextRequest) => {
             type: "error",
           });
         } finally {
-          activeScans.delete(ip);
-          cooldowns.set(ip, Date.now());
+          await release();
           controller.close();
         }
       },
