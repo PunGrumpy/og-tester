@@ -56,4 +56,27 @@ describe("parseOgTags", () => {
       title: "Partial Fixture Title",
     });
   });
+
+  test("does not truncate values at an apostrophe or an embedded opposite quote", async () => {
+    const html = await readFixture("apostrophe.html");
+    const result = parseOgTags(html, "https://example.com/");
+
+    expect(result).toEqual({
+      canonical: "https://example.com/apostrophe",
+      charset: "utf-8",
+      description:
+        "It's a great description that also mentions someone's day at work.",
+      lang: "en",
+      "og:description":
+        'She said "hello world" during testing of this parser fixture.',
+      "og:title": "It's a great day for testing open graph tags",
+      "og:type": "website",
+      "og:url": "https://example.com/apostrophe",
+      rawHead:
+        '<meta charset="utf-8" />\n    <title>Don\'t Panic: A Test Fixture Title Example</title>\n    <meta\n      name="description"\n      content="It\'s a great description that also mentions someone\'s day at work."\n    />\n    <link rel="canonical" href="https://example.com/apostrophe" />\n    <meta\n      property="og:title"\n      content="It\'s a great day for testing open graph tags"\n    />\n    <meta\n      property="og:description"\n      content=\'She said "hello world" during testing of this parser fixture.\'\n    />\n    <meta property="og:url" content="https://example.com/apostrophe" />\n    <meta property="og:type" content="website" />\n    <meta name="twitter:card" content="summary_large_image" />\n    <meta\n      name="twitter:title"\n      content="Don\'t miss this: apostrophe test for twitter card"\n    />',
+      title: "Don't Panic: A Test Fixture Title Example",
+      "twitter:card": "summary_large_image",
+      "twitter:title": "Don't miss this: apostrophe test for twitter card",
+    });
+  });
 });
