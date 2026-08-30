@@ -35,6 +35,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "test": "bun test --pass-with-no-tests",
     "typecheck": "tsgo --noEmit",
     "prepublishOnly": "bun run build"
   },
