@@ -9,6 +9,15 @@ import color from "picocolors";
 import { parseCount, parseScore } from "../options";
 import { drawScoreBlock } from "./check";
 
+export const toDisplayPath = (raw: string | undefined): string => {
+  if (!raw) {
+    return "/";
+  }
+  // Absolute URLs (real site scans) -> pathname; bare paths (local scans) -> as-is.
+  const parsed = URL.parse(raw);
+  return parsed ? parsed.pathname : raw;
+};
+
 export const getScoreColor = (score: number) => {
   if (score >= 90) {
     return color.green;
@@ -75,7 +84,7 @@ export const displayTuiReport = (report: ScanReport) => {
     const worstPagesList = sortedPages
       .slice(0, worstPagesCount)
       .map((page) => {
-        const path = page.url ? new URL(page.url).pathname : "/";
+        const path = toDisplayPath(page.url);
         const colorFn = getScoreColor(page.score);
         return `  [${colorFn(page.score.toString().padStart(3))}/100] ${color.dim(path || "/")} — ${page.diagnostics.length} issues`;
       })
