@@ -14,6 +14,9 @@ const PER_PAGE = 25;
 
 const LIST_TITLE = "Scanned sites";
 
+const INLINE_LINK_CLASS =
+  "text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
+
 export const metadata: Metadata = createMetadata(
   "All scans | OG Tester",
   "Every site scanned with OG Tester, newest first, with its last known metadata score."
@@ -76,9 +79,17 @@ const Listing = async ({ searchParams }: ScansPageProps) => {
     <>
       <Heading>
         <p className="text-muted-foreground max-w-measure mt-2 text-pretty">
-          {total === 0
-            ? "Nothing has been scanned yet. Enter a URL on the home page to be the first."
-            : `${total} ${total === 1 ? "site" : "sites"}, newest first. Every row links to that site's full report.`}
+          {total === 0 ? (
+            <>
+              Nothing has been scanned yet.{" "}
+              <Link className={INLINE_LINK_CLASS} href="/">
+                Scan a site
+              </Link>{" "}
+              to be the first.
+            </>
+          ) : (
+            `${total} ${total === 1 ? "site" : "sites"}, newest first. Every row links to that site’s full report.`
+          )}
         </p>
       </Heading>
 
