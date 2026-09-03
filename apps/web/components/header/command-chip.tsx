@@ -102,13 +102,15 @@ export const CommandChip = () => {
       </span>
 
       {state === "failed" && (
-        <span className="text-muted-foreground shrink-0 text-xs">Press ⌘C</span>
+        <span className="text-muted-foreground shrink-0 text-xs">
+          Copy failed
+        </span>
       )}
 
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "Command copied" : ""}
         {state === "failed"
-          ? "Could not copy. Select the command and press ⌘C."
+          ? "Could not copy. Select the command and copy it."
           : ""}
       </span>
     </button>

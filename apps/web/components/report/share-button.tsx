@@ -24,7 +24,7 @@ const LinkGlyph = () => (
 
 const LABEL = {
   copied: "Copied",
-  failed: "Press ⌘C",
+  failed: "Copy failed",
   idle: "Share",
 } as const;
 
@@ -46,7 +46,7 @@ export const ShareButton = () => {
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "Link copied" : ""}
         {state === "failed"
-          ? "Could not copy. Select the address bar and press ⌘C."
+          ? "Could not copy. Copy the address from the address bar."
           : ""}
       </span>
     </button>
