@@ -78,7 +78,7 @@ const TagLink = ({ href }: { href: string }) => (
     target="_blank"
   >
     {href}
-    <ExternalLink aria-hidden="true" className="ml-1 inline size-3" />
+    <ExternalLink aria-hidden="true" className="ms-1 inline size-3" />
     <span className="sr-only">(opens in new tab)</span>
   </a>
 );

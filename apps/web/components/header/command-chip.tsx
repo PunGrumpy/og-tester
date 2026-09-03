@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const BASE = "npx og-tester";
 
 const CHIP_CLASS =
-  "group bg-card ml-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-left transition-colors sm:flex";
+  "group bg-card ms-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-start transition-colors sm:flex";
 
 const CopyGlyph = () => (
   <svg

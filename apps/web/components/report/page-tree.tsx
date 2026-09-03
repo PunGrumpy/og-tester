@@ -168,18 +168,18 @@ const Chain = ({
       {branches.length > 0 ? (
         <ul className="m-0 list-none p-0">
           {branches.map((child, index) => (
-            <li className="relative m-0 pl-7" key={child.key}>
+            <li className="relative m-0 ps-7" key={child.key}>
               {/* The spine stops at the last child rather than running past it. */}
               <span
                 aria-hidden="true"
-                className="bg-border absolute top-0 left-0 w-px"
+                className="bg-border absolute start-0 top-0 w-px"
                 style={{
                   height: index === branches.length - 1 ? HALF : "100%",
                 }}
               />
               <span
                 aria-hidden="true"
-                className="bg-border absolute left-0 h-px w-5"
+                className="bg-border absolute start-0 h-px w-5"
                 style={{ top: HALF }}
               />
               <Chain mixed={mixed} node={child} parentUrl={last.page.url} />

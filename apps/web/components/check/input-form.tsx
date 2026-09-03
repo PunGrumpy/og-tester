@@ -111,7 +111,7 @@ export const InputForm = () => {
             </div>
             {fieldState.invalid ? (
               <FieldError
-                className="mx-auto w-full max-w-155 text-left"
+                className="mx-auto w-full max-w-155 text-start"
                 errors={[fieldState.error]}
                 id={errorId}
               />

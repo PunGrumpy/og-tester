@@ -200,7 +200,7 @@ export const Previews = ({
                 {label}
                 {active === id && (
                   <m.span
-                    className="bg-foreground absolute right-0 -bottom-px left-0 h-px"
+                    className="bg-foreground absolute inset-x-0 -bottom-px h-px"
                     layoutId="active-preview-tab"
                     transition={transition(DURATION.fast)}
                   />
