@@ -59,7 +59,9 @@
 }
 
 :root {
-  --default-transition-duration: 240ms;
+  /* Hover and focus feedback on colour and opacity. Choreographed motion
+     keeps its own durations in lib/motion.ts. */
+  --default-transition-duration: 150ms;
   --default-transition-timing-function: var(--ease-out-custom);
 
   --background: oklch(0.99 0 0);
