@@ -78,20 +78,27 @@ const Chip = ({
 
   return (
     <Tooltip>
-      {/* The popup is decoration: this version of Base UI gives it no role and
-          wires no `aria-describedby`, so the whole statement has to live on
-          the trigger or a screen reader hears the path and nothing else. */}
+      {/* The chip is a link to the page, like the rows in the Pages list, so
+          it has a real role in the tab order. The popup is decoration: this
+          version of Base UI gives it no role and wires no `aria-describedby`,
+          so the whole statement has to live on the link or a screen reader
+          hears the path and nothing else. */}
       <TooltipTrigger
-        aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}`}
         className={cn(
-          "inline-flex shrink-0 cursor-help items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none transition-colors",
+          "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none transition-colors",
           "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
           CHIP_TONE[getStanding(page.score)]
         )}
         delay={HOVER_DELAY}
-        render={<span />}
+        render={
+          <a
+            aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}`}
+            href={page.url}
+            rel="noopener noreferrer"
+            target="_blank"
+          />
+        }
         style={{ height: ROW }}
-        tabIndex={0}
       >
         {mixed ? <Glyph page={page} /> : null}
         <span className="max-w-[22rem] truncate">{label}</span>
