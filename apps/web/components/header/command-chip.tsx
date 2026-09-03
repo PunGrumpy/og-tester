@@ -3,6 +3,7 @@
 import { Check, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { StateIcon } from "@/components/state-icon";
 import { useCopy } from "@/hooks/use-copy";
 import { useDraftStore } from "@/hooks/use-draft-store";
 import { normalizeDomain } from "@/lib/reports/domain";
@@ -92,14 +93,14 @@ export const CommandChip = () => {
     >
       <CommandText argument={argument} resolved={resolved} />
 
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground group-hover:text-foreground shrink-0 transition-colors"
+      <StateIcon
+        className="text-muted-foreground group-hover:text-foreground transition-colors"
+        state={state}
       >
         {state === "copied" && <Check className="size-4" strokeWidth={1.5} />}
         {state === "failed" && <X className="size-4" strokeWidth={1.5} />}
         {state === "idle" && <CopyGlyph />}
-      </span>
+      </StateIcon>
 
       {state === "failed" && (
         <span className="text-muted-foreground shrink-0 text-xs">

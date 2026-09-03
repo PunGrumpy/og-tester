@@ -2,6 +2,7 @@
 
 import { Check, X } from "lucide-react";
 
+import { StateIcon } from "@/components/state-icon";
 import { useCopy } from "@/hooks/use-copy";
 
 const LinkGlyph = () => (
@@ -38,11 +39,11 @@ export const ShareButton = () => {
       type="button"
     >
       {LABEL[state]}
-      <span aria-hidden="true" className="shrink-0">
+      <StateIcon className="size-3.5" state={state}>
         {state === "copied" && <Check className="size-3.5" strokeWidth={1.5} />}
         {state === "failed" && <X className="size-3.5" strokeWidth={1.5} />}
         {state === "idle" && <LinkGlyph />}
-      </span>
+      </StateIcon>
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "Link copied" : ""}
         {state === "failed"
