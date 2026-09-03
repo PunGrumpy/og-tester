@@ -8,6 +8,11 @@ import { normalizeDomain } from "@/lib/reports/domain";
 import { REPORTS_TAG, reportTag, saveReport } from "@/lib/reports/store";
 import { safeFetch } from "@/lib/safe-fetch";
 
+// A full scan fetches up to 50 pages plus their og:image bytes, which does not
+// fit in the 10s default a Hobby function gets. 60s is the ceiling that plan
+// allows without Fluid compute.
+export const maxDuration = 60;
+
 export const POST = async (req: NextRequest) => {
   try {
     const { url } = (await req.json()) as { url?: string };
