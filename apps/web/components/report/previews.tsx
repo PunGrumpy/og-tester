@@ -26,6 +26,7 @@ import { SlackPreview } from "../check/social-preview/slack-preview";
 import { WhatsappPreview } from "../check/social-preview/whatsapp-preview";
 import { XPreview } from "../check/social-preview/x-preview";
 import { ReportSection } from "./section";
+import { describeTagFailure } from "./tag-failure";
 
 const getPreviewData = (data: OgData, url: string) => ({
   description:
@@ -147,9 +148,7 @@ const PreviewBody = ({
           Could not read this page
         </p>
         <p className="text-muted-foreground max-w-md text-sm text-pretty">
-          {canRescan
-            ? `${errorMessage} Rescan above once the page responds.`
-            : `${errorMessage} The scan is still running; you can rescan once it finishes.`}
+          {describeTagFailure(errorMessage, canRescan)}
         </p>
       </div>
     );

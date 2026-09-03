@@ -186,7 +186,7 @@ const handleSseEvent = (
     set(
       stoppedState(
         refreshing,
-        event.error || "An error occurred during scanning",
+        event.error || "The scan stopped before it finished. Try again.",
         "error"
       )
     );
@@ -252,12 +252,14 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
 
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.error || "Failed to start scan");
+        throw new Error(err.error || "The scan could not start. Try again.");
       }
 
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error("Streaming not supported on this browser.");
+        throw new Error(
+          "This browser cannot stream scan results. Try a current version of Chrome, Firefox, or Safari."
+        );
       }
 
       const decoder = new TextDecoder();

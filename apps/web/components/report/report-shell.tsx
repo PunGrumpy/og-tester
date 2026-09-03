@@ -95,7 +95,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
       setOgError(
         error.serverError
           ? parseError(error.serverError)
-          : "Unable to read this page's tags."
+          : "Unable to read this page’s tags."
       ),
     onSuccess: ({ data }) => setResult(siteUrl, data ?? {}),
   });

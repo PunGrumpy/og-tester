@@ -8,6 +8,7 @@ import { toImageSrc } from "@/lib/image-src";
 import type { OgData } from "@/lib/schemas/og";
 
 import { ReportSection } from "./section";
+import { describeTagFailure } from "./tag-failure";
 
 interface Field {
   key: string;
@@ -136,13 +137,12 @@ export const TagSections = ({
   status,
 }: TagSectionsProps) => {
   if (status !== "ready") {
-    const failure = canRescan
-      ? `${errorMessage} Rescan above once the page responds.`
-      : `${errorMessage} The scan is still running; you can rescan once it finishes.`;
     return (
       <ReportSection
         description={
-          status === "loading" ? "Reading the page’s tags…" : failure
+          status === "loading"
+            ? "Reading the page’s tags…"
+            : describeTagFailure(errorMessage, canRescan)
         }
         id="tags-status"
         title="Tags"
