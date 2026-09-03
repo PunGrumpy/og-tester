@@ -56,6 +56,15 @@
   --container-measure: 32rem;
 
   --container-page: 75rem;
+
+  /* The two sizes the default scale lacks. `md` sits between sm and base
+     for the URL input, its button and dense list rows. `display` is the
+     page headline: 36px at 320px wide, 54px from about 770px. */
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.5;
+  --text-display: clamp(2.25rem, 1.45rem + 4vw, 3.375rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.04em;
 }
 
 :root {

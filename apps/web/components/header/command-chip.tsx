@@ -47,7 +47,7 @@ const CommandText = ({
   argument: string;
   resolved: string | null;
 }) => (
-  <code className="text-foreground truncate font-mono text-[13px]">
+  <code className="text-foreground truncate font-mono text-sm">
     <span aria-hidden="true" className="text-muted-foreground/60">
       ${" "}
     </span>

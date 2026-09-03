@@ -33,7 +33,7 @@ export const ShareButton = () => {
 
   return (
     <button
-      className="bg-background text-muted-foreground hover:border-foreground/25 hover:text-foreground focus-visible:ring-ring/50 active:bg-muted -my-2 inline-flex h-9 shrink-0 items-center gap-2 self-center rounded-full border px-3 text-[13px] transition-colors focus-visible:ring-[3px] focus-visible:outline-none active:scale-[0.96]"
+      className="bg-background text-muted-foreground hover:border-foreground/25 hover:text-foreground focus-visible:ring-ring/50 active:bg-muted -my-2 inline-flex h-9 shrink-0 items-center gap-2 self-center rounded-full border px-3 text-sm transition-colors focus-visible:ring-[3px] focus-visible:outline-none active:scale-[0.96]"
       onClick={() => copy(window.location.href)}
       type="button"
     >

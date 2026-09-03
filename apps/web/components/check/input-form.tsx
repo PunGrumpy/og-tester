@@ -74,7 +74,7 @@ export const InputForm = () => {
                   autoCapitalize="none"
                   autoComplete="url"
                   autoCorrect="off"
-                  className="border-foreground/45 bg-background hover:border-foreground/60 h-13 rounded-md px-4 text-base shadow-none transition-colors sm:text-[15px] md:text-[15px]"
+                  className="border-foreground/45 bg-background hover:border-foreground/60 sm:text-md h-13 rounded-md px-4 text-base shadow-none transition-colors"
                   enterKeyHint="go"
                   id={field.name}
                   inputMode="url"
@@ -86,7 +86,7 @@ export const InputForm = () => {
               </div>
 
               <button
-                className="border-primary bg-primary text-primary-foreground focus-visible:ring-ring/50 relative inline-flex h-13 shrink-0 items-center justify-center rounded-md border px-5 text-[15px] font-medium transition-opacity hover:opacity-85 focus-visible:ring-[3px] focus-visible:outline-none active:scale-[0.96] disabled:pointer-events-none disabled:opacity-50 sm:px-7"
+                className="border-primary bg-primary text-primary-foreground focus-visible:ring-ring/50 text-md relative inline-flex h-13 shrink-0 items-center justify-center rounded-md border px-5 font-medium transition-opacity hover:opacity-85 focus-visible:ring-[3px] focus-visible:outline-none active:scale-[0.96] disabled:pointer-events-none disabled:opacity-50 sm:px-7"
                 disabled={isPending}
                 type="submit"
               >
