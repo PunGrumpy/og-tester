@@ -2,6 +2,7 @@ import { cacheLife } from "next/cache";
 import Link from "next/link";
 
 import { Container } from "@/components/layout";
+import { NewTabHint } from "@/components/new-tab-hint";
 
 import { ThemeSwitcher } from "./theme-switcher";
 
@@ -52,6 +53,7 @@ export const Footer = async () => (
               target="_blank"
             >
               {label}
+              <NewTabHint />
             </Link>
           ))}
         </nav>

@@ -92,7 +92,7 @@ const Chip = ({
         delay={HOVER_DELAY}
         render={
           <a
-            aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}`}
+            aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}, opens in new tab`}
             href={page.url}
             rel="noopener noreferrer"
             target="_blank"

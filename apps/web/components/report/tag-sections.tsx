@@ -3,6 +3,7 @@
 import { ExternalLink, ImageOff } from "lucide-react";
 import Image from "next/image";
 
+import { NewTabHint } from "@/components/new-tab-hint";
 import type { OgStatus } from "@/hooks/use-og-store";
 import { toImageSrc } from "@/lib/image-src";
 import type { OgData } from "@/lib/schemas/og";
@@ -79,7 +80,7 @@ const TagLink = ({ href }: { href: string }) => (
   >
     {href}
     <ExternalLink aria-hidden="true" className="ms-1 inline size-3" />
-    <span className="sr-only">(opens in new tab)</span>
+    <NewTabHint />
   </a>
 );
 

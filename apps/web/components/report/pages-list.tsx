@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 
+import { NewTabHint } from "@/components/new-tab-hint";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import type { Standing } from "@/lib/reports/verdict";
 import { getStanding } from "@/lib/reports/verdict";
@@ -115,6 +116,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
                     target="_blank"
                   >
                     {path}
+                    <NewTabHint />
                   </a>
                   <p className="text-muted-foreground mt-1 text-sm">
                     {tags.length === 0

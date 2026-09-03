@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { NewTabHint } from "@/components/new-tab-hint";
+
 const RULES_URL =
   "https://github.com/PunGrumpy/og-tester/blob/main/packages/core/src/scoring/rules.ts";
 
@@ -80,6 +82,7 @@ export const ScoringGuide = () => (
           target="_blank"
         >
           one rules file
+          <NewTabHint />
         </Link>
         , and the same checks run in the{" "}
         <Link
@@ -90,6 +93,7 @@ export const ScoringGuide = () => (
           target="_blank"
         >
           command-line version
+          <NewTabHint />
         </Link>
         .
       </p>
