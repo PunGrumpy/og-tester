@@ -44,6 +44,7 @@ export type ScanPhase =
   | "discovery"
   | "checking"
   | "complete"
+  | "cancelled"
   | "error";
 
 interface ScannerState {
@@ -290,7 +291,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       const cancelled = error instanceof Error && error.name === "AbortError";
       set(
         cancelled
-          ? stoppedState(wasRefreshing, "Scan was cancelled by user.", "idle")
+          ? stoppedState(wasRefreshing, "", "cancelled")
           : stoppedState(
               wasRefreshing,
               error instanceof Error ? error.message : String(error),

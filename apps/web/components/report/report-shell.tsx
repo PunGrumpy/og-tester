@@ -39,6 +39,34 @@ const PHASE_MOTION = {
 
 const NO_CATEGORIES = { image: 0, og: 0, seo: 0, twitter: 0 };
 
+/** The summary slot when a scan ended without a score: an error or a cancel. */
+const StoppedNotice = ({
+  action,
+  domain,
+  message,
+  onAction,
+}: {
+  action: string;
+  domain: string;
+  message: string;
+  onAction: () => void;
+}) => (
+  <Container className="flex flex-col items-center gap-4 border-b py-16 text-center">
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground font-mono text-sm">{domain}</p>
+      <h1 className="text-2xl font-semibold tracking-tight text-balance">
+        Scan stopped
+      </h1>
+      <p className="text-muted-foreground max-w-md text-sm text-pretty">
+        {message}
+      </p>
+    </div>
+    <button className={SECONDARY_BUTTON} onClick={onAction} type="button">
+      {action}
+    </button>
+  </Container>
+);
+
 export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
   const storePhase = useScannerStore((state) => state.phase);
   const storeAverageScore = useScannerStore((state) => state.averageScore);
@@ -122,6 +150,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
 
   const { phase } = scan;
   const isRunning = phase === "discovery" || phase === "checking";
+  const canRescan = phase === "complete" || phase === "cancelled";
 
   return (
     <div className="py-12">
@@ -165,26 +194,23 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
 
         {phase === "error" && (
           <m.div key="error" {...PHASE_MOTION}>
-            <Container className="flex flex-col items-center gap-4 border-b py-16 text-center">
-              <div className="flex flex-col gap-2">
-                <p className="text-muted-foreground font-mono text-sm">
-                  {domain}
-                </p>
-                <h1 className="text-2xl font-semibold tracking-tight text-balance">
-                  Scan stopped
-                </h1>
-                <p className="text-muted-foreground max-w-md text-sm text-pretty">
-                  {errorMsg}
-                </p>
-              </div>
-              <button
-                className={SECONDARY_BUTTON}
-                onClick={() => startScan(siteUrl)}
-                type="button"
-              >
-                Try again
-              </button>
-            </Container>
+            <StoppedNotice
+              action="Try again"
+              domain={domain}
+              message={errorMsg}
+              onAction={() => startScan(siteUrl)}
+            />
+          </m.div>
+        )}
+
+        {phase === "cancelled" && (
+          <m.div key="cancelled" {...PHASE_MOTION}>
+            <StoppedNotice
+              action="Scan again"
+              domain={domain}
+              message="You cancelled the scan before it finished, so there is no score yet."
+              onAction={() => startScan(siteUrl)}
+            />
           </m.div>
         )}
 
@@ -212,7 +238,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
 
       {phase !== "error" && (
         <Previews
-          canRescan={phase === "complete"}
+          canRescan={canRescan}
           data={og.data}
           errorMessage={og.errorMessage}
           status={og.status}
@@ -230,7 +256,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
 
       {phase !== "error" && (
         <TagSections
-          canRescan={phase === "complete"}
+          canRescan={canRescan}
           data={og.data}
           errorMessage={og.errorMessage}
           status={og.status}
