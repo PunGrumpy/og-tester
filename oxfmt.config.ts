@@ -8,5 +8,8 @@ export default defineConfig({
     ".agents",
     ".changeset",
     ".github",
+    // Reformatting this fixture onto multiple lines would remove the single
+    // line shape the parser regression test depends on.
+    "packages/core/test/fixtures/minified-inline-script.html",
   ],
 });

@@ -80,6 +80,91 @@ describe("parseOgTags", () => {
     });
   });
 
+  test("parses a minified single-line page with long inline scripts in linear time", async () => {
+    const html = await readFixture("minified-inline-script.html");
+    const startedAt = performance.now();
+    const result = parseOgTags(html, "https://example.com/");
+    const elapsedMs = performance.now() - startedAt;
+
+    // The previous regexes backtracked across the whole document on this
+    // shape of page and needed minutes. A 2s budget leaves room for a slow CI
+    // runner while still failing loudly on a regression.
+    expect(elapsedMs).toBeLessThan(2000);
+    expect(result.title).toBe("Minified inline script fixture");
+    expect(result.description).toBe(
+      "A minified page whose head sits on one line with long inline scripts."
+    );
+    expect(result["og:title"]).toBe("Minified Inline Script Fixture");
+    expect(result["og:image"]).toBe("https://example.com/og.png");
+    expect(result["twitter:card"]).toBe("summary");
+    expect(result.themeColorLight).toBe("#FFFFFF");
+    expect(result.themeColorDark).toBe("#000000");
+    expect(result.themeColor).toBeUndefined();
+    expect(result.favicons).toEqual([
+      {
+        href: "https://example.com/favicon.ico",
+        rel: "icon",
+        sizes: "32x32",
+        type: "image/x-icon",
+      },
+    ]);
+    expect(
+      Object.keys(result).filter((key) => key.startsWith("og:extra"))
+    ).toHaveLength(30);
+  });
+
+  test("reads attributes regardless of their order inside the tag", () => {
+    const html = [
+      "<head>",
+      '<meta content="Order does not matter" name="description">',
+      '<meta content="/cover.png" property="og:image">',
+      '<meta content="@example" name="twitter:site">',
+      '<link href="/apple.png" rel="apple-touch-icon" sizes="180x180">',
+      '<link href="https://example.com/page" rel="canonical">',
+      "</head>",
+    ].join("");
+    const result = parseOgTags(html, "https://example.com/");
+
+    expect(result.description).toBe("Order does not matter");
+    expect(result["og:image"]).toBe("https://example.com/cover.png");
+    expect(result["twitter:site"]).toBe("@example");
+    expect(result.canonical).toBe("https://example.com/page");
+    expect(result.favicons).toEqual([
+      {
+        href: "https://example.com/apple.png",
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        type: undefined,
+      },
+    ]);
+  });
+
+  test("keeps a favicon rel inside its own tag and lists shortcut icons first", () => {
+    const html = [
+      "<head>",
+      '<link rel="stylesheet" href="/app.css">',
+      '<link rel="icon" href="/icon.png" type="image/png">',
+      '<link rel="shortcut icon" href="/favicon.ico">',
+      "</head>",
+    ].join("");
+    const result = parseOgTags(html, "https://example.com/");
+
+    expect(result.favicons).toEqual([
+      {
+        href: "https://example.com/favicon.ico",
+        rel: "shortcut icon",
+        sizes: undefined,
+        type: undefined,
+      },
+      {
+        href: "https://example.com/icon.png",
+        rel: "icon",
+        sizes: undefined,
+        type: "image/png",
+      },
+    ]);
+  });
+
   describe("HTML entity decoding", () => {
     const ENTITY_CASES: [name: string, input: string, expected: string][] = [
       ["decodes numeric decimal entities", "Don&#8217;t stop", "Don’t stop"],
