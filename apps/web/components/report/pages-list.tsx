@@ -77,7 +77,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
           <li className="text-muted-foreground py-5 text-sm">
             {`No page path matches “${query}”. `}
             <button
-              className="text-foreground underline underline-offset-4"
+              className="text-foreground focus-visible:ring-ring/50 underline underline-offset-4 focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
               onClick={() => setQuery("")}
               type="button"
             >

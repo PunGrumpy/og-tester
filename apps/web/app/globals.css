@@ -129,7 +129,7 @@
   --destructive-foreground: oklch(0 0 0);
   --border: oklch(0.26 0 0);
   --input: oklch(0.32 0 0);
-  --ring: oklch(0.72 0 0);
+  --ring: oklch(1 0 0);
   --radius: 0.5rem;
 
   --score-excellent: oklch(0.72 0.19 150);
@@ -192,12 +192,6 @@
   a[href^="mailto:"],
   a[href^="mailto:"] * {
     @apply cursor-alias;
-  }
-  button:focus,
-  input:focus,
-  textarea:focus,
-  a:focus {
-    @apply focus-visible:ring-primary focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
   }
   @media (prefers-reduced-motion: reduce) {
     *,

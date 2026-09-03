@@ -71,7 +71,7 @@ const isUrl = (value: string) =>
 
 const TagLink = ({ href }: { href: string }) => (
   <a
-    className="text-foreground decoration-border hover:decoration-foreground break-all underline underline-offset-4 transition-colors"
+    className="text-foreground decoration-border hover:decoration-foreground focus-visible:ring-ring/50 break-all underline underline-offset-4 transition-colors focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
     href={href}
     rel="noopener noreferrer"
     target="_blank"
