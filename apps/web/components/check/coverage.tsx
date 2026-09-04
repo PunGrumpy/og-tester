@@ -42,7 +42,7 @@ export const Coverage = () => (
               {prefix}
             </code>
           </div>
-          <p className="text-muted-foreground text-xs md:ml-auto md:text-right">
+          <p className="text-muted-foreground text-xs md:ms-auto md:text-end">
             {detail}
           </p>
         </div>

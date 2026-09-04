@@ -50,7 +50,7 @@ const Home = async () => {
           (entry) => !featuredDomains.has(entry.domain)
         )}
         href="/scans"
-        hrefLabel={`All ${recent.total} scans`}
+        hrefLabel={recent.total === 1 ? "1 scan" : `All ${recent.total} scans`}
         id="recent"
         title="Recent scores"
       />

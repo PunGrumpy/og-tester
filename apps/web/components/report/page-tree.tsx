@@ -78,20 +78,27 @@ const Chip = ({
 
   return (
     <Tooltip>
-      {/* The popup is decoration: this version of Base UI gives it no role and
-          wires no `aria-describedby`, so the whole statement has to live on
-          the trigger or a screen reader hears the path and nothing else. */}
+      {/* The chip is a link to the page, like the rows in the Pages list, so
+          it has a real role in the tab order. The popup is decoration: this
+          version of Base UI gives it no role and wires no `aria-describedby`,
+          so the whole statement has to live on the link or a screen reader
+          hears the path and nothing else. */}
       <TooltipTrigger
-        aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}`}
         className={cn(
-          "inline-flex shrink-0 cursor-help items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none transition-colors",
+          "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 font-mono text-xs leading-none transition-colors",
           "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
           CHIP_TONE[getStanding(page.score)]
         )}
         delay={HOVER_DELAY}
-        render={<span />}
+        render={
+          <a
+            aria-label={`${pathOf(page.url)}, ${origin}, scores ${page.score} of ${page.maxScore}, opens in new tab`}
+            href={page.url}
+            rel="noopener noreferrer"
+            target="_blank"
+          />
+        }
         style={{ height: ROW }}
-        tabIndex={0}
       >
         {mixed ? <Glyph page={page} /> : null}
         <span className="max-w-[22rem] truncate">{label}</span>
@@ -161,18 +168,18 @@ const Chain = ({
       {branches.length > 0 ? (
         <ul className="m-0 list-none p-0">
           {branches.map((child, index) => (
-            <li className="relative m-0 pl-7" key={child.key}>
+            <li className="relative m-0 ps-7" key={child.key}>
               {/* The spine stops at the last child rather than running past it. */}
               <span
                 aria-hidden="true"
-                className="bg-border absolute top-0 left-0 w-px"
+                className="bg-border absolute start-0 top-0 w-px"
                 style={{
                   height: index === branches.length - 1 ? HALF : "100%",
                 }}
               />
               <span
                 aria-hidden="true"
-                className="bg-border absolute left-0 h-px w-5"
+                className="bg-border absolute start-0 h-px w-5"
                 style={{ top: HALF }}
               />
               <Chain mixed={mixed} node={child} parentUrl={last.page.url} />

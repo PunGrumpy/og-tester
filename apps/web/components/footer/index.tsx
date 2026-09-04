@@ -2,6 +2,7 @@ import { cacheLife } from "next/cache";
 import Link from "next/link";
 
 import { Container } from "@/components/layout";
+import { NewTabHint } from "@/components/new-tab-hint";
 
 import { ThemeSwitcher } from "./theme-switcher";
 
@@ -28,7 +29,7 @@ export const Footer = async () => (
   <footer className="text-muted-foreground mt-auto border-t py-8 text-sm">
     <Container>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-6 gap-y-7 lg:flex lg:items-center lg:gap-6">
-        <p className="col-start-1 row-start-2 m-0 flex min-w-0 flex-wrap gap-x-1.5 leading-6 lg:order-1 lg:mr-auto">
+        <p className="col-start-1 row-start-2 m-0 flex min-w-0 flex-wrap gap-x-1.5 leading-6 lg:order-1 lg:me-auto">
           <span className="whitespace-nowrap">
             © {await currentYear()}{" "}
             <Link className={INLINE_LINK_CLASS} href="https://pungrumpy.com">
@@ -52,6 +53,7 @@ export const Footer = async () => (
               target="_blank"
             >
               {label}
+              <NewTabHint />
             </Link>
           ))}
         </nav>

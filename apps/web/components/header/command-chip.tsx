@@ -3,6 +3,7 @@
 import { Check, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { StateIcon } from "@/components/state-icon";
 import { useCopy } from "@/hooks/use-copy";
 import { useDraftStore } from "@/hooks/use-draft-store";
 import { normalizeDomain } from "@/lib/reports/domain";
@@ -11,7 +12,7 @@ import { cn } from "@/lib/utils";
 const BASE = "npx og-tester";
 
 const CHIP_CLASS =
-  "group bg-card ml-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-left transition-colors sm:flex";
+  "group bg-card ms-auto hidden h-9 max-w-[min(60%,26rem)] min-w-0 items-center gap-2.5 rounded-full border px-3 text-start transition-colors sm:flex";
 
 const CopyGlyph = () => (
   <svg
@@ -47,7 +48,7 @@ const CommandText = ({
   argument: string;
   resolved: string | null;
 }) => (
-  <code className="text-foreground truncate font-mono text-[13px]">
+  <code className="text-foreground truncate font-mono text-sm">
     <span aria-hidden="true" className="text-muted-foreground/60">
       ${" "}
     </span>
@@ -92,23 +93,25 @@ export const CommandChip = () => {
     >
       <CommandText argument={argument} resolved={resolved} />
 
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground group-hover:text-foreground shrink-0 transition-colors"
+      <StateIcon
+        className="text-muted-foreground group-hover:text-foreground transition-colors"
+        state={state}
       >
         {state === "copied" && <Check className="size-4" strokeWidth={1.5} />}
         {state === "failed" && <X className="size-4" strokeWidth={1.5} />}
         {state === "idle" && <CopyGlyph />}
-      </span>
+      </StateIcon>
 
       {state === "failed" && (
-        <span className="text-muted-foreground shrink-0 text-xs">Press ⌘C</span>
+        <span className="text-muted-foreground shrink-0 text-xs">
+          Copy failed
+        </span>
       )}
 
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "Command copied" : ""}
         {state === "failed"
-          ? "Could not copy. Select the command and press ⌘C."
+          ? "Could not copy. Select the command and copy it."
           : ""}
       </span>
     </button>

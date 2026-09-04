@@ -23,7 +23,8 @@ export const ThemeSwitcher = () => {
   );
 
   if (!isMounted) {
-    return null;
+    // The mounted control's footprint, so the footer does not shift on hydration.
+    return <div aria-hidden="true" className="h-9 w-25" />;
   }
 
   return (

@@ -3,11 +3,13 @@
 import { ExternalLink, ImageOff } from "lucide-react";
 import Image from "next/image";
 
+import { NewTabHint } from "@/components/new-tab-hint";
 import type { OgStatus } from "@/hooks/use-og-store";
 import { toImageSrc } from "@/lib/image-src";
 import type { OgData } from "@/lib/schemas/og";
 
 import { ReportSection } from "./section";
+import { describeTagFailure } from "./tag-failure";
 
 interface Field {
   key: string;
@@ -71,14 +73,14 @@ const isUrl = (value: string) =>
 
 const TagLink = ({ href }: { href: string }) => (
   <a
-    className="text-foreground decoration-border hover:decoration-foreground break-all underline underline-offset-4 transition-colors"
+    className="text-foreground decoration-border hover:decoration-foreground focus-visible:ring-ring/50 break-all underline underline-offset-4 transition-colors focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
     href={href}
     rel="noopener noreferrer"
     target="_blank"
   >
     {href}
-    <ExternalLink aria-hidden="true" className="ml-1 inline size-3" />
-    <span className="sr-only">(opens in new tab)</span>
+    <ExternalLink aria-hidden="true" className="ms-1 inline size-3" />
+    <NewTabHint />
   </a>
 );
 
@@ -136,13 +138,12 @@ export const TagSections = ({
   status,
 }: TagSectionsProps) => {
   if (status !== "ready") {
-    const failure = canRescan
-      ? `${errorMessage} Rescan above once the page responds.`
-      : `${errorMessage} The scan is still running; you can rescan once it finishes.`;
     return (
       <ReportSection
         description={
-          status === "loading" ? "Reading the page’s tags…" : failure
+          status === "loading"
+            ? "Reading the page’s tags…"
+            : describeTagFailure(errorMessage, canRescan)
         }
         id="tags-status"
         title="Tags"

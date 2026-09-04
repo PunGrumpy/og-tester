@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
+import { NewTabHint } from "@/components/new-tab-hint";
 import type { PageScoreResult } from "@/hooks/use-scanner-store";
 import type { Standing } from "@/lib/reports/verdict";
 import { getStanding } from "@/lib/reports/verdict";
@@ -38,6 +39,7 @@ const rowStanding = (page: PageScoreResult, issues: number): Standing => {
 
 export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
   const [query, setQuery] = useState("");
+  const filterId = useId();
 
   const rows = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -59,17 +61,31 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
       title="Pages"
     >
       {pages.length > FILTER_THRESHOLD ? (
-        <input
-          aria-label="Filter by page path"
-          autoCapitalize="none"
-          autoCorrect="off"
-          className="border-foreground/45 bg-background placeholder:text-muted-foreground hover:border-foreground/60 focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full max-w-sm rounded-md border px-3 text-base transition-colors outline-none focus-visible:ring-[3px] sm:text-sm"
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Filter by path, for example /blog"
-          spellCheck={false}
-          type="text"
-          value={query}
-        />
+        <div className="grid max-w-sm gap-2">
+          <label className="text-sm font-medium" htmlFor={filterId}>
+            Filter by path
+          </label>
+          <input
+            autoCapitalize="none"
+            autoCorrect="off"
+            className="border-foreground/45 bg-background placeholder:text-muted-foreground hover:border-foreground/60 focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-md border px-3 text-base transition-colors outline-none focus-visible:ring-[3px] sm:text-sm"
+            id={filterId}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="/blog"
+            spellCheck={false}
+            type="text"
+            value={query}
+          />
+          {/* Rendered even while empty, so the count is announced on every change. */}
+          <output
+            className="text-muted-foreground min-h-5 text-sm tabular-nums"
+            htmlFor={filterId}
+          >
+            {query.trim()
+              ? `${rows.length} of ${pages.length} ${pages.length === 1 ? "page" : "pages"} match`
+              : ""}
+          </output>
+        </div>
       ) : null}
 
       <ul className="m-0 list-none divide-y border-y p-0">
@@ -77,7 +93,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
           <li className="text-muted-foreground py-5 text-sm">
             {`No page path matches “${query}”. `}
             <button
-              className="text-foreground underline underline-offset-4"
+              className="text-foreground focus-visible:ring-ring/50 underline underline-offset-4 focus-visible:rounded-sm focus-visible:ring-[3px] focus-visible:outline-none"
               onClick={() => setQuery("")}
               type="button"
             >
@@ -100,6 +116,7 @@ export const PagesList = ({ pages }: { pages: PageScoreResult[] }) => {
                     target="_blank"
                   >
                     {path}
+                    <NewTabHint />
                   </a>
                   <p className="text-muted-foreground mt-1 text-sm">
                     {tags.length === 0

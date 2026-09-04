@@ -56,10 +56,21 @@
   --container-measure: 32rem;
 
   --container-page: 75rem;
+
+  /* The two sizes the default scale lacks. `md` sits between sm and base
+     for the URL input, its button and dense list rows. `display` is the
+     page headline: 36px at 320px wide, 54px from about 770px. */
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.5;
+  --text-display: clamp(2.25rem, 1.45rem + 4vw, 3.375rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.04em;
 }
 
 :root {
-  --default-transition-duration: 240ms;
+  /* Hover and focus feedback on colour and opacity. Choreographed motion
+     keeps its own durations in lib/motion.ts. */
+  --default-transition-duration: 150ms;
   --default-transition-timing-function: var(--ease-out-custom);
 
   --background: oklch(0.99 0 0);
@@ -129,7 +140,7 @@
   --destructive-foreground: oklch(0 0 0);
   --border: oklch(0.26 0 0);
   --input: oklch(0.32 0 0);
-  --ring: oklch(0.72 0 0);
+  --ring: oklch(1 0 0);
   --radius: 0.5rem;
 
   --score-excellent: oklch(0.72 0.19 150);
@@ -192,12 +203,6 @@
   a[href^="mailto:"],
   a[href^="mailto:"] * {
     @apply cursor-alias;
-  }
-  button:focus,
-  input:focus,
-  textarea:focus,
-  a:focus {
-    @apply focus-visible:ring-primary focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
   }
   @media (prefers-reduced-motion: reduce) {
     *,

@@ -68,10 +68,10 @@ export const ScoreList = ({
               href={`/scan/${entry.domain}`}
             >
               <Favicon domain={entry.domain} />
-              <span className="min-w-0 truncate text-[15px] font-medium">
+              <span className="text-md min-w-0 truncate font-medium">
                 {entry.domain}
               </span>
-              <span className="ml-auto min-w-[72px] shrink-0 text-right font-mono text-base font-bold whitespace-nowrap tabular-nums">
+              <span className="ms-auto min-w-[72px] shrink-0 text-end font-mono text-base font-bold whitespace-nowrap tabular-nums">
                 {entry.score}
                 <span className="text-muted-foreground font-normal">
                   {" /100"}

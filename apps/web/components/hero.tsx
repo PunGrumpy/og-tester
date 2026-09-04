@@ -3,7 +3,7 @@ import { PixelCycle } from "@/components/pixel-cycle";
 
 export const Hero = () => (
   <section className="mx-auto w-full max-w-[760px] px-5 pt-16 text-center sm:px-8 sm:pt-24">
-    <h1 className="text-4xl leading-[1.05] font-semibold tracking-[-0.04em] text-balance sm:text-5xl md:text-[54px]">
+    <h1 className="text-display font-semibold text-balance">
       See how your <PixelCycle>links</PixelCycle> look when shared
     </h1>
 
