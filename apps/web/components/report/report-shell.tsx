@@ -1,71 +1,77 @@
 "use client";
 
-import { AnimatePresence, m } from "motion/react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useRef } from "react";
 
 import { ogAction } from "@/actions/og-action";
-import { Container } from "@/components/layout";
-import { ScanProgress } from "@/components/scan/scan-progress";
-import { SECONDARY_BUTTON } from "@/components/secondary-button";
+import type { OgStatus } from "@/hooks/use-og-store";
 import { useOgStore } from "@/hooks/use-og-store";
+import type {
+  CategoryAverages,
+  PageScoreResult,
+  ScanPhase,
+  StoredScanReport,
+} from "@/hooks/use-scanner-store";
 import { useScannerStore } from "@/hooks/use-scanner-store";
-import type { StoredScanReport } from "@/hooks/use-scanner-store";
 import { parseError } from "@/lib/error";
-import { DURATION, transition, TRAVEL } from "@/lib/motion";
 import type { OgData } from "@/lib/schemas/og";
 
 import { Findings } from "./findings";
 import { PageTree } from "./page-tree";
 import { PagesList } from "./pages-list";
-import { PendingScore, SUMMARY_GRID, SUMMARY_MAIN } from "./pending-score";
 import { Previews } from "./previews";
 import { RefreshStatus } from "./refresh-status";
-import { ReportSummary } from "./report-summary";
+import { ScanSummary } from "./scan-summary";
 import { TagSections } from "./tag-sections";
+
+type Stored = { report: StoredScanReport; og: OgData } | null;
 
 interface ReportShellProps {
   domain: string;
   siteUrl: string;
-  stored: { report: StoredScanReport; og: OgData } | null;
+  stored: Stored;
 }
-
-const PHASE_MOTION = {
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -TRAVEL },
-  initial: { opacity: 0, y: TRAVEL },
-  transition: transition(DURATION.slow),
-};
 
 const NO_CATEGORIES = { image: 0, og: 0, seo: 0, twitter: 0 };
 
-/** The summary slot when a scan ended without a score: an error or a cancel. */
-const StoppedNotice = ({
-  action,
-  domain,
-  message,
-  onAction,
-}: {
-  action: string;
-  domain: string;
-  message: string;
-  onAction: () => void;
-}) => (
-  <Container className="flex flex-col items-center gap-4 border-b py-16 text-center">
-    <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground font-mono text-sm">{domain}</p>
-      <h1 className="text-2xl font-semibold tracking-tight text-balance">
-        Scan stopped
-      </h1>
-      <p className="text-muted-foreground max-w-md text-sm text-pretty">
-        {message}
-      </p>
-    </div>
-    <button className={SECONDARY_BUTTON} onClick={onAction} type="button">
-      {action}
-    </button>
-  </Container>
-);
+interface ScanView {
+  averageScore: number;
+  categoryAverages: CategoryAverages;
+  pages: PageScoreResult[];
+  phase: ScanPhase;
+}
+
+/** Until the store has run anything, a stored report stands in for it. */
+const resolveScan = (store: ScanView, stored: Stored): ScanView => {
+  if (store.phase === "idle" && stored) {
+    return {
+      averageScore: stored.report.averageScore,
+      categoryAverages: stored.report.categoryAverages,
+      pages: stored.report.pages,
+      phase: "complete",
+    };
+  }
+  return {
+    ...store,
+    categoryAverages:
+      store.phase === "idle" ? NO_CATEGORIES : store.categoryAverages,
+  };
+};
+
+interface OgView {
+  data: OgData;
+  errorMessage: string;
+  status: OgStatus;
+  url: string;
+}
+
+/** Same rule for the page's own tags: stored until the store has a URL. */
+const resolveOg = (store: OgView, stored: Stored, siteUrl: string): OgView => {
+  if (store.url === "" && stored) {
+    return { data: stored.og, errorMessage: "", status: "ready", url: siteUrl };
+  }
+  return { ...store, url: store.url || siteUrl };
+};
 
 export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
   const storePhase = useScannerStore((state) => state.phase);
@@ -117,118 +123,51 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
     startScan(siteUrl);
   }, [fetchOg, loadReport, setLoading, setResult, siteUrl, startScan, stored]);
 
-  const scan =
-    storePhase === "idle" && stored
-      ? {
-          averageScore: stored.report.averageScore,
-          categoryAverages: stored.report.categoryAverages,
-          pages: stored.report.pages,
-          phase: "complete" as const,
-        }
-      : {
-          averageScore: storeAverageScore,
-          categoryAverages:
-            storePhase === "idle" ? NO_CATEGORIES : storeCategoryAverages,
-          pages: storePages,
-          phase: storePhase,
-        };
-
-  const og =
-    storeOgUrl === "" && stored
-      ? {
-          data: stored.og,
-          errorMessage: "",
-          status: "ready" as const,
-          url: siteUrl,
-        }
-      : {
-          data: storeOgData,
-          errorMessage: storeOgError,
-          status: storeOgStatus,
-          url: storeOgUrl || siteUrl,
-        };
+  const scan = resolveScan(
+    {
+      averageScore: storeAverageScore,
+      categoryAverages: storeCategoryAverages,
+      pages: storePages,
+      phase: storePhase,
+    },
+    stored
+  );
+  const og = resolveOg(
+    {
+      data: storeOgData,
+      errorMessage: storeOgError,
+      status: storeOgStatus,
+      url: storeOgUrl,
+    },
+    stored,
+    siteUrl
+  );
 
   const { phase } = scan;
-  const isRunning = phase === "discovery" || phase === "checking";
-  const canRescan = phase === "complete" || phase === "cancelled";
+  const isComplete = phase === "complete";
+  const hasPage = phase !== "error";
+  const canRescan = isComplete || phase === "cancelled";
+  const start = () => startScan(siteUrl);
 
   return (
     <div className="py-12">
-      <AnimatePresence mode="wait">
-        {isRunning && (
-          <m.div key="progress" {...PHASE_MOTION}>
-            <Container className={SUMMARY_GRID}>
-              <div className={SUMMARY_MAIN}>
-                <p className="text-muted-foreground min-w-0 font-mono text-sm break-words">
-                  {domain}
-                </p>
+      <ScanSummary
+        averageScore={scan.averageScore}
+        categoryAverages={scan.categoryAverages}
+        completedUrls={completedUrls}
+        currentScore={currentScore}
+        currentUrl={currentUrl}
+        domain={domain}
+        errorMsg={errorMsg}
+        onCancel={cancelScan}
+        onStart={start}
+        pages={scan.pages}
+        phase={phase}
+        refreshing={refreshing}
+        totalUrls={totalUrls}
+      />
 
-                <h1 className="mt-5 max-w-2xl text-2xl font-semibold tracking-tight text-balance sm:mt-4">
-                  Reading the tags across the site
-                </h1>
-
-                <PendingScore caption="Final score appears when every page has been checked." />
-
-                <div className="mt-8 max-w-lg">
-                  <button
-                    className={SECONDARY_BUTTON}
-                    onClick={cancelScan}
-                    type="button"
-                  >
-                    Cancel scan
-                  </button>
-                </div>
-              </div>
-
-              <ScanProgress
-                completedUrls={completedUrls}
-                currentScore={currentScore}
-                currentUrl={currentUrl}
-                domain={domain}
-                phase={phase}
-                totalUrls={totalUrls}
-              />
-            </Container>
-          </m.div>
-        )}
-
-        {phase === "error" && (
-          <m.div key="error" {...PHASE_MOTION}>
-            <StoppedNotice
-              action="Try again"
-              domain={domain}
-              message={errorMsg}
-              onAction={() => startScan(siteUrl)}
-            />
-          </m.div>
-        )}
-
-        {phase === "cancelled" && (
-          <m.div key="cancelled" {...PHASE_MOTION}>
-            <StoppedNotice
-              action="Scan again"
-              domain={domain}
-              message="You cancelled the scan before it finished, so there is no score yet."
-              onAction={() => startScan(siteUrl)}
-            />
-          </m.div>
-        )}
-
-        {phase === "complete" && (
-          <m.div key="complete" {...PHASE_MOTION}>
-            <ReportSummary
-              averageScore={scan.averageScore}
-              categoryAverages={scan.categoryAverages}
-              domain={domain}
-              onRescan={() => startScan(siteUrl)}
-              pages={scan.pages}
-              refreshing={refreshing}
-            />
-          </m.div>
-        )}
-      </AnimatePresence>
-
-      {phase === "complete" && (
+      {isComplete && (
         <RefreshStatus
           active={refreshing}
           completed={completedUrls}
@@ -236,7 +175,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
         />
       )}
 
-      {phase !== "error" && (
+      {hasPage && (
         <Previews
           canRescan={canRescan}
           data={og.data}
@@ -246,7 +185,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
         />
       )}
 
-      {phase === "complete" && (
+      {isComplete && (
         <>
           <Findings pages={scan.pages} />
           <PageTree pages={scan.pages} />
@@ -254,7 +193,7 @@ export const ReportShell = ({ domain, siteUrl, stored }: ReportShellProps) => {
         </>
       )}
 
-      {phase !== "error" && (
+      {hasPage && (
         <TagSections
           canRescan={canRescan}
           data={og.data}
