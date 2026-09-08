@@ -269,7 +269,7 @@ const ScoreGauge = ({ filled, score }: ScoreGaugeProps) => (
           marginTop: "8px",
         }}
       >
-        Agentic Score
+        Open Graph score
       </span>
     </div>
   </div>
