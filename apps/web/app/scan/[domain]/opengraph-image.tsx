@@ -50,92 +50,157 @@ const getDomainFontSize = (length: number): string => {
   return "56px";
 };
 
-interface RawSubNode {
+interface PathItem {
+  parts: string[];
+  path: string;
   score: number;
-  segment: string;
 }
 
-interface RawNode {
-  children: Map<string, RawSubNode>;
-  score: number;
-  segment: string;
-}
+type SectionEntry = [string, PathItem[]];
 
-const buildSubChildren = (children: Map<string, RawSubNode>): TreeNode[] => {
-  const subChildren: TreeNode[] = [];
-  for (const [, subNode] of children.entries()) {
-    if (subChildren.length >= 2) {
-      break;
-    }
-    subChildren.push({
-      dotColor: getDotColor(subNode.score, true),
-      label: subNode.segment,
-    });
+const cleanSlug = (slug: string): string => {
+  if (!slug) {
+    return "page";
   }
-  return subChildren;
+  const cleanPath = slug.replace(/[?#].*$/u, "");
+  const parts = cleanPath.split("/");
+  const lastPart = parts.findLast(Boolean) || slug;
+  return lastPart.length > 18 ? `${lastPart.slice(0, 16)}...` : lastPart;
 };
 
-const populateRootMap = (
-  pages: { score: number; url: string }[],
-  rootMap: Map<string, RawNode>
-): number => {
+const extractPathItems = (
+  pages: { score: number; url: string }[]
+): { homeScore: number; items: PathItem[] } => {
+  const items: PathItem[] = [];
   const [firstPage] = pages;
   let homeScore = firstPage?.score ?? 89;
 
   for (const pageItem of pages) {
-    const { score, url } = pageItem;
     try {
-      const parsedUrl = new URL(url);
-      const parts = parsedUrl.pathname.split("/").filter(Boolean);
-
-      if (parts.length === 0) {
-        homeScore = score;
-        if (parsedUrl.searchParams.size > 0) {
-          const [firstKey] = parsedUrl.searchParams.keys();
-          if (firstKey) {
-            const queryValue = parsedUrl.searchParams.get(firstKey);
-            const querySegment = queryValue
-              ? `${firstKey}=${queryValue}`
-              : firstKey;
-
-            if (!rootMap.has("params")) {
-              rootMap.set("params", {
-                children: new Map(),
-                score,
-                segment: "params",
-              });
-            }
-            rootMap
-              .get("params")
-              ?.children.set(querySegment, { score, segment: querySegment });
-          }
-        }
+      const parsedUrl = new URL(pageItem.url);
+      const pathname = parsedUrl.pathname.replace(/\/$/u, "");
+      if (!pathname) {
+        homeScore = pageItem.score;
         continue;
       }
-
-      const [top, secondPart] = parts;
-      if (!top) {
-        continue;
-      }
-
-      if (!rootMap.has(top)) {
-        rootMap.set(top, { children: new Map(), score, segment: top });
-      }
-
-      const parentNode = rootMap.get(top);
-      if (parentNode) {
-        parentNode.score = score;
-        if (secondPart) {
-          const subKey = parts.slice(1).join("/");
-          parentNode.children.set(subKey, { score, segment: secondPart });
-        }
-      }
+      const parts = pathname.split("/").filter(Boolean);
+      items.push({ parts, path: pathname, score: pageItem.score });
     } catch {
       // Ignore invalid URL items
     }
   }
 
-  return homeScore;
+  return { homeScore, items };
+};
+
+const groupAndSortSections = (items: PathItem[]): SectionEntry[] => {
+  const sectionMap = new Map<string, PathItem[]>();
+  for (const item of items) {
+    const [top] = item.parts;
+    if (!top) {
+      continue;
+    }
+    if (!sectionMap.has(top)) {
+      sectionMap.set(top, []);
+    }
+    sectionMap.get(top)?.push(item);
+  }
+
+  return [...sectionMap.entries()].toSorted(
+    ([nameA, itemsA], [nameB, itemsB]) => {
+      if (nameA === "docs") {
+        return -1;
+      }
+      if (nameB === "docs") {
+        return 1;
+      }
+      return itemsB.length - itemsA.length;
+    }
+  );
+};
+
+const buildBranchChild = (branchSec: SectionEntry): TreeNode => {
+  const [secName, secItems] = branchSec;
+  const [firstItem] = secItems;
+  const parts = firstItem?.parts ?? [];
+  const hasDeepSub = parts.length >= 3;
+  const branchLabel = hasDeepSub ? `/${parts[1]}` : `/${secName}`;
+  const subPart = hasDeepSub ? parts[2] : parts[1] || parts[0];
+  const subLabel = cleanSlug(subPart || "search");
+  const subScore = firstItem?.score ?? 89;
+
+  return {
+    children: [
+      {
+        dotColor: getDotColor(subScore, true),
+        label: subLabel,
+      },
+    ],
+    dotColor: getDotColor(subScore, false),
+    label: branchLabel,
+  };
+};
+
+const buildHomeTree = (
+  homeScore: number,
+  primarySection?: SectionEntry,
+  secondarySection?: SectionEntry
+): TreeNode => {
+  const homeChildren: TreeNode[] = [];
+
+  const leafName = primarySection ? primarySection[0] : "docs";
+  const leafScore = primarySection?.[1]?.[0]?.score ?? homeScore;
+  homeChildren.push({
+    dotColor: getDotColor(leafScore, false),
+    label: leafName,
+  });
+
+  const branchSec = secondarySection || primarySection;
+  if (branchSec) {
+    homeChildren.push(buildBranchChild(branchSec));
+  }
+
+  return {
+    children: homeChildren,
+    dotColor: getDotColor(homeScore, false),
+    label: "home",
+  };
+};
+
+const buildSectionTree = (section: SectionEntry): TreeNode => {
+  const [secName, items] = section;
+  const [item1, maybeItem2] = items;
+  const item2 = maybeItem2 || item1;
+
+  const parts1 = item1?.parts ?? [];
+  const parts2 = item2?.parts ?? [];
+
+  const subPart1 = parts1[1] || parts1[0] || "search";
+  const subPart2 =
+    parts2[1] || (items.length > 1 ? parts2[0] : undefined) || "search";
+
+  const label1 = cleanSlug(subPart1);
+  const label2 = cleanSlug(subPart2);
+
+  const children: TreeNode[] = [
+    {
+      dotColor: getDotColor(item1?.score ?? 89, true),
+      label: label1,
+    },
+  ];
+
+  if (items.length > 1 || label2 !== label1) {
+    children.push({
+      dotColor: getDotColor(item2?.score ?? 89, true),
+      label: label2,
+    });
+  }
+
+  return {
+    children,
+    dotColor: getDotColor(item1?.score ?? 89, false),
+    label: secName,
+  };
 };
 
 const buildTreeNodes = (
@@ -145,46 +210,20 @@ const buildTreeNodes = (
     return [{ dotColor: "#059669", label: "home" }];
   }
 
-  const sorted = pages.toSorted(
-    (first, second) => first.url.length - second.url.length
-  );
-
-  const rootMap = new Map<string, RawNode>();
-  const homeScore = populateRootMap(sorted, rootMap);
-
-  const result: TreeNode[] = [];
-  const homeChildren: TreeNode[] = [];
-  const rootEntries = [...rootMap.entries()];
-
-  const firstGroup = rootEntries.slice(0, 2);
-  const secondGroup = rootEntries.slice(2, 4);
-
-  for (const [, node] of firstGroup) {
-    const { children, score, segment } = node;
-    const subChildren = buildSubChildren(children);
-
-    homeChildren.push({
-      children: subChildren.length > 0 ? subChildren : undefined,
-      dotColor: getDotColor(score, false),
-      label: subChildren.length > 0 ? `/${segment}` : segment,
-    });
+  const { homeScore, items } = extractPathItems(pages);
+  if (items.length === 0) {
+    return [{ dotColor: getDotColor(homeScore, false), label: "home" }];
   }
 
-  result.push({
-    children: homeChildren.length > 0 ? homeChildren : undefined,
-    dotColor: getDotColor(homeScore, false),
-    label: "home",
-  });
+  const sortedSections = groupAndSortSections(items);
+  const [primarySection, secondarySection] = sortedSections;
 
-  for (const [, node] of secondGroup) {
-    const { children, score, segment } = node;
-    const subChildren = buildSubChildren(children);
+  const result: TreeNode[] = [
+    buildHomeTree(homeScore, primarySection, secondarySection),
+  ];
 
-    result.push({
-      children: subChildren.length > 0 ? subChildren : undefined,
-      dotColor: getDotColor(score, false),
-      label: segment,
-    });
+  if (primarySection) {
+    result.push(buildSectionTree(primarySection));
   }
 
   return result;
@@ -280,7 +319,7 @@ interface TreeCardProps {
 }
 
 const renderTreeNodes = (nodes: TreeNode[]): ReactNode => (
-  <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
     {nodes.map((node) => {
       const { children, dotColor, label } = node;
       return (
@@ -421,6 +460,7 @@ const TreeCard = ({ nodes }: TreeCardProps) => (
       display: "flex",
       flexDirection: "column",
       height: "486px",
+      justifyContent: "center",
       padding: "36px 32px",
       width: "440px",
     }}
@@ -480,52 +520,61 @@ export default async function Image({ params }: ImageProps) {
   return new ImageResponse(
     <div
       style={{
-        alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#f5f5f5",
         display: "flex",
-        flexDirection: "row",
         fontFamily: "sans-serif",
         height: "100%",
-        justifyContent: "space-between",
-        padding: "72px 88px",
+        padding: "72px",
+        position: "relative",
         width: "100%",
       }}
     >
-      {/* Left Column */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           height: "100%",
           justifyContent: "space-between",
-          width: "520px",
+          width: "600px",
         }}
       >
         <BrandHeader />
 
-        {/* Main Content */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
-          <div
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginBottom: "auto",
+            marginTop: "auto",
+          }}
+        >
+          <span
             style={{
               color: "#09090b",
               fontSize: domainFontSize,
               fontWeight: 700,
-              letterSpacing: "-0.03em",
+              letterSpacing: "-0.04em",
               lineHeight: 1.1,
-              wordBreak: "break-all",
             }}
           >
             {domain}
-          </div>
-
-          <ScoreGauge filled={filled} score={score} />
+          </span>
         </div>
 
-        <div style={{ height: "24px" }} />
+        <ScoreGauge filled={filled} score={score} />
       </div>
 
-      {/* Right Column - Tree Card */}
-      <TreeCard nodes={treeNodes} />
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          height: "100%",
+          justifyContent: "flex-end",
+          width: "456px",
+        }}
+      >
+        <TreeCard nodes={treeNodes} />
+      </div>
     </div>,
     {
       ...size,
