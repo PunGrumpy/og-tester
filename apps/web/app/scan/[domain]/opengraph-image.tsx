@@ -1,9 +1,10 @@
+import { fetchOgTags, runScanSite } from "@og-tester/core";
 import { ImageResponse } from "next/og";
+import type { ReactNode } from "react";
 
-import { normalizeDomain } from "@/lib/reports/domain";
-import type { PageTreeNode } from "@/lib/reports/page-tree";
-import { buildPageTree, labelUnder, pathOf } from "@/lib/reports/page-tree";
-import { getReport } from "@/lib/reports/store";
+import { domainToUrl, normalizeDomain } from "@/lib/reports/domain";
+import { getReport, saveReport } from "@/lib/reports/store";
+import { safeFetch } from "@/lib/safe-fetch";
 
 export const size = {
   height: 630,
@@ -12,28 +13,24 @@ export const size = {
 
 export const contentType = "image/png";
 
-const DIAL_SIZE = 104;
+const DIAL_SIZE = 112;
 const RADIUS = DIAL_SIZE / 4;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-interface FlatTreeRow {
-  depth: number;
+export interface TreeNode {
+  children?: TreeNode[];
   dotColor: string;
-  hasParent: boolean;
-  isSubaction: boolean;
-  key: string;
   label: string;
-  score: number;
 }
 
-const getDotColor = (score: number, depth: number): string => {
-  if (depth >= 2) {
-    // Purple for sub-actions / search / endpoints
+const getDotColor = (score: number, isSubaction: boolean): string => {
+  if (isSubaction) {
+    // Purple for nested sub-actions / search / endpoints
     return "#8b5cf6";
   }
   if (score >= 80) {
     // Emerald green
-    return "#10b981";
+    return "#059669";
   }
   if (score >= 50) {
     // Amber
@@ -45,7 +42,7 @@ const getDotColor = (score: number, depth: number): string => {
 
 const getDomainFontSize = (length: number): string => {
   if (length > 25) {
-    return "40px";
+    return "42px";
   }
   if (length > 16) {
     return "48px";
@@ -53,115 +50,145 @@ const getDomainFontSize = (length: number): string => {
   return "56px";
 };
 
-const flattenTree = (
-  nodes: PageTreeNode[],
-  parentUrl?: string,
-  depth = 0,
-  maxRows = 6
-): FlatTreeRow[] => {
-  const result: FlatTreeRow[] = [];
+interface RawSubNode {
+  score: number;
+  segment: string;
+}
 
-  for (const node of nodes) {
-    if (result.length >= maxRows) {
+interface RawNode {
+  children: Map<string, RawSubNode>;
+  score: number;
+  segment: string;
+}
+
+const buildSubChildren = (children: Map<string, RawSubNode>): TreeNode[] => {
+  const subChildren: TreeNode[] = [];
+  for (const [, subNode] of children.entries()) {
+    if (subChildren.length >= 2) {
       break;
     }
+    subChildren.push({
+      dotColor: getDotColor(subNode.score, true),
+      label: subNode.segment,
+    });
+  }
+  return subChildren;
+};
 
-    const { children, key, page } = node;
-    const { score: pageScore, url: pageUrl } = page;
+const populateRootMap = (
+  pages: { score: number; url: string }[],
+  rootMap: Map<string, RawNode>
+): number => {
+  const [firstPage] = pages;
+  let homeScore = firstPage?.score ?? 89;
 
-    const rawPath = pathOf(pageUrl);
-    const rawLabel =
-      depth === 0 && (rawPath === "/" || rawPath === "")
-        ? "home"
-        : labelUnder(pageUrl, parentUrl);
+  for (const pageItem of pages) {
+    const { score, url } = pageItem;
+    try {
+      const parsedUrl = new URL(url);
+      const parts = parsedUrl.pathname.split("/").filter(Boolean);
 
-    const isSubaction =
-      rawLabel.toLowerCase() === "search" ||
-      rawLabel.toLowerCase().includes("filter") ||
-      depth >= 2;
+      if (parts.length === 0) {
+        homeScore = score;
+        if (parsedUrl.searchParams.size > 0) {
+          const [firstKey] = parsedUrl.searchParams.keys();
+          if (firstKey) {
+            const queryValue = parsedUrl.searchParams.get(firstKey);
+            const querySegment = queryValue
+              ? `${firstKey}=${queryValue}`
+              : firstKey;
 
-    const dotColor = isSubaction ? "#8b5cf6" : getDotColor(pageScore, depth);
+            if (!rootMap.has("params")) {
+              rootMap.set("params", {
+                children: new Map(),
+                score,
+                segment: "params",
+              });
+            }
+            rootMap
+              .get("params")
+              ?.children.set(querySegment, { score, segment: querySegment });
+          }
+        }
+        continue;
+      }
+
+      const [top, secondPart] = parts;
+      if (!top) {
+        continue;
+      }
+
+      if (!rootMap.has(top)) {
+        rootMap.set(top, { children: new Map(), score, segment: top });
+      }
+
+      const parentNode = rootMap.get(top);
+      if (parentNode) {
+        parentNode.score = score;
+        if (secondPart) {
+          const subKey = parts.slice(1).join("/");
+          parentNode.children.set(subKey, { score, segment: secondPart });
+        }
+      }
+    } catch {
+      // Ignore invalid URL items
+    }
+  }
+
+  return homeScore;
+};
+
+const buildTreeNodes = (
+  pages: { score: number; url: string }[]
+): TreeNode[] => {
+  if (pages.length === 0) {
+    return [{ dotColor: "#059669", label: "home" }];
+  }
+
+  const sorted = pages.toSorted(
+    (first, second) => first.url.length - second.url.length
+  );
+
+  const rootMap = new Map<string, RawNode>();
+  const homeScore = populateRootMap(sorted, rootMap);
+
+  const result: TreeNode[] = [];
+  const homeChildren: TreeNode[] = [];
+  const rootEntries = [...rootMap.entries()];
+
+  const firstGroup = rootEntries.slice(0, 2);
+  const secondGroup = rootEntries.slice(2, 4);
+
+  for (const [, node] of firstGroup) {
+    const { children, score, segment } = node;
+    const subChildren = buildSubChildren(children);
+
+    homeChildren.push({
+      children: subChildren.length > 0 ? subChildren : undefined,
+      dotColor: getDotColor(score, false),
+      label: subChildren.length > 0 ? `/${segment}` : segment,
+    });
+  }
+
+  result.push({
+    children: homeChildren.length > 0 ? homeChildren : undefined,
+    dotColor: getDotColor(homeScore, false),
+    label: "home",
+  });
+
+  for (const [, node] of secondGroup) {
+    const { children, score, segment } = node;
+    const subChildren = buildSubChildren(children);
 
     result.push({
-      depth,
-      dotColor,
-      hasParent: depth > 0,
-      isSubaction,
-      key,
-      label: rawLabel,
-      score: pageScore,
+      children: subChildren.length > 0 ? subChildren : undefined,
+      dotColor: getDotColor(score, false),
+      label: segment,
     });
-
-    if (children.length > 0 && result.length < maxRows) {
-      const childrenRows = flattenTree(
-        children,
-        pageUrl,
-        depth + 1,
-        maxRows - result.length
-      );
-      result.push(...childrenRows);
-    }
   }
 
   return result;
 };
-
-const defaultPreviewRows: FlatTreeRow[] = [
-  {
-    depth: 0,
-    dotColor: "#10b981",
-    hasParent: false,
-    isSubaction: false,
-    key: "p-home",
-    label: "home",
-    score: 100,
-  },
-  {
-    depth: 1,
-    dotColor: "#10b981",
-    hasParent: true,
-    isSubaction: false,
-    key: "p-docs",
-    label: "docs",
-    score: 95,
-  },
-  {
-    depth: 1,
-    dotColor: "#10b981",
-    hasParent: true,
-    isSubaction: false,
-    key: "p-features",
-    label: "/features",
-    score: 90,
-  },
-  {
-    depth: 2,
-    dotColor: "#8b5cf6",
-    hasParent: true,
-    isSubaction: true,
-    key: "p-search",
-    label: "search",
-    score: 85,
-  },
-  {
-    depth: 0,
-    dotColor: "#10b981",
-    hasParent: false,
-    isSubaction: false,
-    key: "p-docs-root",
-    label: "docs",
-    score: 92,
-  },
-  {
-    depth: 1,
-    dotColor: "#8b5cf6",
-    hasParent: true,
-    isSubaction: true,
-    key: "p-docs-search",
-    label: "search",
-    score: 88,
-  },
-];
 
 const BrandHeader = () => (
   <div style={{ alignItems: "center", display: "flex", gap: "12px" }}>
@@ -187,12 +214,11 @@ const BrandHeader = () => (
 
 interface ScoreGaugeProps {
   filled: number;
-  hasReport: boolean;
-  score: number | null;
+  score: number;
 }
 
-const ScoreGauge = ({ filled, hasReport, score }: ScoreGaugeProps) => (
-  <div style={{ alignItems: "center", display: "flex", gap: "24px" }}>
+const ScoreGauge = ({ filled, score }: ScoreGaugeProps) => (
+  <div style={{ alignItems: "center", display: "flex", gap: "28px" }}>
     <svg
       height={DIAL_SIZE}
       viewBox={`0 0 ${DIAL_SIZE} ${DIAL_SIZE}`}
@@ -204,7 +230,7 @@ const ScoreGauge = ({ filled, hasReport, score }: ScoreGaugeProps) => (
         fill="#f4f4f5"
         r={DIAL_SIZE / 2}
       />
-      {score !== null && score > 0 ? (
+      {score > 0 ? (
         <circle
           cx={DIAL_SIZE / 2}
           cy={DIAL_SIZE / 2}
@@ -223,209 +249,183 @@ const ScoreGauge = ({ filled, hasReport, score }: ScoreGaugeProps) => (
         <span
           style={{
             color: "#09090b",
-            fontSize: "76px",
+            fontSize: "80px",
             fontWeight: 700,
             letterSpacing: "-0.04em",
             lineHeight: 1,
           }}
         >
-          {score ?? "--"}
+          {score}
         </span>
-        <span style={{ color: "#71717a", fontSize: "24px", fontWeight: 500 }}>
+        <span style={{ color: "#71717a", fontSize: "26px", fontWeight: 500 }}>
           / 100
         </span>
       </div>
       <span
         style={{
           color: "#71717a",
-          fontSize: "18px",
+          fontSize: "20px",
           fontWeight: 500,
           marginTop: "8px",
         }}
       >
-        {hasReport ? "Agentic Score" : "Ready to scan"}
-      </span>
-    </div>
-  </div>
-);
-
-interface CategoryPillProps {
-  categoryAverages: {
-    image: number;
-    og: number;
-    seo: number;
-    twitter: number;
-  };
-  hasReport: boolean;
-}
-
-const CategoryPill = ({ categoryAverages, hasReport }: CategoryPillProps) => (
-  <div
-    style={{
-      alignItems: "center",
-      backgroundColor: "#f4f4f5",
-      borderRadius: "14px",
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "14px 18px",
-    }}
-  >
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <span
-        style={{
-          color: "#71717a",
-          fontSize: "11px",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-        }}
-      >
-        OG
-      </span>
-      <span style={{ color: "#18181b", fontSize: "16px", fontWeight: 600 }}>
-        {hasReport ? `${categoryAverages.og}%` : "--"}
-      </span>
-    </div>
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <span
-        style={{
-          color: "#71717a",
-          fontSize: "11px",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-        }}
-      >
-        Twitter
-      </span>
-      <span style={{ color: "#18181b", fontSize: "16px", fontWeight: 600 }}>
-        {hasReport ? `${categoryAverages.twitter}%` : "--"}
-      </span>
-    </div>
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <span
-        style={{
-          color: "#71717a",
-          fontSize: "11px",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-        }}
-      >
-        SEO
-      </span>
-      <span style={{ color: "#18181b", fontSize: "16px", fontWeight: 600 }}>
-        {hasReport ? `${categoryAverages.seo}%` : "--"}
-      </span>
-    </div>
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <span
-        style={{
-          color: "#71717a",
-          fontSize: "11px",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-        }}
-      >
-        Images
-      </span>
-      <span style={{ color: "#18181b", fontSize: "16px", fontWeight: 600 }}>
-        {hasReport ? `${categoryAverages.image}%` : "--"}
+        Agentic Score
       </span>
     </div>
   </div>
 );
 
 interface TreeCardProps {
-  categoryAverages: {
-    image: number;
-    og: number;
-    seo: number;
-    twitter: number;
-  };
-  hasReport: boolean;
-  remainingPages: number;
-  treeRows: FlatTreeRow[];
+  nodes: TreeNode[];
 }
 
-const TreeCard = ({
-  categoryAverages,
-  hasReport,
-  remainingPages,
-  treeRows,
-}: TreeCardProps) => (
+const renderTreeNodes = (nodes: TreeNode[]): ReactNode => (
+  <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+    {nodes.map((node) => {
+      const { children, dotColor, label } = node;
+      return (
+        <div key={label} style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ alignItems: "center", display: "flex", gap: "12px" }}>
+            <div
+              style={{
+                backgroundColor: dotColor,
+                borderRadius: "4px",
+                flexShrink: 0,
+                height: "8px",
+                width: "8px",
+              }}
+            />
+            <span
+              style={{
+                color: "#18181b",
+                fontFamily: "monospace",
+                fontSize: "20px",
+              }}
+            >
+              {label}
+            </span>
+          </div>
+
+          {children && children.length > 0 ? (
+            <div
+              style={{
+                borderLeft: "1.5px solid #e5e7eb",
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                marginLeft: "3.5px",
+                marginTop: "16px",
+                paddingLeft: "18px",
+              }}
+            >
+              {children.map((child) => {
+                const {
+                  children: grandChildren,
+                  dotColor: childColor,
+                  label: childLabel,
+                } = child;
+
+                return (
+                  <div
+                    key={childLabel}
+                    style={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <div
+                      style={{
+                        alignItems: "center",
+                        display: "flex",
+                        gap: "12px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: childColor,
+                          borderRadius: "4px",
+                          flexShrink: 0,
+                          height: "8px",
+                          width: "8px",
+                        }}
+                      />
+                      <span
+                        style={{
+                          color: "#18181b",
+                          fontFamily: "monospace",
+                          fontSize: "20px",
+                        }}
+                      >
+                        {childLabel}
+                      </span>
+                    </div>
+
+                    {grandChildren && grandChildren.length > 0 ? (
+                      <div
+                        style={{
+                          borderLeft: "1.5px solid #e5e7eb",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "16px",
+                          marginLeft: "3.5px",
+                          marginTop: "16px",
+                          paddingLeft: "18px",
+                        }}
+                      >
+                        {grandChildren.map((grand) => (
+                          <div
+                            key={grand.label}
+                            style={{
+                              alignItems: "center",
+                              display: "flex",
+                              gap: "12px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: grand.dotColor,
+                                borderRadius: "4px",
+                                flexShrink: 0,
+                                height: "8px",
+                                width: "8px",
+                              }}
+                            />
+                            <span
+                              style={{
+                                color: "#52525b",
+                                fontFamily: "monospace",
+                                fontSize: "20px",
+                              }}
+                            >
+                              {grand.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      );
+    })}
+  </div>
+);
+
+const TreeCard = ({ nodes }: TreeCardProps) => (
   <div
     style={{
       backgroundColor: "#ffffff",
-      border: "1px solid #e4e4e7",
+      border: "1px solid #e5e7eb",
       borderRadius: "24px",
-      boxShadow: "0 4px 24px -2px rgba(0, 0, 0, 0.05)",
+      boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.03)",
       display: "flex",
       flexDirection: "column",
-      height: "490px",
-      justifyContent: "space-between",
-      padding: "32px",
-      width: "470px",
+      height: "486px",
+      padding: "36px 32px",
+      width: "440px",
     }}
   >
-    {/* Tree Rows */}
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-      {treeRows.map((row) => (
-        <div
-          key={row.key}
-          style={{
-            alignItems: "center",
-            display: "flex",
-            gap: "10px",
-            paddingLeft: row.depth > 0 ? `${row.depth * 20}px` : "0px",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: row.dotColor,
-              borderRadius: "4px",
-              flexShrink: 0,
-              height: "8px",
-              width: "8px",
-            }}
-          />
-          <span
-            style={{
-              color: row.isSubaction ? "#52525b" : "#18181b",
-              fontFamily: "monospace",
-              fontSize: "17px",
-              fontWeight: row.depth === 0 ? 600 : 400,
-            }}
-          >
-            {row.label}
-          </span>
-          {hasReport ? (
-            <span
-              style={{
-                color: "#a1a1aa",
-                fontFamily: "monospace",
-                fontSize: "13px",
-                marginLeft: "auto",
-              }}
-            >
-              {row.score}
-            </span>
-          ) : null}
-        </div>
-      ))}
-
-      {remainingPages > 0 ? (
-        <div
-          style={{
-            color: "#a1a1aa",
-            fontFamily: "monospace",
-            fontSize: "13px",
-            paddingLeft: "20px",
-          }}
-        >
-          {`+ ${remainingPages} more pages scanned`}
-        </div>
-      ) : null}
-    </div>
-
-    <CategoryPill categoryAverages={categoryAverages} hasReport={hasReport} />
+    {renderTreeNodes(nodes)}
   </div>
 );
 
@@ -438,26 +438,42 @@ export default async function Image({ params }: ImageProps) {
   const domain = normalizeDomain(decodeURIComponent(rawDomain)) ?? rawDomain;
   const stored = await getReport(domain);
 
-  const hasReport = stored !== null;
-  const score = hasReport ? Math.round(stored.report.averageScore) : null;
-  const totalPages = hasReport ? stored.report.totalPages : 0;
-  const categoryAverages = hasReport
-    ? stored.report.categoryAverages
-    : { image: 0, og: 0, seo: 0, twitter: 0 };
+  let report = stored?.report;
 
-  const filled =
-    score === null
-      ? 0
-      : (Math.min(Math.max(score, 0), 100) / 100) * CIRCUMFERENCE;
+  if (!report) {
+    try {
+      const siteUrl = domainToUrl(domain);
+      const [scannedReport, fetchedOg] = await Promise.all([
+        runScanSite({
+          concurrency: 4,
+          fetch: safeFetch,
+          maxUrls: 8,
+          siteUrl,
+        }),
+        fetchOgTags(siteUrl, { fetch: safeFetch }).catch(() => ({})),
+      ]);
 
-  const treeRows = hasReport
-    ? flattenTree(buildPageTree(stored.report.pages), undefined, 0, 6)
-    : defaultPreviewRows;
+      report = scannedReport;
+      await saveReport({
+        domain,
+        og: fetchedOg,
+        report,
+        scannedAt: report.scannedAt,
+        siteUrl,
+      });
+    } catch {
+      // Gracefully continue with fallback if host unreachable
+    }
+  }
 
-  const remainingPages =
-    hasReport && totalPages > treeRows.length
-      ? totalPages - treeRows.length
-      : 0;
+  const score = report ? Math.round(report.averageScore) : 89;
+  const filled = (Math.min(Math.max(score, 0), 100) / 100) * CIRCUMFERENCE;
+
+  const validPages = (report?.pages ?? []).filter(
+    (page): page is typeof page & { url: string } =>
+      typeof page.url === "string"
+  );
+  const treeNodes = buildTreeNodes(validPages);
 
   const domainFontSize = getDomainFontSize(domain.length);
 
@@ -471,7 +487,7 @@ export default async function Image({ params }: ImageProps) {
         fontFamily: "sans-serif",
         height: "100%",
         justifyContent: "space-between",
-        padding: "64px 76px",
+        padding: "72px 88px",
         width: "100%",
       }}
     >
@@ -482,44 +498,34 @@ export default async function Image({ params }: ImageProps) {
           flexDirection: "column",
           height: "100%",
           justifyContent: "space-between",
-          width: "530px",
+          width: "520px",
         }}
       >
         <BrandHeader />
 
         {/* Main Content */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
           <div
             style={{
               color: "#09090b",
               fontSize: domainFontSize,
               fontWeight: 700,
               letterSpacing: "-0.03em",
-              lineHeight: 1.15,
+              lineHeight: 1.1,
               wordBreak: "break-all",
             }}
           >
             {domain}
           </div>
 
-          <ScoreGauge filled={filled} hasReport={hasReport} score={score} />
+          <ScoreGauge filled={filled} score={score} />
         </div>
 
-        {/* Footer */}
-        <div style={{ alignItems: "center", display: "flex", gap: "8px" }}>
-          <span style={{ color: "#a1a1aa", fontSize: "14px" }}>
-            Open Graph · Twitter Card · Core SEO
-          </span>
-        </div>
+        <div style={{ height: "24px" }} />
       </div>
 
       {/* Right Column - Tree Card */}
-      <TreeCard
-        categoryAverages={categoryAverages}
-        hasReport={hasReport}
-        remainingPages={remainingPages}
-        treeRows={treeRows}
-      />
+      <TreeCard nodes={treeNodes} />
     </div>,
     {
       ...size,
