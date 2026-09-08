@@ -32,7 +32,9 @@ export const generateMetadata = async ({
     ? `${domain} scores ${stored.report.averageScore} out of 100 across ${stored.report.totalPages} pages.`
     : `Open Graph, Twitter Card and SEO tags across ${domain}.`;
 
-  return createMetadata(`${domain} | OG Tester`, description);
+  return createMetadata(`${domain} | OG Tester`, description, {
+    includeDefaultImages: false,
+  });
 };
 
 const Report = async ({ params }: ScanPageProps) => {
