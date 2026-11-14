@@ -40,18 +40,8 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Test
-        run: bun run test
+      - name: Typecheck and test
+        run: bunx turbo typecheck test
 
       - name: Build CLI
         run: bun run build --filter=og-tester
-
-      - name: Typecheck core
-        working-directory: packages/core
-        run: bun run typecheck
-
-      - name: Typecheck web
-        working-directory: apps/web
-        run: |
-          bunx xmcp build
-          bun run typecheck
