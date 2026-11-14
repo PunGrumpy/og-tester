@@ -1,4 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 const entry = new URL("../src/index.ts", import.meta.url).pathname;
 const fixture = new URL(
@@ -55,7 +58,9 @@ describe("options shared by the root command and its subcommands", () => {
       "--max-urls",
       "1",
       "--min-score",
-      "0"
+      "0",
+      "--output",
+      path.join(mkdtempSync(path.join(tmpdir(), "og-tester-")), "report.json")
     );
     expect(exitCode).toBe(0);
     expect(JSON.parse(stdout).averageScore).toBeNumber();
