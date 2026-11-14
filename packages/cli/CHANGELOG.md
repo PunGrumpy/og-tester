@@ -1,5 +1,16 @@
 # og-tester
 
+## 0.2.0
+
+### Minor Changes
+
+- f9f13b0: Add `og-tester diff <a> <b>` to compare the tags and scores of two URLs, such as staging against production. It lists the tags that differ, the score change per category, and the issues fixed or regressed. Pass `--json` for machine-readable output, or `--fail-on-regression` to exit 1 when B is worse than A.
+
+### Patch Changes
+
+- b166139: Speed up scans by fetching each page once instead of two or three times and by keeping every crawl slot busy.
+- b747ea7: Fix subcommand options being ignored: `--json` on `check`, `scan`, `sitemap` and `robots`, `--min-score` on `check` and `scan`, and `--max-urls`, `--concurrency` and `--output` on `scan`.
+
 ## 0.1.3
 
 ### Patch Changes
