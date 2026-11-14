@@ -41,6 +41,11 @@ export interface ScanReport {
   averageScore: number;
   categoryAverages: Record<CategoryId, number>;
   pages: ScannedPage[];
+  /**
+   * The entry page's tags, empty when it could not be read. Absent when the
+   * entry page was not part of the scan, as when a sitemap omits it.
+   */
+  entryOg?: OgData;
   summary: {
     // 90-100
     excellent: number;
@@ -95,6 +100,9 @@ export const scanSite = (
       });
     }
 
+    const entryHref = new URL(options.siteUrl).href;
+    let entryOg: OgData | undefined;
+
     const scanSingleUrl = ({ foundOn, og, url }: DiscoveredUrl) =>
       Effect.gen(function* scanSingleUrlGen() {
         if (options.signal?.aborted) {
@@ -109,6 +117,9 @@ export const scanSite = (
           if (dataResult._tag === "Success") {
             data = dataResult.success;
           }
+        }
+        if (url === entryHref) {
+          entryOg = data;
         }
 
         const scoreResult = yield* scorePage(data, url, {
@@ -178,6 +189,7 @@ export const scanSite = (
     const report: ScanReport = {
       averageScore,
       categoryAverages,
+      entryOg,
       pages: pageScores,
       scannedAt: new Date().toISOString(),
       siteUrl: options.siteUrl,

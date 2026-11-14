@@ -18,7 +18,7 @@ afterEach(async () => {
 });
 
 describe("runScanSite on the crawl path", () => {
-  it("fetches each page once", async () => {
+  it("fetches each page once and reports the entry page's tags", async () => {
     const hits = new Map<string, number>();
     server = Bun.serve({
       fetch: (req) => {
@@ -44,5 +44,7 @@ describe("runScanSite on the crawl path", () => {
     for (const path of Object.keys(pages)) {
       expect(hits.get(path)).toBe(1);
     }
+    expect(report.entryOg?.title).toBe("Home");
+    expect(report.entryOg?.["og:title"]).toBe("Home OG");
   });
 });
