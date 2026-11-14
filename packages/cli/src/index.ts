@@ -2,6 +2,7 @@ import { Command } from "commander";
 
 import packageJson from "../package.json";
 import { checkCommand } from "./commands/check";
+import { diffCommand } from "./commands/diff";
 import { robotsCommand } from "./commands/robots";
 import { scanCommand } from "./commands/scan";
 import { sitemapCommand } from "./commands/sitemap";
@@ -46,6 +47,7 @@ program
   .action(defaultAction);
 
 program.addCommand(checkCommand);
+program.addCommand(diffCommand);
 program.addCommand(robotsCommand);
 program.addCommand(sitemapCommand);
 program.addCommand(scanCommand);
