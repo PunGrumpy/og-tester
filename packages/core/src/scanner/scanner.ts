@@ -58,6 +58,14 @@ export interface ScanReport {
   };
 }
 
+const normalizeHref = (href: string): string | undefined => {
+  try {
+    return new URL(href).href;
+  } catch {
+    return undefined;
+  }
+};
+
 /* eslint-disable promise/prefer-await-to-callbacks */
 export const scanSite = (
   options: ScanOptions
@@ -100,7 +108,7 @@ export const scanSite = (
       });
     }
 
-    const entryHref = new URL(options.siteUrl).href;
+    const entryHref = normalizeHref(options.siteUrl);
     let entryOg: OgData | undefined;
 
     const scanSingleUrl = ({ foundOn, og, url }: DiscoveredUrl) =>
@@ -118,7 +126,7 @@ export const scanSite = (
             data = dataResult.success;
           }
         }
-        if (url === entryHref) {
+        if (entryHref !== undefined && normalizeHref(url) === entryHref) {
           entryOg = data;
         }
 
