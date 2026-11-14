@@ -33,6 +33,18 @@ export type { ImageMeta } from "./scoring/image";
 export { OgDiagnostic, Severity } from "./schemas/diagnostic";
 export { ScoreResult } from "./schemas/score";
 
+// Diff
+export { diffPages } from "./diff/diff";
+export type { DiffInput, DiffTagKey, PageDiff } from "./diff/diff";
+
+// Tag field lists
+export {
+  GENERAL_TAG_FIELDS,
+  OG_TAG_FIELDS,
+  TAG_FIELDS,
+  TWITTER_TAG_FIELDS,
+} from "./diff/fields";
+
 // Crawler & Discovery
 export { crawlSite } from "./crawler/crawler";
 export type { CrawlerOptions, DiscoveredUrl } from "./crawler/crawler";
