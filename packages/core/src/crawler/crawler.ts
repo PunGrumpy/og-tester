@@ -2,10 +2,13 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchLike } from "../fetch-like";
+import { USER_AGENT } from "../fetchers/og";
 import { fetchRobotsTxtEffect } from "../fetchers/robots";
 import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
+import { parseOgTags } from "../parsers/og";
 import { parseRobotsTxt, isUrlDisallowed } from "../parsers/robots";
 import type { RobotsRules } from "../parsers/robots";
+import type { OgData } from "../schemas/og";
 
 export const isHtmlPageUrl = (url: URL): boolean => {
   const { pathname } = url;
@@ -83,6 +86,12 @@ export interface DiscoveredUrl {
    * anything a sitemap listed rather than a link.
    */
   foundOn?: string;
+  /**
+   * The tags parsed from the HTML the crawler already fetched, so the scanner
+   * need not fetch the page again. Absent for sitemap-listed URLs and for
+   * pages the crawler could not read.
+   */
+  og?: OgData;
 }
 
 export const crawlSite = (
@@ -114,6 +123,7 @@ export const crawlSite = (
     // Every URL we have seen, against the page we saw it on. The entry point
     // was not linked from anywhere, so it maps to undefined.
     const discovered = new Map<string, string | undefined>();
+    const ogByUrl = new Map<string, OgData>();
     const queue: string[] = [originUrl.href];
     discovered.set(originUrl.href, undefined);
 
@@ -149,7 +159,9 @@ export const crawlSite = (
         return null;
       }
       try {
-        const response = await doFetch(url);
+        const response = await doFetch(url, {
+          headers: { "User-Agent": USER_AGENT },
+        });
         return response.ok
           ? await readTextCapped(response, HTML_MAX_BYTES)
           : null;
@@ -162,6 +174,7 @@ export const crawlSite = (
       if (!html) {
         return;
       }
+      ogByUrl.set(url, parseOgTags(html, url));
       for (const link of extractInternalLinks(html, url)) {
         if (!discovered.has(link) && discovered.size < maxUrls * 2) {
           discovered.set(link, url);
@@ -200,6 +213,7 @@ export const crawlSite = (
 
     return [...visited].slice(0, maxUrls).map((url) => ({
       foundOn: discovered.get(url),
+      og: ogByUrl.get(url),
       url,
     }));
   }).pipe(

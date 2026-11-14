@@ -95,18 +95,20 @@ export const scanSite = (
       });
     }
 
-    const scanSingleUrl = ({ foundOn, url }: DiscoveredUrl) =>
+    const scanSingleUrl = ({ foundOn, og, url }: DiscoveredUrl) =>
       Effect.gen(function* scanSingleUrlGen() {
         if (options.signal?.aborted) {
           return yield* Effect.fail(new Error("Scan aborted"));
         }
 
-        const dataResult = yield* fetchOgTagsEffect(url, {
-          fetch: options.fetch,
-        }).pipe(Effect.result);
-        let data: OgData = {};
-        if (dataResult._tag === "Success") {
-          data = dataResult.success;
+        let data: OgData = og ?? {};
+        if (!og) {
+          const dataResult = yield* fetchOgTagsEffect(url, {
+            fetch: options.fetch,
+          }).pipe(Effect.result);
+          if (dataResult._tag === "Success") {
+            data = dataResult.success;
+          }
         }
 
         const scoreResult = yield* scorePage(data, url, {
