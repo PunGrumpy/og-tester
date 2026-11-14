@@ -102,60 +102,60 @@ export const diffCommand = new Command("diff")
     "--fail-on-regression",
     "Exit 1 if B scores lower than A or has diagnostics A does not"
   )
-  .action(async (a: string, b: string, _local, command: Command) => {
-    // The root program also declares --json, so commander hands it to the
-    // root and the subcommand's own options never see it.
-    const options = command.optsWithGlobals<{
-      failOnRegression?: boolean;
-      json?: boolean;
-    }>();
-    const urlA = withScheme(a);
-    const urlB = withScheme(b);
+  .action(
+    async (
+      a: string,
+      b: string,
+      options: { failOnRegression?: boolean; json?: boolean }
+    ) => {
+      const urlA = withScheme(a);
+      const urlB = withScheme(b);
 
-    if (!options.json) {
-      intro(color.bgCyan(color.black(" OG Tester — Diff ")));
-    }
-
-    const s = spinner();
-    if (!options.json) {
-      s.start(
-        `Fetching ${color.underline(urlA)} and ${color.underline(urlB)}...`
-      );
-    }
-
-    try {
-      const [pageA, pageB] = await Promise.all([
-        loadSide("A", urlA),
-        loadSide("B", urlB),
-      ]);
-      const diff = diffPages(pageA, pageB);
-
-      if (options.json) {
-        console.log(JSON.stringify(diff, null, 2));
-      } else {
-        s.stop("Fetched both pages.");
-        note(formatDiff(diff), "Diff");
-      }
-
-      const regressed = diff.regressed.length > 0 || diff.scoreDelta < 0;
-      if (options.failOnRegression && regressed) {
-        if (!options.json) {
-          outro(color.red("B regressed compared to A."));
-        }
-        process.exit(1);
-      }
       if (!options.json) {
-        outro(color.green("Done!"));
+        intro(color.bgCyan(color.black(" OG Tester — Diff ")));
       }
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (options.json) {
-        console.error(JSON.stringify({ error: message }, null, 2));
+
+      const s = spinner();
+      if (!options.json) {
+        s.start(
+          `Fetching ${color.underline(urlA)} and ${color.underline(urlB)}...`
+        );
+      }
+
+      try {
+        const [pageA, pageB] = await Promise.all([
+          loadSide("A", urlA),
+          loadSide("B", urlB),
+        ]);
+        const diff = diffPages(pageA, pageB);
+
+        if (options.json) {
+          console.log(JSON.stringify(diff, null, 2));
+        } else {
+          s.stop("Fetched both pages.");
+          note(formatDiff(diff), "Diff");
+        }
+
+        const regressed = diff.regressed.length > 0 || diff.scoreDelta < 0;
+        if (options.failOnRegression && regressed) {
+          if (!options.json) {
+            outro(color.red("B regressed compared to A."));
+          }
+          process.exit(1);
+        }
+        if (!options.json) {
+          outro(color.green("Done!"));
+        }
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (options.json) {
+          console.error(JSON.stringify({ error: message }, null, 2));
+          process.exit(1);
+        }
+        s.stop(color.red("Failed to fetch or parse tags"));
+        log.error(color.red(message));
+        outro(color.red("Exited with errors."));
         process.exit(1);
       }
-      s.stop(color.red("Failed to fetch or parse tags"));
-      log.error(color.red(message));
-      outro(color.red("Exited with errors."));
-      process.exit(1);
     }
-  });
+  );
