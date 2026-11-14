@@ -143,65 +143,65 @@ export const crawlSite = (
       return links;
     };
 
-    while (queue.length > 0 && visited.size < maxUrls) {
-      const batchSize = Math.min(
-        concurrency,
-        queue.length,
-        maxUrls - visited.size
-      );
-      const batch = queue.splice(0, batchSize);
+    const fetchHtml = async (url: string): Promise<string | null> => {
+      const parsed = new URL(url);
+      if (isUrlDisallowed(parsed.pathname + parsed.search, robotsRules)) {
+        return null;
+      }
+      try {
+        const response = await doFetch(url);
+        return response.ok
+          ? await readTextCapped(response, HTML_MAX_BYTES)
+          : null;
+      } catch {
+        return null;
+      }
+    };
 
-      const crawlResults = yield* Effect.all(
-        batch.map((url) => {
-          visited.add(url);
-          const parsed = new URL(url);
-          if (isUrlDisallowed(parsed.pathname + parsed.search, robotsRules)) {
-            return Effect.succeed({ html: "", skipped: true, url });
-          }
-
-          return Effect.tryPromise({
-            catch: () => new Error("Failed fetch"),
-            try: () => doFetch(url),
-          }).pipe(
-            Effect.flatMap((response) => {
-              if (!response.ok) {
-                return Effect.succeed({ html: "", skipped: true, url });
-              }
-              return Effect.tryPromise({
-                catch: () => new Error("Failed read text"),
-                try: () => readTextCapped(response, HTML_MAX_BYTES),
-              }).pipe(
-                Effect.map((html) => ({
-                  html: html ?? "",
-                  skipped: html === null,
-                  url,
-                }))
-              );
-            }),
-            Effect.catch(() => Effect.succeed({ html: "", skipped: true, url }))
-          );
-        }),
-        { concurrency }
-      );
-
-      for (const res of crawlResults) {
-        if (res.skipped || !res.html) {
-          continue;
-        }
-
-        const newLinks = extractInternalLinks(res.html, res.url);
-        for (const link of newLinks) {
-          if (!discovered.has(link) && discovered.size < maxUrls * 2) {
-            discovered.set(link, res.url);
-            queue.push(link);
-          }
+    const onPageFetched = (url: string, html: string | null) => {
+      if (!html) {
+        return;
+      }
+      for (const link of extractInternalLinks(html, url)) {
+        if (!discovered.has(link) && discovered.size < maxUrls * 2) {
+          discovered.set(link, url);
+          queue.push(link);
         }
       }
-    }
+    };
 
-    return [...visited]
-      .slice(0, maxUrls)
-      .map((url) => ({ foundOn: discovered.get(url), url }));
+    // Keeps `concurrency` fetches in flight, so a slow page holds one slot
+    // instead of the whole batch.
+    yield* Effect.promise(async () => {
+      const inFlight = new Set<Promise<void>>();
+      const crawlOne = async (url: string, self: () => Promise<void>) => {
+        const html = await fetchHtml(url);
+        inFlight.delete(self());
+        onPageFetched(url, html);
+      };
+      while (queue.length > 0 || inFlight.size > 0) {
+        while (
+          inFlight.size < concurrency &&
+          queue.length > 0 &&
+          visited.size < maxUrls
+        ) {
+          const url = queue.shift() as string;
+          visited.add(url);
+          const task = crawlOne(url, () => task);
+          inFlight.add(task);
+        }
+        if (inFlight.size === 0) {
+          return;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.race(inFlight);
+      }
+    });
+
+    return [...visited].slice(0, maxUrls).map((url) => ({
+      foundOn: discovered.get(url),
+      url,
+    }));
   }).pipe(
     Effect.mapError((err) =>
       err instanceof Error ? err : new Error(String(err))
