@@ -170,15 +170,30 @@ export const crawlSite = (
       }
     };
 
-    const onPageFetched = (url: string, html: string | null) => {
-      if (!html) {
-        return;
+    // Links are queued in the order fetches started, never the order they
+    // finished, so which pages survive the maxUrls cutoff does not depend on
+    // response timing.
+    const settled: ({ url: string; links: string[] } | undefined)[] = [];
+    let flushed = 0;
+
+    const onPageFetched = (
+      index: number,
+      url: string,
+      html: string | null
+    ) => {
+      let links: string[] = [];
+      if (html) {
+        ogByUrl.set(url, parseOgTags(html, url));
+        links = extractInternalLinks(html, url);
       }
-      ogByUrl.set(url, parseOgTags(html, url));
-      for (const link of extractInternalLinks(html, url)) {
-        if (!discovered.has(link) && discovered.size < maxUrls * 2) {
-          discovered.set(link, url);
-          queue.push(link);
+      settled[index] = { links, url };
+      for (let page = settled[flushed]; page; page = settled[flushed]) {
+        flushed += 1;
+        for (const link of page.links) {
+          if (!discovered.has(link) && discovered.size < maxUrls * 2) {
+            discovered.set(link, page.url);
+            queue.push(link);
+          }
         }
       }
     };
@@ -187,10 +202,14 @@ export const crawlSite = (
     // instead of the whole batch.
     yield* Effect.promise(async () => {
       const inFlight = new Set<Promise<void>>();
-      const crawlOne = async (url: string, self: () => Promise<void>) => {
+      const crawlOne = async (
+        index: number,
+        url: string,
+        self: () => Promise<void>
+      ) => {
         const html = await fetchHtml(url);
         inFlight.delete(self());
-        onPageFetched(url, html);
+        onPageFetched(index, url, html);
       };
       while (queue.length > 0 || inFlight.size > 0) {
         while (
@@ -199,8 +218,9 @@ export const crawlSite = (
           visited.size < maxUrls
         ) {
           const url = queue.shift() as string;
+          const index = visited.size;
           visited.add(url);
-          const task = crawlOne(url, () => task);
+          const task = crawlOne(index, url, () => task);
           inFlight.add(task);
         }
         if (inFlight.size === 0) {
