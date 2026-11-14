@@ -55,16 +55,18 @@ export const POST = async (req: NextRequest) => {
         };
 
         try {
-          const [report, og] = await Promise.all([
-            runScanSite({
-              concurrency: 5,
-              fetch: safeFetch,
-              maxUrls: 50,
-              onProgress: sendEvent,
-              siteUrl: parsedUrl,
-            }),
-            fetchOgTags(parsedUrl, { fetch: safeFetch }).catch(() => ({})),
-          ]);
+          const report = await runScanSite({
+            concurrency: 5,
+            fetch: safeFetch,
+            maxUrls: 50,
+            onProgress: sendEvent,
+            siteUrl: parsedUrl,
+          });
+          const og =
+            report.entryOg ??
+            (await fetchOgTags(parsedUrl, { fetch: safeFetch }).catch(
+              () => ({})
+            ));
 
           if (domain) {
             await saveReport({

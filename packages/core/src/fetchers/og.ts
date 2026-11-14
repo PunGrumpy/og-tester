@@ -5,7 +5,8 @@ import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
 import { parseOgTags } from "../parsers/og";
 import type { OgData } from "../schemas/og";
 
-const USER_AGENT = "OGTester/1.0 (+https://github.com/PunGrumpy/og-tester)";
+export const USER_AGENT =
+  "OGTester/1.0 (+https://github.com/PunGrumpy/og-tester)";
 
 export const fetchOgTagsEffect = (
   url: string,

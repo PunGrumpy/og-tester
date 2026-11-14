@@ -41,6 +41,11 @@ export interface ScanReport {
   averageScore: number;
   categoryAverages: Record<CategoryId, number>;
   pages: ScannedPage[];
+  /**
+   * The entry page's tags, empty when it could not be read. Absent when the
+   * entry page was not part of the scan, as when a sitemap omits it.
+   */
+  entryOg?: OgData;
   summary: {
     // 90-100
     excellent: number;
@@ -52,6 +57,14 @@ export interface ScanReport {
     poor: number;
   };
 }
+
+const normalizeHref = (href: string): string | undefined => {
+  try {
+    return new URL(href).href;
+  } catch {
+    return undefined;
+  }
+};
 
 /* eslint-disable promise/prefer-await-to-callbacks */
 export const scanSite = (
@@ -95,18 +108,26 @@ export const scanSite = (
       });
     }
 
-    const scanSingleUrl = ({ foundOn, url }: DiscoveredUrl) =>
+    const entryHref = normalizeHref(options.siteUrl);
+    let entryOg: OgData | undefined;
+
+    const scanSingleUrl = ({ foundOn, og, url }: DiscoveredUrl) =>
       Effect.gen(function* scanSingleUrlGen() {
         if (options.signal?.aborted) {
           return yield* Effect.fail(new Error("Scan aborted"));
         }
 
-        const dataResult = yield* fetchOgTagsEffect(url, {
-          fetch: options.fetch,
-        }).pipe(Effect.result);
-        let data: OgData = {};
-        if (dataResult._tag === "Success") {
-          data = dataResult.success;
+        let data: OgData = og ?? {};
+        if (!og) {
+          const dataResult = yield* fetchOgTagsEffect(url, {
+            fetch: options.fetch,
+          }).pipe(Effect.result);
+          if (dataResult._tag === "Success") {
+            data = dataResult.success;
+          }
+        }
+        if (entryHref !== undefined && normalizeHref(url) === entryHref) {
+          entryOg = data;
         }
 
         const scoreResult = yield* scorePage(data, url, {
@@ -176,6 +197,7 @@ export const scanSite = (
     const report: ScanReport = {
       averageScore,
       categoryAverages,
+      entryOg,
       pages: pageScores,
       scannedAt: new Date().toISOString(),
       siteUrl: options.siteUrl,

@@ -2,10 +2,13 @@
 import * as Effect from "effect/Effect";
 
 import type { FetchLike } from "../fetch-like";
+import { USER_AGENT } from "../fetchers/og";
 import { fetchRobotsTxtEffect } from "../fetchers/robots";
 import { HTML_MAX_BYTES, readTextCapped, withTimeout } from "../http";
+import { parseOgTags } from "../parsers/og";
 import { parseRobotsTxt, isUrlDisallowed } from "../parsers/robots";
 import type { RobotsRules } from "../parsers/robots";
+import type { OgData } from "../schemas/og";
 
 export const isHtmlPageUrl = (url: URL): boolean => {
   const { pathname } = url;
@@ -83,6 +86,12 @@ export interface DiscoveredUrl {
    * anything a sitemap listed rather than a link.
    */
   foundOn?: string;
+  /**
+   * The tags parsed from the HTML the crawler already fetched, so the scanner
+   * need not fetch the page again. Absent for sitemap-listed URLs and for
+   * pages the crawler could not read.
+   */
+  og?: OgData;
 }
 
 export const crawlSite = (
@@ -114,6 +123,7 @@ export const crawlSite = (
     // Every URL we have seen, against the page we saw it on. The entry point
     // was not linked from anywhere, so it maps to undefined.
     const discovered = new Map<string, string | undefined>();
+    const ogByUrl = new Map<string, OgData>();
     const queue: string[] = [originUrl.href];
     discovered.set(originUrl.href, undefined);
 
@@ -143,65 +153,89 @@ export const crawlSite = (
       return links;
     };
 
-    while (queue.length > 0 && visited.size < maxUrls) {
-      const batchSize = Math.min(
-        concurrency,
-        queue.length,
-        maxUrls - visited.size
-      );
-      const batch = queue.splice(0, batchSize);
+    const fetchHtml = async (url: string): Promise<string | null> => {
+      const parsed = new URL(url);
+      if (isUrlDisallowed(parsed.pathname + parsed.search, robotsRules)) {
+        return null;
+      }
+      try {
+        const response = await doFetch(url, {
+          headers: { "User-Agent": USER_AGENT },
+        });
+        return response.ok
+          ? await readTextCapped(response, HTML_MAX_BYTES)
+          : null;
+      } catch {
+        return null;
+      }
+    };
 
-      const crawlResults = yield* Effect.all(
-        batch.map((url) => {
-          visited.add(url);
-          const parsed = new URL(url);
-          if (isUrlDisallowed(parsed.pathname + parsed.search, robotsRules)) {
-            return Effect.succeed({ html: "", skipped: true, url });
-          }
+    // Links are queued in the order fetches started, never the order they
+    // finished, so which pages survive the maxUrls cutoff does not depend on
+    // response timing.
+    const settled: ({ url: string; links: string[] } | undefined)[] = [];
+    let flushed = 0;
 
-          return Effect.tryPromise({
-            catch: () => new Error("Failed fetch"),
-            try: () => doFetch(url),
-          }).pipe(
-            Effect.flatMap((response) => {
-              if (!response.ok) {
-                return Effect.succeed({ html: "", skipped: true, url });
-              }
-              return Effect.tryPromise({
-                catch: () => new Error("Failed read text"),
-                try: () => readTextCapped(response, HTML_MAX_BYTES),
-              }).pipe(
-                Effect.map((html) => ({
-                  html: html ?? "",
-                  skipped: html === null,
-                  url,
-                }))
-              );
-            }),
-            Effect.catch(() => Effect.succeed({ html: "", skipped: true, url }))
-          );
-        }),
-        { concurrency }
-      );
-
-      for (const res of crawlResults) {
-        if (res.skipped || !res.html) {
-          continue;
+    const onPageFetched = (index: number, url: string, html: string | null) => {
+      let links: string[] = [];
+      if (html) {
+        try {
+          ogByUrl.set(url, parseOgTags(html, url));
+          links = extractInternalLinks(html, url);
+        } catch {
+          ogByUrl.delete(url);
         }
-
-        const newLinks = extractInternalLinks(res.html, res.url);
-        for (const link of newLinks) {
+      }
+      settled[index] = { links, url };
+      for (let page = settled[flushed]; page; page = settled[flushed]) {
+        flushed += 1;
+        for (const link of page.links) {
           if (!discovered.has(link) && discovered.size < maxUrls * 2) {
-            discovered.set(link, res.url);
+            discovered.set(link, page.url);
             queue.push(link);
           }
         }
       }
-    }
+    };
 
-    return [...visited]
-      .slice(0, maxUrls)
-      .map((url) => ({ foundOn: discovered.get(url), url }));
+    // Keeps `concurrency` fetches in flight, so a slow page holds one slot
+    // instead of the whole batch.
+    yield* Effect.promise(async () => {
+      const inFlight = new Set<Promise<void>>();
+      const crawlOne = async (
+        index: number,
+        url: string,
+        self: () => Promise<void>
+      ) => {
+        const html = await fetchHtml(url);
+        inFlight.delete(self());
+        onPageFetched(index, url, html);
+      };
+      while (queue.length > 0 || inFlight.size > 0) {
+        while (
+          inFlight.size < concurrency &&
+          queue.length > 0 &&
+          visited.size < maxUrls
+        ) {
+          const url = queue.shift() as string;
+          const index = visited.size;
+          visited.add(url);
+          const task = crawlOne(index, url, () => task);
+          inFlight.add(task);
+        }
+        if (inFlight.size === 0) {
+          return;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.race(inFlight);
+      }
+    });
+
+    return [...visited].slice(0, maxUrls).map((url) => ({
+      foundOn: discovered.get(url),
+      og: ogByUrl.get(url),
+      url,
+    }));
   }).pipe(
     Effect.mapError((err) =>
       err instanceof Error ? err : new Error(String(err))
