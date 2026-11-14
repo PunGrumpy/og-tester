@@ -10,7 +10,7 @@ cp apps/web/.env.example apps/web/.env.local
 bun run dev
 ```
 
-`bun run dev` starts the web app and watches the CLI. Run `bun run check` before opening a PR. It runs lint, typecheck, and tests, the same steps CI runs. `bun run format` fixes formatting.
+`bun run dev` starts the web app and watches the CLI. Run `bun run check` before opening a PR. It runs lint, typecheck, and tests. CI runs the same steps, then builds the CLI. `bun run format` fixes formatting.
 
 ## Environment variables
 
@@ -19,8 +19,8 @@ bun run dev
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_DATABUDDY_CLIENT_ID` | Yes | Databuddy analytics client id |
-| `UNKEY_API_KEY` | Yes | Unkey API key for MCP endpoint auth |
-| `UNKEY_ROOT_KEY` | Yes | Unkey root key, must start with `unkey_` |
+| `UNKEY_API_KEY` | Yes | Bearer token the web app sends to its own `/api/og` route |
+| `UNKEY_ROOT_KEY` | Yes | Unkey root key that verifies keys on the `/api/*` and MCP routes, must start with `unkey_` |
 | `UPSTASH_REDIS_REST_URL` | No | Shared rate limit and report store |
 | `UPSTASH_REDIS_REST_TOKEN` | No | Without the Upstash pair, dev uses in-memory stores |
 
