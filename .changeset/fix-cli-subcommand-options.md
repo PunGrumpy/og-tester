@@ -2,4 +2,4 @@
 "og-tester": patch
 ---
 
-Fix `--json`, `--min-score`, `--max-urls`, `--concurrency` and `--output` being ignored on the `check`, `scan`, `sitemap` and `robots` subcommands.
+Fix subcommand options being ignored: `--json` on `check`, `scan`, `sitemap` and `robots`, `--min-score` on `check` and `scan`, and `--max-urls`, `--concurrency` and `--output` on `scan`.
