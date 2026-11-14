@@ -176,15 +176,15 @@ export const crawlSite = (
     const settled: ({ url: string; links: string[] } | undefined)[] = [];
     let flushed = 0;
 
-    const onPageFetched = (
-      index: number,
-      url: string,
-      html: string | null
-    ) => {
+    const onPageFetched = (index: number, url: string, html: string | null) => {
       let links: string[] = [];
       if (html) {
-        ogByUrl.set(url, parseOgTags(html, url));
-        links = extractInternalLinks(html, url);
+        try {
+          ogByUrl.set(url, parseOgTags(html, url));
+          links = extractInternalLinks(html, url);
+        } catch {
+          ogByUrl.delete(url);
+        }
       }
       settled[index] = { links, url };
       for (let page = settled[flushed]; page; page = settled[flushed]) {
