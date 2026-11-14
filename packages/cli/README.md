@@ -21,6 +21,10 @@
   - **Icons Panel** - Display all favicons with sizes and types
 - 🖼️ **Image Previews** - Visual preview of Open Graph and Twitter Card images
 
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](https://github.com/PunGrumpy/og-tester/blob/main/CONTRIBUTING.md) for setup, environment variables, and the `bun run check` workflow.
+
 ## 📝 License
 
 Licensed under the [MIT License](LICENSE).

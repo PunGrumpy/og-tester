@@ -13,6 +13,7 @@
     "typecheck": "turbo typecheck",
     "lint": "ultracite check",
     "format": "ultracite fix",
+    "check": "bun run lint && turbo typecheck test",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:release": "turbo run build --filter=og-tester && changeset publish",

@@ -7,7 +7,7 @@
     "dev": "xmcp dev & next dev",
     "build": "xmcp build && next build",
     "start": "next start",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "xmcp build && tsgo --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
