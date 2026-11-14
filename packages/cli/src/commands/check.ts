@@ -2,7 +2,13 @@ import { setTimeout } from "node:timers/promises";
 
 import { intro, log, note, outro, spinner } from "@clack/prompts";
 import type { OgData } from "@og-tester/core";
-import { fetchOgTags, runScorePage } from "@og-tester/core";
+import {
+  GENERAL_TAG_FIELDS,
+  OG_TAG_FIELDS,
+  TWITTER_TAG_FIELDS,
+  fetchOgTags,
+  runScorePage,
+} from "@og-tester/core";
 import { Command } from "commander";
 import color from "picocolors";
 
@@ -10,7 +16,7 @@ import { parseScore } from "../options";
 
 const formatFields = (
   data: OgData,
-  fields: string[],
+  fields: readonly string[],
   emptyMsg: string
 ): string => {
   const dataRecord = data as Record<string, unknown>;
@@ -28,40 +34,17 @@ export const formatReport = (data: OgData): string => {
   const sections = [
     `${color.bold(color.cyan("General Tags:"))}\n${formatFields(
       data,
-      [
-        "title",
-        "description",
-        "author",
-        "canonical",
-        "robots",
-        "keywords",
-        "themeColor",
-      ],
+      GENERAL_TAG_FIELDS,
       "No general tags detected."
     )}`,
     `${color.bold(color.magenta("Open Graph Tags (og:*):"))}\n${formatFields(
       data,
-      [
-        "og:title",
-        "og:description",
-        "og:image",
-        "og:url",
-        "og:type",
-        "og:site_name",
-        "og:locale",
-      ],
+      OG_TAG_FIELDS,
       "No Open Graph tags detected."
     )}`,
     `${color.bold(color.blue("Twitter Card Tags (twitter:*):"))}\n${formatFields(
       data,
-      [
-        "twitter:card",
-        "twitter:title",
-        "twitter:description",
-        "twitter:image",
-        "twitter:site",
-        "twitter:creator",
-      ],
+      TWITTER_TAG_FIELDS,
       "No Twitter Card tags detected."
     )}`,
     `${color.bold(color.yellow("Favicons & Icons:"))}\n${
