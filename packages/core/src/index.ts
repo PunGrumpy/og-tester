@@ -33,6 +33,10 @@ export type { ImageMeta } from "./scoring/image";
 export { OgDiagnostic, Severity } from "./schemas/diagnostic";
 export { ScoreResult } from "./schemas/score";
 
+// Diff
+export { diffPages } from "./diff/diff";
+export type { DiffInput, DiffTagKey, PageDiff } from "./diff/diff";
+
 // Tag field lists
 export {
   GENERAL_TAG_FIELDS,
