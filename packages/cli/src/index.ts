@@ -13,6 +13,7 @@ const program = new Command();
 program
   .name("og-tester")
   .version(packageJson.version)
+  .enablePositionalOptions()
   .description(
     "Test and analyze Open Graph, Twitter Card, and meta tags from the command line"
   )
